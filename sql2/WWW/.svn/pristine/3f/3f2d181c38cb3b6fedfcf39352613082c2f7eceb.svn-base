@@ -1,0 +1,33 @@
+<!--#include file="../comm/RWIniFile.inc"-->
+<%
+	Session.CodePage = 65001
+	Response.Charset = "UTF-8"
+	itype = Request.QueryString("itype")
+	username = session("user")
+	state = int(Request.QueryString("state"))
+	msg = ""
+	result = 0
+	If username <> "" Then
+		if itype = 1 Then
+			If state = 1 Or state = 0 then
+				Response.Cookies("AutoConfig")("FJMode") = state
+				result = 1
+			End if
+		End If
+		If itype = 2 Then
+			If state = 2 Or state = 1 Or state = 0 Then
+				Response.Cookies("AutoConfig")("ZMMode") = state
+				result = 1
+			End if
+		End if
+		
+		if result = 1 Then
+			msg = "修改成功"
+		Else
+			msg = "请稍候再操作"
+		End if
+	Else
+		msg = "未登录不可进行操作"
+	End if
+	Response.write "{""result"":" & result & ",""msg"":""" & msg & """}"
+%>

@@ -1,0 +1,46 @@
+<!--#include file="../comm/mconn.asp"-->
+<%
+	Session.CodePage = 65001
+	Response.Charset = "UTF-8"
+	itype = Request.QueryString("itype")
+	username = session("user")
+	id = Request("id")
+	x = Request("xvalue")
+	y = Request("yvalue")
+	w = int(Request("wvalue"))
+	h = int(Request("hvalue"))
+	msg = ""
+	result = 0
+	If username <> "" Then
+		Dim mRs
+		Set mRs = Server.CreateObject("Adodb.RecordSet")
+		mRs.open "select Account from Popedom where Have=3 and Account='" & username & "'", conn, 1, 2
+		if not mRs.eof Then
+			mRs.close
+			if itype = 1 Then
+				mRs.open "select 1 from devpara where DevID=" & id, conn, 1, 2
+				If Not mRs.eof Then
+					mRs.close
+					If int(x) = "" Or int(y) = "" Or w = "" Or h = "" Or w < 0 Or h < 0 Or x < 0 Or y < 0 Or int(x) > w - 1 Or int(y) > h - 1 Then
+						msg = "请求参数异常"
+					Else
+						x = FormatNumber(x,2) + 0
+						y = FormatNumber(y,2) + 0
+						sql = "update devpara set Pointx=" & x & ",PointY=" & y & ",ScreenWidth=" & w & ",ScreenHeight=" & h & " where DevID=" & id
+						Conn.Execute(sql)
+						result = 1
+						msg = "修改设备位置成功"
+					End if
+				Else
+					msg = "无该设备(DevID为" & id & ")"
+				End If	
+			End if
+		Else
+			msg = "没有权限进行操作(3)"
+		End If
+		mRs.close
+	Else
+		msg = "未登录不可进行操作"
+	End If
+	Response.write "{""result"":" & result & ",""msg"":""" & msg & """}"
+%>

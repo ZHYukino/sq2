@@ -1,0 +1,96 @@
+﻿<%@ language=VBScript%>
+<%
+if session("user") <> ""  then
+	response.redirect "default.asp"
+	response.End()
+else
+	username = request.form("username")
+	password = request.form("password")
+	userip = Request.ServerVariables("HTTP_X_FORWARDED_FOR") 
+	If userip = empty Then userip = Request.ServerVariables("REMOTE_ADDR") end if
+	if (username <> "") and (password <> "") then
+%>
+<!--#include file="comm/mconn.asp"-->
+<%	
+		if session("Server_Name") = ""	then
+			errString = "无法连接服务器！"
+		else
+			Dim mRs
+			Set mRs = Server.CreateObject("Adodb.RecordSet")
+			mRs.open "Select PassWord from userinfo where Account='" & username & "'", conn, 1, 2
+			if not mRs.eof then
+				if mRs("PassWord") = password Then
+					mRs.close
+					mRs.open "select 1 from Popedom where Have=0 and Account='" & username & "'", conn, 1, 2
+					If not mRs.eof then
+						ssql = "insert into LogSys(logman,LogTime,Logdesc,LogMemo,logtype) values ('" & username & "',GETDATE(),'登录隧道控制','',1)"
+						Conn.Execute(ssql)
+						session("user") = username
+						session("userip") = userip
+						'session("userhost") = Request.ServerVariables("REMOTE_HOST")
+						Session.Timeout = 5
+						response.redirect "default.asp"
+						response.End()
+					else
+						errString = "没有相应操作权限！"
+						errusername = ""
+					end if
+				else
+					errString = "错误的账号或密码！"
+					errusername = username
+				end if
+			else
+				errString = "错误的账号！"
+				errusername = ""
+			end if 
+			mRs.close
+		end if
+	else
+		errString = ""	
+		errusername = ""
+	end if
+end if
+%>
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+    <head>
+        <meta charset="utf-8">
+        <title>系统登录</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="">
+        <meta name="author" content="">
+
+        <!-- CSS -->
+        <link rel='stylesheet' href='css/gg_font.css'>
+        <link rel="stylesheet" href="css/reset.css">
+        <link rel="stylesheet" href="css/supersized.css">
+        <link rel="stylesheet" href="css/style.css">
+
+    </head>
+    <body>
+
+        <div class="page-container">
+            <h1>登录</h1>
+            <form action="" method="post">
+              <input type="text" id="username" name="username" class="username" placeholder="输入账号" onMouseOver="this.focus()" onFocus="this.select()" value="<%= errusername%>">
+              <input type="password" name="password" class="password" placeholder="输入密码" onMouseOver="this.focus()" onFocus="this.select()">
+              <button type="submit">登录</button> 
+			  <button type="reset">重置</button>
+			  <div style="margin-top:10px;color:#FF0000"><span><%= errString%></span></div> <!--$('div span').text('');-->
+            </form>
+            <div class="connect">
+                <p></p>
+                <p></p>
+            </div>
+        </div>
+        <div align="center">技术支持：创想交通</div>
+		<script type="text/javascript">
+			document.getElementById("username").focus();
+		</script>
+        <!-- Javascript -->
+        <script src="js/jquery-1.8.2.min.js"></script>
+        <script src="js/supersized.3.2.7.min.js"></script>
+        <script src="js/supersized-init.js"></script>
+        <script src="js/scripts.js"></script> 
+    </body>
+</html>

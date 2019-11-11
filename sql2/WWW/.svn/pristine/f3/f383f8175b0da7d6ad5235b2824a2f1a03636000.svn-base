@@ -1,0 +1,411 @@
+MyDesktop = new Ext.app.App({
+	init :function(){
+		Ext.QuickTips.init();
+	},
+
+	getModules : function(){
+		return [
+			//new MyDesktop.GridWindow(),
+      		//new MyDesktop.TabWindow(),
+	  		//new MyDesktop.AccordionWindow(),
+      		//new MyDesktop.BogusMenuModule(),
+      		//new MyDesktop.BogusModule(),
+			new MyDesktop.ChangePassword(),
+			new MyDesktop.UserManagement(),
+			new MyDesktop.BogusMenuModuleCMS(),
+			new MyDesktop.BogusMenuModuleReport()
+		];
+	},
+
+    // config for the start menu
+    getStartConfig : function(){
+        return {
+            title: '汕头市创想交通科技有限公司',
+            iconCls: 'cx',
+            toolItems: [{
+                text:'配置',
+                iconCls:'settings',
+				handler : this.createWindowA,
+                scope:this
+            },'-',{
+                text:'注销',
+                iconCls:'logout',
+				handler : this.createWindowB,
+                scope:this
+            }]
+        };
+    },
+	createWindowA : function(){
+		var desktop = this.getDesktop();
+        var win = desktop.getWindow('syssetwin');
+        if(!win){
+			win = Ext.SysSet.MyWindow();	
+        };
+        win.show();
+	},
+	createWindowB : function(){
+		if (confirm("你确定要注销?")){   
+				window.location.href="logout.asp"   
+    	}   
+		/*$.ajax( {  
+	    		url: 'logout.asp?a=1&b=2',// 跳转到 action  
+	    		//data:JSON.stringify(a),
+	    		type:'post',  
+	    		contentType: "application/x-www-form-urlencoded",
+	    		cache:false,
+				//async : false, //默认为true 异步    
+	    		dataType:'json',  //json
+	    		success:function(data, textStatus) {  
+	    		},  
+	    		error : function(XMLHttpRequest, textStatus, errorThrown) {
+	    		}
+		});*/
+    }
+});
+
+MyDesktop.GridWindow = Ext.extend(Ext.app.Module, {
+    id:'grid-win',
+    init : function(){
+        this.launcher = {
+            text: 'Grid Window',
+            iconCls:'icon-grid',
+            handler : this.createWindow,
+            scope: this
+        }
+    },
+
+    createWindow : function(){
+        alert('grid window');
+    }
+});
+
+
+
+MyDesktop.TabWindow = Ext.extend(Ext.app.Module, {
+    id:'tab-win',
+    init : function(){
+        this.launcher = {
+            text: '门架式情报板内容编辑',
+            iconCls:'tabs',
+            handler : this.createWindow,
+            scope: this
+        }
+    },
+    createWindow : function(){
+        //var desktop = this.app.getDesktop();
+        var win = Ext.getCmp('cmswin');
+        if(!win){
+            win = new Ext.cy.MyWindowcms();					
+        }
+        win.show();        
+    }
+});
+
+
+
+MyDesktop.AccordionWindow = Ext.extend(Ext.app.Module, {
+    id:'acc-win',
+    init : function(){
+        this.launcher = {
+            text: 'Accordion Window',
+            iconCls:'accordion',
+            handler : this.createWindow7,
+            scope: this
+        }
+    },
+
+    createWindow7 : function(){
+        alert('acc-win');
+    }
+});
+
+var windowIndex = 0;
+
+MyDesktop.BogusModule = Ext.extend(Ext.app.Module, {
+    init : function(){
+        this.launcher = {
+            text: 'Window '+(++windowIndex),
+            iconCls:'bogus',
+            handler : this.createWindow,
+            scope: this,
+            windowId:windowIndex
+        }
+    },
+
+    createWindow : function(src){
+        var desktop = this.app.getDesktop();
+        var win = desktop.getWindow('bogus'+src.windowId);
+        if(!win){
+            win = desktop.createWindow({
+                id: 'bogus'+src.windowId,
+                title:src.text,
+                width:640,
+                height:480,
+                html : '<p>Something useful would be in here.123</p>',
+                iconCls: 'bogus',
+                shim:false,
+                animCollapse:false,
+                constrainHeader:true
+            });
+        }
+        win.show();
+    }
+});
+
+
+MyDesktop.BogusMenuModule = Ext.extend(MyDesktop.BogusModule, {
+    init : function(){
+        this.launcher = {
+            text: 'Bogus Submenu',
+            iconCls: 'bogus',
+            handler: function() {
+				return false;
+			},
+            menu: {
+                items:[{
+                    text: 'Bogus Window '+(++windowIndex),
+                    iconCls:'bogus',
+                    handler : this.createWindow,//用父类的方法
+                    scope: this,
+                    windowId: windowIndex
+                    },{
+                    text: 'Bogus Window '+(++windowIndex),
+                    iconCls:'bogus',
+                    handler : this.createWindow,
+                    scope: this,
+                    windowId: windowIndex
+                    },{
+                    text: 'Bogus Window '+(++windowIndex),
+                    iconCls:'bogus',
+                    handler : this.createWindow,
+                    scope: this,
+                    windowId: windowIndex
+                    },{
+                    text: 'Bogus Window '+(++windowIndex),
+                    iconCls:'bogus',
+                    handler : this.createWindow3,
+                    scope: this,
+                    windowId: windowIndex
+                    },{
+                    text: 'Bogus Window '+(++windowIndex),
+                    iconCls:'bogus',
+                    handler : this.createWindow2,
+                    scope: this,
+                    windowId: windowIndex
+                }]
+            }
+        }
+    },
+    createWindow2 : function(src){
+        var desktop = this.app.getDesktop();
+        var win = desktop.getWindow('bogus'+src.windowId);
+        if(!win){
+            win = desktop.createWindow({
+                id: 'bogus'+src.windowId,
+                title:src.text,
+                width:640,
+                height:480,
+                html : '<p>Something usefulaaaaaa would be in here.222</p>',
+                iconCls: 'bogus',
+                shim:false,
+                animCollapse:false,
+                constrainHeader:true
+            });
+        }
+        win.show();
+    },
+    createWindow3 : function(src){
+        var desktop = this.app.getDesktop();
+        var win = desktop.getWindow('bogus'+src.windowId);
+        if(!win){
+            win = desktop.createWindow({
+                id: 'bogus'+src.windowId,
+                title:src.text,
+                width:640,
+                height:480,
+                html : '<p>Something usefulaaaaaa would be in here.333</p>',
+                iconCls: 'bogus',
+                shim:false,
+                animCollapse:false,
+                constrainHeader:true
+            });
+        }
+        win.show();
+    }
+});
+MyDesktop.ChangePassword = Ext.extend(Ext.app.Module, {
+    id:'tab-win',
+    init : function(){
+        this.launcher = {
+            text: '修改密码',
+            iconCls:'bogus',
+            handler : this.createWindow,
+            scope: this
+        }
+    },
+    createWindow : function(){
+        //var desktop = this.app.getDesktop();
+        var win = Ext.getCmp('passwordeditwin');
+        if(!win){
+            win = new Ext.CXPasswordEdit.MyWindow();					
+        }
+        win.show();     		
+	}
+});
+MyDesktop.UserManagement = Ext.extend(Ext.app.Module, {
+    id:'tab-win',
+    init : function(){
+        this.launcher = {
+            text: '用户管理',
+            iconCls:'bogus',
+            handler : this.createWindow,
+            scope: this
+        }
+    },
+    createWindow : function(){
+        //var desktop = this.app.getDesktop();
+        var win = Ext.getCmp('userwin');
+        if(!win){
+            win = new Ext.CXUser.MyWindow();					
+        }
+        win.show();        
+    }
+});
+
+MyDesktop.BogusMenuModuleCMS = Ext.extend(Ext.app.Module, {
+    init : function(){
+        this.launcher = {
+            text: '情报板内容编辑',
+            iconCls: 'tabs',
+            handler: function() {
+				return false;
+			},
+            menu: {
+                items:[{
+                    text: '门架式',
+                    iconCls:'bogus',
+                    handler : this.createWindowcms,
+                    scope: this,
+                    windowId: windowIndex
+                    },{
+                    text: 'LED屏',
+                    iconCls:'bogus',
+                    handler : this.createWindowscms,
+                    scope: this,
+                    windowId: windowIndex					
+                    },{
+                    text: 'F型',
+                    iconCls:'bogus',
+                    handler : this.createWindowfcms,
+                    scope: this,
+                    windowId: windowIndex
+                    },{
+                    text: 'T型',
+                    iconCls:'bogus',
+                    handler : this.createWindowtcms,
+                    scope: this,
+                    windowId: windowIndex
+                }]
+            }
+        }
+    },
+    createWindowcms : function(){
+        //var desktop = this.app.getDesktop();
+        /*var win = Ext.getCmp('cmswin');
+        if(!win){
+            win = new Ext.cy.MyWindowcms();					
+        }
+        win.show();*/
+		Ext.cy.init();
+    },
+    createWindowscms : function(){
+        //var desktop = this.app.getDesktop();
+        /*var win = Ext.getCmp('scmswin');
+        if(!win){
+            win = new Ext.cy4.MyWindowscms();					
+        }
+        win.show();*/
+		Ext.cy4.init();
+    },	
+    createWindowfcms : function(){
+        //var desktop = this.app.getDesktop();
+        /*var win = Ext.getCmp('fcmswin');
+        if(!win){
+            win = new Ext.cy3.MyWindowfcms();					
+        }
+        win.show();*/
+		Ext.cy3.init();
+    },
+    createWindowtcms : function(){
+        //var desktop = this.app.getDesktop();
+        /*var win = Ext.getCmp('tcmswin');
+        if(!win){
+            win = new Ext.cy2.MyWindowtcms();					
+        }
+        win.show();*/
+		Ext.cy2.init();
+    }
+});
+
+MyDesktop.BogusMenuModuleReport = Ext.extend(Ext.app.Module, {
+    init : function(){
+        this.launcher = {
+            text: '统计报表',
+            iconCls: 'tabs',
+            handler: function() {
+				return false;
+			},
+            menu: {
+                items:[{
+                    text: '气象检测器',
+                    iconCls:'bogus',
+                    handler : this.createWindowwd,
+                    scope: this,
+                    windowId: windowIndex
+                    },{
+                    text: '车辆检测器',
+                    iconCls:'bogus',
+                    handler : this.createWindowvd,
+                    scope: this,
+                    windowId: windowIndex
+                    },{
+                    text: '情报板',
+                    iconCls:'bogus',
+                    handler : this.createWindowcms,
+                    scope: this,
+                    windowId: windowIndex
+                },{
+                    text: '操作日志',
+                    iconCls:'bogus',
+                    handler : this.createWindowsyslog,
+                    scope: this,
+                    windowId: windowIndex
+                }]
+            }
+        }
+    },
+    createWindowwd : function(){
+        var win = Ext.getCmp('wdreportwin');
+        if(!win){
+            win = new Ext.CXReportWD.MyWindowtwd();					
+        }
+        win.show();   
+    },
+    createWindowvd : function(){
+        var win = Ext.getCmp('vdreportwin');
+        if(!win){
+            win = new Ext.CXReportVD.MyWindowtvd();					
+        }
+        win.show();   
+    },	
+	createWindowcms : function(){
+        Ext.CXReportCMS.init();
+    },
+	createWindowsyslog : function(){
+        var win = Ext.getCmp('syslogreportwin');
+        if(!win){
+            win = new Ext.CXReportSysLog.MyWindow();					
+        }
+        win.show(); 
+    }
+});

@@ -1,0 +1,94 @@
+<!--#include file="../comm/mconn.asp"-->
+<%
+	Session.CodePage = 65001
+	Response.Charset = "UTF-8"
+	itype = Request.QueryString("itype") '1 按日期段 2 按月份 3 按年份
+	'offset = Request.QueryString("offset") '页码
+	'limit = Request.QueryString("limit") '每页显示条数
+	begindate = Request.QueryString("date1") '开始时间
+	enddate = Request.QueryString("date2") '结束时间
+	devid = int(Request.QueryString("devid")) '设备id
+	flag = 1
+	Select Case itype
+		Case 1
+			If IsDate(begindate) And IsDate(enddate) Then
+				begindate = FormatDateTime(CDate(begindate),2)
+				enddate = FormatDateTime(DateAdd("d",1,CDate(enddate)),2)
+			Else
+				flag = 0
+			End if
+		Case 2
+			If IsDate(begindate) Then
+				begindate = FormatDateTime(CDate(begindate),2)
+				enddate = FormatDateTime(DateAdd("m",1,begindate),2)
+			Else
+				flag = 0
+			End if
+		Case 3
+			If IsDate(begindate & "-01") Then
+				begindate = FormatDateTime(CDate(begindate & "-01"),2)
+				enddate = FormatDateTime(DateAdd("yyyy",1,begindate),2)
+			Else
+				flag = 0
+			End If
+		Case 4
+			enddate = FormatDateTime(Now,0)
+			begindate = FormatDateTime(DateAdd("h",-1,enddate),0)
+			flag = 2
+		Case Else
+			flag = 0
+	End Select
+	If flag = 1 Then
+		Dim mRs
+		Set mRs = Server.CreateObject("Adodb.RecordSet")
+		sql = "select top 1000 a.CollTime colltime,a.CoVal coval,a.ViVal vival,b.DevEName ename,b.DevCName cname from CollCOVI a left join Devpara b on a.DevID=b.DevID where a.CollTime>='" & begindate & "' and a.CollTime<'" & enddate & "'"
+		If devid <> "" And devid <> 0 Then
+			sql = sql & " and a.DevID=" & devid
+		End If
+		sql = sql & " order by CollTime desc"
+		mRs.open sql, conn, 1, 2
+		If Not mRs.eof Then
+			response.write "{""total"": " & mRs.recordcount & ",""rows"": ["
+			do while not mRs.eof
+				response.write "{""colltime"":""" & mRs("colltime") & """,""coval"":""" & mRs("coval") & """,""vival"":""" & mRs("vival") & """,""ename"":""" & mRs("ename") & """,""cname"":""" & mRs("cname") & """,""formatSpace"":""""}"
+				mRs.movenext
+				if not mRs.eof then
+					response.write ","
+				end If
+			Loop
+			response.write "]}"
+		else
+			Response.write "{""results"":0,""rows"":[]}"
+		End If
+		mRs.close
+	Else
+		If flag = 2 And devid <> "" Then
+			Dim mRs2
+			Set mRs2 = Server.CreateObject("Adodb.RecordSet")
+			mRs2.open "select a.DevEName name,a.DevAddr addr,b.State state from Devpara a left join DevState b on a.DevID=b.DevID where a.DevID=" & devid, conn, 1, 2
+			If Not mRs2.eof Then
+				Response.write "{""name"":""" & mRs2("name") & """,""addr"":""" & mRs2("addr") & """,""state"":""" & mRs2("state") & ""","
+				mRs2.close
+				mRs2.open "select CollTime,CoVal,ViVal from CollCOVI where CollTime>='" & begindate & "' and CollTime<'" & enddate & "' and DevID=" & devid, conn, 1, 2
+				If Not mRs2.eof Then
+					response.write """data"":["
+					do while not mRs2.eof
+						response.write "{""colltime"":""" & mRs2("CollTime") & """,""coval"":""" & mRs2("CoVal") & """,""vival"":""" & mRs2("ViVal") & """}"
+						mRs2.movenext
+						if not mRs2.eof then
+							response.write ","
+						end If
+					Loop
+					response.write "]}"
+				else
+					Response.write """data"":[]}"
+				End If
+			else
+				Response.write "没有该设备"
+			End if
+			mRs2.close
+		else
+			Response.write "参数错误"
+		End if
+	End If
+%>

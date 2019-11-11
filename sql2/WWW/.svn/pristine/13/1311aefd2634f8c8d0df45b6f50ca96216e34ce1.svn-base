@@ -1,0 +1,2064 @@
+﻿//全局
+
+//预加载
+var loadAction="";      //计时判断加载
+var percentnum=0;		//加载设备时
+var loadarr=[[0,0]];    //是否已加载的数组
+var loadflag=0;        
+var loadstrflag=0;
+
+
+var gWndId = 0;
+var bLogin = 0;			//视频连接状态
+
+var ledrelation_id="";  //照明表id
+var fanrelation_id="";  //风机表id
+var ledtime_id="";      //照明时钟表id
+
+var lstsup_id="";       //上行表id
+var lstsdown_id="";     //上行表id
+
+var lstsup_ename="";    //上行表ename
+var lstsdown_ename="";  //上行表ename
+
+var covipanelindex="";
+var fsfxpanelindex="";
+var lightpanelindex="";
+
+//var ledrelation_array=new Array();
+//var fanrelation_array=new Array();
+
+var ary_cmstext="";	    //情报板内容数组
+var ary_cmsstyle="";    //情报板样式数组
+var cms_showwidth="";	//情报板宽度
+var cms_showheight="";  //情报板高度
+var ary_cmstime="";		//停留时间
+
+var cmsSwitchAction=""; //计时方法
+
+var fannum=0;
+var flag = true;
+
+//判断浏览器
+function ajaxcreateXMLHttpRequest(){
+	var xmlHttp=null;
+	//一般先判断非IE浏览器
+	//window对象中有XMLHttpRequest存在就是非IE，包括（IE7，IE8）
+	if(window.XMLHttpRequest){
+		xmlHttp=new XMLHttpRequest();//非IE以及IE7，IE8浏览器
+		if(xmlHttp.overrideMimeType){
+			xmlHttp.overrideMimeType("text/xml");//重置mime类型
+		}
+	//window对象中有ActiveXObject属性存在就是IE浏览器的低版本
+	}
+	else if(window.ActiveXObject){
+		var versions=['Microsoft.XMLHTTP', 'MSXML.XMLHTTP', 'Msxml2.XMLHTTP.7.0','Msxml2.XMLHTTP.6.0','Msxml2.XMLHTTP.5.0', 'Msxml2.XMLHTTP.4.0', 'MSXML2.XMLHTTP.3.0', 'MSXML2.XMLHTTP'];//各种IE浏览器创建Ajax对象时传递的参数
+		for(var i=0; i<versions.length; i++){
+			try{
+				xmlHttp=new ActiveXObject(versions[i]);//各个IE浏览器版本的参数不同
+				if(xmlHttp){
+					return xmlHttp;
+				}
+			}catch(e){
+				xmlHttp=false;
+			}
+		}
+	}
+	return xmlHttp;
+}
+
+//判断浏览器
+function ietypecheck(){
+	var Sys = {};
+	var ua = navigator.userAgent.toLowerCase();
+	var s;
+		(s = ua.match(/(msie\s|trident.*rv:)([\d.]+)/)) ? Sys.ie = s[2] :
+		(s = ua.match(/firefox\/([\d.]+)/)) ? Sys.firefox = s[1] :
+		(s = ua.match(/chrome\/([\d]+)/)) ? Sys.chrome = s[1] :
+		(s = ua.match(/opera.([\d.]+)/)) ? Sys.opera = s[1] :
+		(s = ua.match(/version\/([\d.]+).*safari/)) ? Sys.safari = s[1] : 0;
+	if (Sys.ie){ietype = 0}
+	else {ietype =1}
+}
+
+function returnPicclass(typevalue){
+	var picclass;
+	switch(typevalue){
+		case "TS":
+			//交通信号灯
+			picclass="default-pic-TS";
+			break;
+		case "LS":
+			//车道指示标志
+			picclass="default-pic-LS";
+			break;
+		case "LIGHT":
+			//光强
+			picclass="default-pic-LIGHT";
+			break;
+		case "LED":
+			//照明
+			picclass="default-pic-LED";
+			break;
+		case "FAN":
+			//风机
+			picclass="default-pic-FAN";
+			break;
+		case "COVI":
+			//COVI
+			picclass="default-pic-COVI";
+			break;
+		case "FSFX":
+			//风速风向
+			picclass="default-pic-FSFX";
+			break;
+		case "FB":
+			//手报
+			picclass="default-pic-FB";
+			break;
+		case "FGS":
+			//烟感
+			picclass="default-pic-FGS";
+			break;
+		case "FGW":
+			//温感
+			picclass="default-pic-FGW";
+			break;
+		case "FGR":
+			//消防箱
+			picclass="default-pic-FGR";
+			break;
+		case "DOOR":
+			//防火门
+			picclass="default-pic-DOOR";
+			break;
+		case "CAM":
+			//摄像机
+			picclass="default-pic-CAM";
+			break;
+	}
+	return picclass;
+}
+
+//右键菜单
+function bindRightKey(id,picclass,shape){
+	switch(picclass){
+		//信号灯
+		case "default-pic-TS":
+			//右键
+			var shape=parseInt(shape);
+			switch(shape){
+				case 3:
+					$("#"+id).contextMenu('menu_TS_1', {
+						onShowMenu: function(e, menu) {
+							this.shadow = false;//去除阴影
+							//定位菜单
+							setTimeout(function(){
+								onShowMenu(e.pageX,e.pageY,$($(menu[0])[0]).width(),$($(menu[0])[0]).height());
+							},1);
+							return menu;
+						},
+						bindings:{	
+							'TS_red': function(t) {	
+								rightMenuAjax("TS",t.id,1,"TS_red")
+							},
+							'TS_yellow': function(t) {
+								rightMenuAjax("TS",t.id,2,"TS_yellow")
+							},
+							'TS_green': function(t) {	
+								rightMenuAjax("TS",t.id,4,"TS_green") 
+							}
+						}
+					});
+					break;
+				case 4:
+					$("#"+id).contextMenu('menu_TS_2', {
+						onShowMenu: function(e, menu) {
+							this.shadow = false;//去除阴影
+							//定位菜单
+							setTimeout(function(){
+								onShowMenu(e.pageX,e.pageY,$($(menu[0])[0]).width(),$($(menu[0])[0]).height());
+							},1);
+							return menu;
+						},
+						bindings:{	
+							'TS_red': function(t) {	
+								rightMenuAjax("TS",t.id,1,"TS_red")
+							},
+							'TS_yellow': function(t) {
+								rightMenuAjax("TS",t.id,2,"TS_yellow")
+							},
+							'TS_green': function(t) {	
+								rightMenuAjax("TS",t.id,4,"TS_green") 
+							},
+							'TS_turnleft': function(t) {
+								rightMenuAjax("TS",t.id,8,"TS_turnleft")
+							}
+						}
+					});
+					break;
+				default:
+					$("#"+id).contextMenu('menu_TS_1', {
+						onShowMenu: function(e, menu) {
+							this.shadow = false;//去除阴影
+							//定位菜单
+							setTimeout(function(){
+								onShowMenu(e.pageX,e.pageY,$($(menu[0])[0]).width(),$($(menu[0])[0]).height());
+							},1);
+							return menu;
+						},
+						bindings:{	
+							'TS_red': function(t) {	
+								rightMenuAjax("TS",t.id,1,"TS_red")
+							},
+							'TS_yellow': function(t) {
+								rightMenuAjax("TS",t.id,2,"TS_yellow")
+							},
+							'TS_green': function(t) {	
+								rightMenuAjax("TS",t.id,4,"TS_green") 
+							}
+						}
+					});
+					break;
+			}
+			break;
+		case "default-pic-LS":
+			getLSMenu(id,shape);
+			break;
+		//LED
+		case "default-pic-LED":
+			$("#"+id).contextMenu('menu_LED', {
+				onShowMenu: function(e, menu) {
+					this.shadow = false;//去除阴影
+					//定位菜单
+					setTimeout(function(){
+				  		onShowMenu(e.pageX,e.pageY,$($(menu[0])[0]).width(),$($(menu[0])[0]).height());
+					},1);
+					return menu;
+				},
+				bindings:{
+					'LED_close': function(t) {
+						rightMenuAjax("LED",t.id,0,"LED_close")
+					},
+					'LED_open': function(t) {
+						rightMenuAjax("LED",t.id,1,"LED_open")
+					}
+				}
+			});			
+			break;
+		case "default-pic-FAN":
+			$("#"+id).contextMenu('menu_FAN', {
+				onShowMenu: function(e, menu) {
+					this.shadow = false;//去除阴影
+					//定位菜单
+					setTimeout(function(){
+				  		onShowMenu(e.pageX,e.pageY,$($(menu[0])[0]).width(),$($(menu[0])[0]).height());
+					},1);
+					return menu;
+				},
+				bindings:{
+					'FAN_stop': function(t) {
+						rightMenuAjax("FAN",t.id,0,"FAN_stop") 
+					},
+					'FAN_right': function(t) {
+						rightMenuAjax("FAN",t.id,1,"FAN_right")
+					},
+					'FAN_left': function(t) {
+						rightMenuAjax("FAN",t.id,2,"FAN_left")
+					}
+				}
+			});
+			break;
+		case "default-pic-DOOR":
+			$("#"+id).contextMenu('menu_DOOR', {
+				onShowMenu: function(e, menu) {
+					this.shadow = false;//去除阴影
+					//定位菜单
+					setTimeout(function(){
+				  		onShowMenu(e.pageX,e.pageY,$($(menu[0])[0]).width(),$($(menu[0])[0]).height());
+					},1);
+					return menu;
+				},
+				bindings:{
+					'DOOR_up': function(t) {
+						rightMenuAjax("DOOR",t.id,1,"DOOR_up")  
+					},
+					'DOOR_default': function(t) {
+						rightMenuAjax("DOOR",t.id,2,"DOOR_default")
+					},
+					'DOOR_down': function(t) {
+						rightMenuAjax("DOOR",t.id,3,"DOOR_down")
+					}
+				}
+			});
+			break;
+		case "default-pic-CAM":
+			$("#"+id).contextMenu('menu_CAM', {
+				onShowMenu: function(e, menu) {
+					this.shadow = false;//去除阴影
+					//定位菜单
+					setTimeout(function(){
+				  		onShowMenu(e.pageX,e.pageY,$($(menu[0])[0]).width(),$($(menu[0])[0]).height());
+					},1);
+					return menu;
+				},
+				bindings:{
+					'CAM_open': function(t) {
+						showBigScreen(id);
+					},
+					'CAM_group': function(t) {
+						//合屏
+						bigScreenLoadCollection();
+					},
+					'CAM_separate': function(t) {
+						//分屏
+						bigScreenSplitCollection();
+					}
+				}
+			});
+			break;
+	}
+}
+
+//车道指示标志右键类别
+function getLSMenu(id,shape){
+	var shape=parseInt(shape);
+	switch(shape){
+		case 1:
+			$("#"+id).contextMenu('menu_LS_1', {
+				onShowMenu: function(e, menu) {
+					this.shadow = false;//去除阴影
+					//定位菜单
+					setTimeout(function(){
+				  		onShowMenu(e.pageX,e.pageY,$($(menu[0])[0]).width(),$($(menu[0])[0]).height());
+					},1);
+					return menu;
+				},
+				bindings:{
+					'LS_stop': function(t) {
+						rightMenuAjax("LS",t.id,0,"LS_stop");
+					},
+					'LS_go': function(t) {
+						rightMenuAjax("LS",t.id,1,"LS_go");
+					}
+				}
+			});
+			break;
+		case 2:
+			$("#"+id).contextMenu('menu_LS_2', {
+				onShowMenu: function(e, menu) {
+					this.shadow = false;//去除阴影
+					//定位菜单
+					setTimeout(function(){
+				  		onShowMenu(e.pageX,e.pageY,$($(menu[0])[0]).width(),$($(menu[0])[0]).height());
+					},1);
+					return menu;
+				},
+				bindings:{
+					'LS_twoway': function(t) {
+						rightMenuAjax("LS",t.id,0,"LS_twoway");
+					},
+					'LS_right': function(t) {
+						rightMenuAjax("LS",t.id,1,"LS_right");
+					}
+				}
+			});
+			break;
+		case 3:
+			$("#"+id).contextMenu('menu_LS_3', {
+				onShowMenu: function(e, menu) {
+					this.shadow = false;//去除阴影
+					//定位菜单
+					setTimeout(function(){
+				  		onShowMenu(e.pageX,e.pageY,$($(menu[0])[0]).width(),$($(menu[0])[0]).height());
+					},1);
+					return menu;
+				},
+				bindings:{
+					'LS_twoway': function(t) {
+						rightMenuAjax("LS",t.id,0,"LS_twoway");
+					},
+					'LS_right': function(t) {
+						rightMenuAjax("LS",t.id,1,"LS_right");
+					},
+					'LS_left': function(t) {
+						rightMenuAjax("LS",t.id,3,"LS_left");
+					}
+				}
+			});
+			break;
+		case 4:
+			$("#"+id).contextMenu('menu_LS_4', {
+				onShowMenu: function(e, menu) {
+					this.shadow = false;//去除阴影
+					//定位菜单
+					setTimeout(function(){
+				  		onShowMenu(e.pageX,e.pageY,$($(menu[0])[0]).width(),$($(menu[0])[0]).height());
+					},1);
+					return menu;
+				},
+				bindings:{
+					'LS_twoway': function(t) {
+						rightMenuAjax("LS",t.id,0,"LS_twoway");
+					},
+					'LS_right': function(t) {
+						rightMenuAjax("LS",t.id,1,"LS_right");
+					},
+					'LS_left': function(t) {
+						rightMenuAjax("LS",t.id,3,"LS_left");
+					},
+					'LS_turnleft': function(t) {
+						rightMenuAjax("LS",t.id,5,"LS_turnleft");
+					}
+				}
+			});
+			break;
+		case 5:
+			$("#"+id).contextMenu('menu_LS_4', {
+				onShowMenu: function(e, menu) {
+					this.shadow = false;//去除阴影
+					//定位菜单
+					setTimeout(function(){
+				  		onShowMenu(e.pageX,e.pageY,$($(menu[0])[0]).width(),$($(menu[0])[0]).height());
+					},1);
+					return menu;
+				},
+				bindings:{
+					'LS_twoway': function(t) {
+						rightMenuAjax("LS",t.id,0,"LS_twoway");
+					},
+					'LS_right': function(t) {
+						rightMenuAjax("LS",t.id,1,"LS_right");
+					},
+					'LS_left': function(t) {
+						rightMenuAjax("LS",t.id,3,"LS_left");
+					},
+					'LS_turnleft': function(t) {
+						rightMenuAjax("LS",t.id,5,"LS_turnleft");
+					}
+				}
+			});
+			break;
+		default:
+			$("#"+id).contextMenu('menu_LS_1', {
+				onShowMenu: function(e, menu) {
+					this.shadow = false;//去除阴影
+					//定位菜单
+					setTimeout(function(){
+				  		onShowMenu(e.pageX,e.pageY,$($(menu[0])[0]).width(),$($(menu[0])[0]).height());
+					},1);
+					return menu;
+				},
+				bindings:{
+					'LS_stop': function(t) {
+						rightMenuAjax("LS",t.id,0,"LS_stop");
+					},
+					'LS_go': function(t) {
+						rightMenuAjax("LS",t.id,1,"LS_go");
+					}
+				}
+			});
+			break;
+	}
+}
+
+//定位右键位置
+function onShowMenu(pageX,pageY,menuW,menuH){
+	if(pageX+menuW>W){
+		$("#jqContextMenu").css("left",W-menuW-10);
+	}
+	if(pageY+menuH>H){
+		$("#jqContextMenu").css("top",H-menuH-10);
+	}
+}
+
+//返回图片
+function returnPicurl(typevalue,state,shape,updown,i1,i2){
+	var picurl="";
+	var state=parseInt(state);
+	var shape=parseInt(shape);
+	var updown=parseInt(updown);
+	var i1=parseInt(i1);
+	var i2=parseInt(i2);
+	//正常或采集器异常
+	if(state==1||state==3){
+		switch(typevalue){
+			case "TS":
+				//交通信号灯
+				switch(i1){
+					case 0:
+						//关闭
+						picurl="../pic/roadsig5.png";
+						break;
+					case 1:
+						//红灯
+						picurl="../pic/roadsig2.png";
+						break;
+					case 2:
+						//黄灯
+						picurl="../pic/roadsig1.png";
+						break;
+					case 4:
+						//绿灯
+						picurl="../pic/roadsig0.png";
+						break;
+					case 8:
+						//左转
+						switch(updown){
+							case 1:
+								picurl="../pic/roadsig4.png";
+								break;
+							case 0:
+								picurl="../pic/roadsig3.png";
+								break;
+						}
+						break;
+					default:
+						picurl="";
+						break;
+				}
+				break;
+			case "LS":
+				//车道指示标志
+				switch(shape){
+					case 1:
+						switch(i1){
+							case 0:
+								//禁止
+								picurl="../pic/sigF.png";
+								break;
+							case 1:
+								//通行
+								picurl="../pic/sigG.png";
+								break;
+						}
+						break;
+					case 2:
+						switch(i1){
+							case 0:
+								//双向禁止
+								picurl="../pic/sigC.png";
+								break;
+							case 1:
+								//正向通行
+								switch(updown){
+									case 1:
+										//禁止
+										picurl="../pic/sigA.png";
+										break;
+									case 0:
+										//通行
+										picurl="../pic/sigB.png";
+										break;
+								}
+								break;
+						}
+						break;
+					case 3:
+						switch(i1){
+							case 0:
+								//双向禁止
+								picurl="../pic/sigC.png";
+								break;
+							case 1:
+								//正向通行
+								switch(updown){
+									case 1:
+										picurl="../pic/sigA.png";
+										break;
+									case 0:
+										picurl="../pic/sigB.png";
+										break;
+								}
+								break;
+							case 3:
+								//反向通行
+								switch(updown){
+									case 1:
+										picurl="../pic/sigB.png";
+										break;
+									case 0:
+										picurl="../pic/sigA.png";
+										break;
+								}
+								break;
+						}
+						break;
+					//4态和5态一样
+					case 4:
+						switch(i1){
+							case 0:
+								//双向禁止
+								picurl="../pic/sigC.png";
+								break;
+							case 1:
+								//正向通行
+								switch(updown){
+									case 1:
+										picurl="../pic/sigA.png";
+										break;
+									case 0:
+										picurl="../pic/sigB.png";
+										break;
+								}
+								break;
+							case 3:
+								//反向通行
+								switch(updown){
+									case 1:
+										picurl="../pic/sigB.png";
+										break;
+									case 0:
+										picurl="../pic/sigA.png";
+										break;
+								}
+								break;
+							case 5:
+								//左转通行
+								switch(updown){
+									case 1:
+										picurl="../pic/sigD.png";
+										break;
+									case 0:
+										picurl="../pic/sigE.png";
+										break;
+								}
+								break;
+						}
+						break;
+					case 5:
+						switch(i1){
+							case 0:
+								//双向禁止
+								picurl="../pic/sigC.png";
+								break;
+							case 1:
+								//正向通行
+								switch(updown){
+									case 1:
+										picurl="../pic/sigA.png";
+										break;
+									case 0:
+										picurl="../pic/sigB.png";
+										break;
+								}
+								break;
+							case 3:
+								//反向通行
+								switch(updown){
+									case 1:
+										picurl="../pic/sigB.png";
+										break;
+									case 0:
+										picurl="../pic/sigA.png";
+										break;
+								}
+								break;
+							case 5:
+								//左转通行
+								switch(updown){
+									case 1:
+										picurl="../pic/sigD.png";
+										break;
+									case 0:
+										picurl="../pic/sigE.png";
+										break;
+								}
+								break;
+						}
+						break;
+				}
+				break;
+			case "LIGHT":
+				//光强
+				picurl="../pic/ld.png";
+				break;
+			case "LED":
+				//照明
+				switch(i1){
+					case 0:
+						//关
+						switch(updown){
+							case 1:
+								picurl="../pic/light_offB.png";
+								break;
+							case 0:
+								picurl="../pic/light_offA.png";
+								break;
+						}
+						break;
+					case 1:
+						//开
+						switch(updown){
+							case 1:
+								picurl="../pic/light_onB.png";
+								break;
+							case 0:
+								picurl="../pic/light_onA.png";
+								break;
+						}
+						break;
+				}
+				break;
+			case "FAN":
+				//风机
+				switch(i1){
+					case 0:
+						//停止	
+						switch(i2){
+							case 0:
+								switch(updown){
+									case 1:
+										picurl="../pic/fan5.gif";
+										break;
+									case 0:
+										picurl="../pic/fan2.gif";
+										break;
+								}
+								break;
+							case 1:
+								switch(updown){
+									case 1:
+										picurl="../pic/falsepic/false-fan5.png";
+										break;
+									case 0:
+										picurl="../pic/falsepic/false-fan2.png";
+										break;
+								}
+								break;
+						}
+						break;
+					case 1:
+						//正转
+						switch(i2){
+							case 0:
+								switch(updown){
+									case 1:
+										picurl="../pic/fan3.gif";
+										break;
+									case 0:
+										picurl="../pic/fan1.gif";
+										break;
+								}
+								break;
+							case 1:
+								switch(updown){
+									case 1:
+										picurl="../pic/falsepic/false-fan3.png";
+										break;
+									case 0:
+										picurl="../pic/falsepic/false-fan1.png";
+										break;
+								}
+								break;
+						}
+						break;
+					case 2:
+						//反转
+						switch(i2){
+							case 0:
+								switch(updown){
+									case 1:
+										picurl="../pic/fan4.gif";
+										break;
+									case 0:
+										picurl="../pic/fan0.gif";
+										break;
+								}
+								break;
+							case 1:
+								switch(updown){
+									case 1:
+										picurl="../pic/falsepic/false-fan4.png";
+										break;
+									case 0:
+										picurl="../pic/falsepic/false-fan0.png";
+										break;
+								}
+								break;
+						}
+						break;
+				}	
+				break;
+			case "COVI":
+				//COVI
+				picurl="../pic/covi.png";
+				break;
+			case "FSFX":
+				//风速风向
+				picurl="../pic/fsfx.png";
+				break;
+			case "FB":
+				//手报
+				switch(i1){
+					case 0:
+						//正常
+						picurl="../pic/fire2.gif";
+						break;
+					case 1:
+						//火警
+						picurl="../pic/fire1.gif";
+						break;
+				}
+				break;
+			case "FGS":
+				//烟感
+				switch(i1){
+					case 0:
+						//正常
+						picurl="../pic/fire4.gif";
+						break;
+					case 1:
+						//火警
+						picurl="../pic/fire3.gif";
+						break;
+				}
+				break;
+			case "FGW":
+				//温感
+				switch(i1){
+					case 0:
+						//正常
+						picurl="../pic/fire7.gif";
+						break;
+					case 1:
+						//火警
+						picurl="../pic/fire8.gif";
+						break;
+				}
+				break;
+			case "FGR":
+				//消防箱
+				switch(i1){
+					case 0:
+						//正常
+						picurl="../pic/fire11.gif";
+						break;
+					case 1:
+						//火警
+						picurl="../pic/fire10.gif";
+						break;
+				}
+				break;
+			case "DOOR":
+				//防火门
+				switch(i1){
+					case 1:
+						//上位
+						picurl="../pic/doorC.gif";
+						break;
+					case 2:
+						//中位
+						picurl="../pic/doorB.gif";
+						break;
+					case 3:
+						//下位
+						picurl="../pic/doorA.gif";
+						break;
+				}
+				break;
+			case "CAM":
+				//摄像机
+				switch(updown){
+					case 1:
+						picurl="../pic/camer2.ico";
+						break;
+					case 0:
+						picurl="../pic/camer1.ico";
+						break;
+				}
+				break;
+		}
+	}
+	//故障
+	if(state==2){
+		switch(typevalue){
+			case "TS":
+				//交通信号灯
+				picurl="../pic/errorpic/error-roadsig.png";
+				break;
+			case "LS":
+				//车道指示标志
+				switch(shape){
+					case 1:
+						picurl="../pic/errorpic/error-sig.png";
+						break;
+					default:
+						picurl="../pic/errorpic/error-sigC.png";
+						break;
+				}
+				break;
+			case "LIGHT":
+				//光强
+				picurl="../pic/errorpic/error-ld.png";
+				break;
+			case "LED":
+				//照明
+				picurl="../pic/errorpic/error-light.png";
+				break;
+			case "FAN":
+				//风机
+				switch(updown){
+					case 0:
+						//停止
+						picurl="../pic/errorpic/error-fan.png";
+						break;
+					case 1:
+						//正转						
+						picurl="../pic/errorpic/error-fan2.png";
+						break;	
+				}	
+				break;
+			case "COVI":
+				//COVI
+				picurl="../pic/errorpic/error-covi.png";
+				break;
+			case "FSFX":
+				//风速风向
+				picurl="../pic/errorpic/error-fsfx.png";
+				break;
+			case "FB":
+				//手报
+				picurl="../pic/errorpic/error-fire2.png";
+				break;
+			case "FGS":
+				//烟感
+				picurl="../pic/errorpic/error-fire4.png";
+				break;
+			case "FGW":
+				//温感
+				picurl="../pic/errorpic/error-fire7.png";
+				break;
+			case "FGR":
+				//消防箱
+				picurl="../pic/errorpic/error-fire11.png";
+				break;
+			case "DOOR":
+				//防火门
+				picurl="../pic/errorpic/error-doorA.png";
+				break;
+			case "CAM":
+				//摄像机
+				switch(updown){
+					case 0:
+						//停止
+						picurl="../pic/errorpic/error-camer1.png";
+						break;
+					case 1:
+						//正转
+						picurl="../pic/errorpic/error-camer2.png";
+						break;	
+				}	
+				break;
+		}
+	}
+	return picurl;
+}
+
+//返回设备信息
+function returnPicinfo(spantype,title,typevalue,state,shape,updown,i1,i2,n1,n2){
+	var picinfo="";
+	var state=parseInt(state);
+	var shape=parseInt(shape);
+	var updown=parseInt(updown);
+	var i1=parseInt(i1);
+	var i2=parseInt(i2);
+	var str;
+	if(spantype==1){
+		str="&#13;";
+	}else{
+		str="\n";
+	}
+	//正常或采集器异常
+	if(state==1||state==3){
+		switch(typevalue){
+			case "TS":
+				//交通信号灯
+				switch(i1){
+					case 0:
+						//关闭
+						picinfo="关闭";
+						break;
+					case 1:
+						//红灯
+						picinfo="红灯";
+						break;
+					case 2:
+						//黄灯
+						picinfo="黄灯";
+						break;
+					case 4:
+						//绿灯
+						picinfo="绿灯";
+						break;
+					case 8:
+						//左转
+						picinfo="左转";
+						break;
+				}
+				break;
+			case "LS":
+				//车道指示标志
+				switch(shape){
+					case 1:
+						switch(i1){
+							case 0:
+								//禁止
+								picinfo="禁止";
+								break;
+							case 1:
+								//通行
+								picinfo="通行";
+								break;
+						}
+						break;
+					case 2:
+						switch(i1){
+							case 0:
+								//双向禁止
+								picinfo="双向禁止";
+								break;
+							case 1:
+								//正向通行
+								picinfo="正向通行";
+								break;
+						}
+						break;
+					case 3:
+						switch(i1){
+							case 0:
+								//双向禁止
+								picinfo="双向禁止";
+								break;
+							case 1:
+								//正向通行
+								picinfo="正向通行";
+								break;
+							case 3:
+								//反向通行
+								picinfo="反向通行";
+								break;
+						}
+						break;
+					//4态和5态一样
+					case 4:
+						switch(i1){
+							case 0:
+								//双向禁止
+								picinfo="双向禁止";
+								break;
+							case 1:
+								//正向通行
+								picinfo="正向通行";
+								break;
+							case 3:
+								//反向通行
+								picinfo="反向通行";
+								break;
+							case 5:
+								//左转通行
+								picinfo="左转通行";
+								break;
+						}
+						break;
+					case 5:
+						switch(i1){
+							case 0:
+								//双向禁止
+								picinfo="双向禁止";
+								break;
+							case 1:
+								//正向通行
+								picinfo="正向通行";
+								break;
+							case 3:
+								//反向通行
+								picinfo="反向通行";
+								break;
+							case 5:
+								//左转通行
+								picinfo="左转通行";
+								break;
+						}
+						break;
+				}			
+				break;
+			case "LIGHT":
+				//光强
+				picinfo="洞内值:"+n1+" (lux)"+str;
+				picinfo=picinfo+"洞外值:"+n2+" (cd/m2)";	
+				break;
+			case "LED":
+				//照明
+				switch(i1){
+					case 0:
+						//关
+						picinfo="关";						
+						break;
+					case 1:
+						//开
+						picinfo="开";						
+						break;
+				}				
+				break;
+			case "FAN":
+				//风机
+				switch(i1){
+					case 0:
+						//停止	
+						switch(i2){
+							case 0:
+								picinfo="停止";								
+								break;
+							case 1:
+								picinfo="停止(异常)";							
+								break;
+						}					
+						break;
+					case 1:
+						//正转
+						switch(i2){
+							case 0:
+								picinfo="正转";
+								break;
+							case 1:
+								picinfo="正转(异常)";
+								break;
+						}						
+						break;
+					case 2:
+						//反转
+						switch(i2){
+							case 0:
+								picinfo="反转";								
+								break;
+							case 1:
+								picinfo="反转(异常)";
+								break;
+						}						
+						break;
+				}				
+				break;
+			case "COVI":
+				//COVI
+				picinfo="CO:"+n1+" (ppm)"+str;
+				picinfo=picinfo+"VI:"+n2+" (km1)";				
+				break;
+			case "FSFX":
+				//风速风向
+				picinfo="风速:"+n1+" (m/s)"+str;				
+				switch(i1){
+					case 0:					
+						picinfo=picinfo+"风向：顺车行方向";
+						break;
+					case 1:
+						//火警
+						picinfo=picinfo+"风向：逆车行方向";
+						break;
+				}				
+				break;
+			case "FB":
+				//手报
+				switch(i1){
+					case 0:
+						//正常
+						picinfo="正常";
+						break;
+					case 1:
+						//火警
+						picinfo="火警";
+						break;
+				}
+				break;
+			case "FGS":
+				//烟感
+				switch(i1){
+					case 0:
+						//正常
+						picinfo="正常";
+						break;
+					case 1:
+						//火警
+						picinfo="火警";
+						break;
+				}				
+				break;
+			case "FGW":
+				//温感
+				switch(i1){
+					case 0:
+						//正常
+						picinfo="正常";
+						break;
+					case 1:
+						//火警
+						picinfo="火警";
+						break;
+				}				
+				break;
+			case "FGR":
+				//消防箱
+				switch(i1){
+					case 0:
+						//正常
+						picinfo="正常";
+						break;
+					case 1:
+						//火警
+						picinfo="火警";
+						break;
+				}				
+				break;
+			case "DOOR":
+				//防火门
+				switch(i1){
+					case 1:
+						//上位
+						picinfo="上位";
+						break;
+					case 2:
+						//中位
+						picinfo="中位";
+						break;
+					case 3:
+						//下位
+						picinfo="下位";
+						break;
+				}				
+				break;
+			case "CAM":
+				//摄像机
+				picinfo="正常";				
+				break;
+		}
+	}
+	//故障
+	if(state==2){
+		picinfo="故障";
+	}
+	return title+str+picinfo;
+}
+
+//返回状态名称
+function returnStateName(num){
+	var statename="";
+	num=parseInt(num);
+	switch(num){
+		case 1:
+			statename="正常";
+			break;
+		case 2:
+			statename="故障";
+			break;
+		case 3:
+			statename="采集器异常";
+			break;
+	}
+	return statename;
+}
+
+function returnDevTypeName(str){
+	var infotype="";
+	
+	switch(str){
+		case "TS":
+			infotype = "交通信号灯";
+			break;
+		case "LS":
+			infotype = "车道指示标志";
+			break;
+		case "LIGHT":
+			infotype = "光强";
+			break;
+		case "LED":
+			infotype = "照明";
+			break;
+		case "FAN":
+			infotype = "风机";
+			break;
+		case "COVI":
+			infotype = "COVI";
+			break;
+		case "FSFX":
+			infotype = "风速风向";
+			break;
+		case "FB":
+			infotype = "手报";
+			break;
+		case "FGS":
+			infotype = "烟感";
+			break;
+		case "FGW":
+			infotype = "温感";
+			break;
+		case "FGR":
+			infotype = "消防箱";
+			break;
+		case "DOOR":
+			infotype = "防火门";
+			break;
+		case "CMS":
+			infotype = "情报板";
+			break;
+		case "CAM":
+			infotype = "摄像机";
+			break;
+		case "DEC":
+			infotype = "解码器";
+			break;
+		case "ET":
+			infotype = "紧急电话";
+			break;
+		case "VD":
+			infotype = "车检";
+			break;
+		case "PUMP":
+			infotype = "消防水泵";
+			break;
+		case "WD":
+			infotype = "气象";
+			break;
+	}
+		
+		return infotype;
+}
+
+//返回状态对应图片
+function returnStatePic(name,num){
+	var picurl="";
+	num=parseInt(num);
+	switch(name){
+		case "covi":
+			switch(num){
+				case 1:
+					picurl="../pic/covi.png";
+					break;
+				case 2:
+					picurl="../pic/errorpic/error-covi.png";
+					break;
+				case 3:
+					picurl="../pic/covi.png";
+					break;
+			}
+			break;
+		case "fsfx":
+			switch(num){
+				case 1:
+					picurl="../pic/fsfx.png";
+					break;
+				case 2:
+					picurl="../pic/errorpic/error-fsfx.png";
+					break;
+				case 3:
+					picurl="../pic/fsfx.png";
+					break;
+			}
+			break;
+		case "light":
+			switch(num){
+				case 1:
+					picurl="../pic/ld.png";
+					break;
+				case 2:
+					picurl="../pic/errorpic/error-ld.png";
+					break;
+				case 3:
+					picurl="../pic/ld.png";
+					break;
+			}
+			break;
+	}
+	return picurl;
+}
+
+//返回情报板类型名称
+function showCmsClassName(num){
+	var classname="";
+	num=parseInt(num);
+	if(num>8&&num<14){
+		switch(num){
+			case 9:
+				classname="T型情报板";
+				break;
+			case 10:
+				classname="小型情报板";
+				break;
+			case 11:
+				classname="F型情报板";
+				break;
+			case 12:
+				classname="LED情报板";
+				break;
+			case 13:
+				classname="门架式情报板";
+				break;
+			default:
+				classname="T型情报板";
+		}
+	}
+	return classname;
+}
+
+//返回情报板宽高
+function getCmsClassWH(num){
+	//var classname="";
+	num=parseInt(num);
+	switch(num){
+		case 9://T型情报板
+			cms_showwidth="96px";
+			cms_showheight="96px";
+			break;
+		case 10://小型情报板
+			//cms_showwidth="";
+			//cms_showheight="";
+			break;
+		case 11://F型情报板
+			cms_showwidth="128px";
+			cms_showheight="64px";
+			break;
+		case 12://LED情报板
+			cms_showwidth="160px";
+			cms_showheight="120px";
+			break;
+		case 13://门架式情报板
+			cms_showwidth="400px";
+			cms_showheight="40px";
+			break;
+		//default:
+			//cms_showwidth="96px";
+			//cms_showheight="96px";
+	}
+	//return classname;
+}
+
+//返回情报板字体大小
+function getCmsFontSize(num){
+	var str="";
+	num=parseInt(num);
+	switch(num){
+		case 0:
+			str="48px";
+			break;
+		case 1:
+			str="32px";
+			break;
+		case 2:
+			str="24px";
+			break;
+		case 3:
+			str="16px";
+			break;
+		case 4:
+			str="20px";
+			break;
+		case 5:
+			str="40px";
+			break;
+		default:
+			str="48px";
+	}
+	return str
+}
+
+//返回情报板字体
+function getCmsFontFamily(num){
+	var str="";
+	num=parseInt(num);
+	switch(num){
+		case 0:
+			str="宋体";
+			break;
+		case 1:
+			str="楷体";
+			break;
+		case 2:
+			str="黑体";
+			break;
+		default:
+			str="宋体";
+	}
+	return str
+}
+
+//返回情报板字体颜色
+function getCmsFontColor(num){
+	var str="";
+	num=parseInt(num);
+	switch(num){
+		case 0:
+			str="red";
+			break;
+		case 1:
+			str="green";
+			break;
+		case 2:
+			str="yellow";
+			break;
+		default:
+			str="red";
+	}
+	return str;
+}
+
+//情报板切换停留时间
+function cmsSwitch(tnum){
+	cmsSwitchAction="";
+	
+	var cmstext=ary_cmstext.split("*");
+	var cmsstyle=ary_cmsstyle.split("*");
+	
+	//console.log(cmstext[tnum]);
+	
+	var cmstextstr=ReplaceSeperator(cmstext[tnum]);
+	cmstextstr=cmstextstr.replace(/[,]/g,'<br />');
+	var cmsarr=cmsstyle[tnum].split(",");
+	
+	$("#div_seeCMS").html("<div id=\"div_seeCMS_content\">"+ cmstextstr +"</div>");
+	
+	$("#div_seeCMS_content").css("fontSize",getCmsFontSize(cmsarr[3]));
+	$("#div_seeCMS_content").css("lineHeight",getCmsFontSize(cmsarr[3]));
+	$("#div_seeCMS_content").css("fontFamily",getCmsFontFamily(cmsarr[4]));
+	$("#div_seeCMS_content").css("color",getCmsFontColor(cmsarr[5]));
+	$("#div_seeCMS_content").css("marginLeft",cmsarr[7]+"px");
+	$("#div_seeCMS_content").css("marginTop",cmsarr[8]+"px");
+	
+	//clearTimeout(paneltv);panletv=setTimeout(function(){
+	cmsSwitchAction=setTimeout(function(){
+			clearTimeout(cmsSwitchAction);
+			tnum++;
+			if(tnum>=cmstext.length){
+				tnum=0;
+			}
+			cmsSwitch(tnum);
+		},cmsarr[2]*1000
+	)
+}
+
+//判断设备是否加载完成
+function estimatesInit(){
+	if(TSinit[0]==true){
+		loadflag=1;
+		for(var i=0;i<loadarr.length;i++){
+			if(loadarr[i][0]==1){
+				loadstrflag=0;
+				break;				
+			}else{
+				loadstrflag=1;
+			}
+		}
+		
+		if(loadstrflag==1){
+			percentnum=parseInt(percentnum)+4;			
+			loadInAction(percentnum);
+			
+			loadarr.push([1,1]);
+		}
+	}else{
+		loadflag=0;
+		return loadflag;
+	}
+	
+	if(LSinit[0]==true){
+		loadflag=1;
+		for(var i=0;i<loadarr.length;i++){
+			if(loadarr[i][0]==2){
+				loadstrflag=0;
+				break;				
+			}else{
+				loadstrflag=1;
+			}
+		}
+		
+		if(loadstrflag==1){
+			percentnum=parseInt(percentnum)+4;
+			loadInAction(percentnum);
+			loadarr.push([2,1]);
+		}
+	}else{
+		loadflag=0;
+		return loadflag;
+	}
+	
+	if(LIGHTinit[0]==true){
+		loadflag=1;
+		for(var i=0;i<loadarr.length;i++){
+			if(loadarr[i][0]==3){
+				loadstrflag=0;
+				break;				
+			}else{
+				loadstrflag=1;
+			}
+		}
+		
+		if(loadstrflag==1){
+			percentnum=parseInt(percentnum)+4;
+			loadInAction(percentnum);
+			loadarr.push([3,1]);
+		}
+	}else{
+		loadflag=0;
+		return loadflag;
+	}
+	
+	if(LEDinit[0]==true){
+		loadflag=1;
+		for(var i=0;i<loadarr.length;i++){
+			if(loadarr[i][0]==4){
+				loadstrflag=0;
+				break;				
+			}else{
+				loadstrflag=1;
+			}
+		}
+		
+		if(loadstrflag==1){
+			percentnum=parseInt(percentnum)+4;
+			loadInAction(percentnum);
+			loadarr.push([4,1]);
+		}
+	}else{
+		loadflag=0;
+		return loadflag;
+	}
+	
+	if(FANinit[0]==true){
+		loadflag=1;
+		for(var i=0;i<loadarr.length;i++){
+			if(loadarr[i][0]==5){
+				loadstrflag=0;
+				break;				
+			}else{
+				loadstrflag=1;
+			}
+		}
+		
+		if(loadstrflag==1){
+			percentnum=parseInt(percentnum)+4;
+			loadInAction(percentnum);
+			loadarr.push([5,1]);
+		}
+	}else{
+		loadflag=0;
+		return loadflag;
+	}
+	
+	if(COVIinit[0]==true){
+		loadflag=1;
+		for(var i=0;i<loadarr.length;i++){
+			if(loadarr[i][0]==6){
+				loadstrflag=0;
+				break;				
+			}else{
+				loadstrflag=1;
+			}
+		}
+		
+		if(loadstrflag==1){
+			percentnum=parseInt(percentnum)+4;
+			loadInAction(percentnum);
+			loadarr.push([6,1]);
+		}
+	}else{
+		loadflag=0;
+		return loadflag;
+	}
+	
+	if(FSFXinit[0]==true){
+		loadflag=1;
+		for(var i=0;i<loadarr.length;i++){
+			if(loadarr[i][0]==7){
+				loadstrflag=0;
+				break;				
+			}else{
+				loadstrflag=1;
+			}
+		}
+		
+		if(loadstrflag==1){
+			percentnum=parseInt(percentnum)+4;
+			loadInAction(percentnum);
+			loadarr.push([7,1]);
+		}
+	}else{
+		loadflag=0;
+		return loadflag;
+	}
+	
+	if(FBinit[0]==true){
+		loadflag=1;
+		for(var i=0;i<loadarr.length;i++){
+			if(loadarr[i][0]==8){
+				loadstrflag=0;
+				break;				
+			}else{
+				loadstrflag=1;
+			}
+		}
+		
+		if(loadstrflag==1){
+			percentnum=parseInt(percentnum)+4;
+			loadInAction(percentnum);
+			loadarr.push([8,1]);
+		}
+	}else{
+		loadflag=0;
+		return loadflag;
+	}
+	
+	if(FGSinit[0]==true){
+		loadflag=1;
+		for(var i=0;i<loadarr.length;i++){
+			if(loadarr[i][0]==9){
+				loadstrflag=0;
+				break;				
+			}else{
+				loadstrflag=1;
+			}
+		}
+		
+		if(loadstrflag==1){
+			percentnum=parseInt(percentnum)+4;
+			loadInAction(percentnum);
+			loadarr.push([9,1]);
+		}
+	}else{
+		loadflag=0;
+		return loadflag;
+	}
+	
+	if(FGWinit[0]==true){
+		loadflag=1;
+		for(var i=0;i<loadarr.length;i++){
+			if(loadarr[i][0]==10){
+				loadstrflag=0;
+				break;				
+			}else{
+				loadstrflag=1;
+			}
+		}
+		
+		if(loadstrflag==1){
+			percentnum=parseInt(percentnum)+4;
+			loadInAction(percentnum);
+			loadarr.push([10,1]);
+		}
+	}else{
+		loadflag=0;
+		return loadflag;
+	}
+	
+	if(FGRinit[0]==true){
+		loadflag=1;
+		for(var i=0;i<loadarr.length;i++){
+			if(loadarr[i][0]==11){
+				loadstrflag=0;
+				break;				
+			}else{
+				loadstrflag=1;
+			}
+		}
+		
+		if(loadstrflag==1){
+			percentnum=parseInt(percentnum)+4;
+			loadInAction(percentnum);
+			loadarr.push([11,1]);
+		}
+	}else{
+		loadflag=0;
+		return loadflag;
+	}
+	
+	if(DOORinit[0]==true){
+		loadflag=1;
+		for(var i=0;i<loadarr.length;i++){
+			if(loadarr[i][0]==12){
+				loadstrflag=0;
+				break;				
+			}else{
+				loadstrflag=1;
+			}
+		}
+		
+		if(loadstrflag==1){
+			percentnum=parseInt(percentnum)+4;
+			loadInAction(percentnum);
+			loadarr.push([12,1]);
+		}
+	}else{
+		loadflag=0;
+		return loadflag;
+	}
+	
+	if(CMSinit[0]==true){
+		loadflag=1;
+		for(var i=0;i<loadarr.length;i++){
+			if(loadarr[i][0]==13){
+				loadstrflag=0;
+				break;				
+			}else{
+				loadstrflag=1;
+			}
+		}
+		
+		if(loadstrflag==1){
+			percentnum=parseInt(percentnum)+4;
+			loadInAction(percentnum);
+			loadarr.push([13,1]);
+		}
+	}else{
+		loadflag=0;
+		return loadflag;
+	}
+	
+	if(CAMinit[0]==true){
+		loadflag=1;
+		for(var i=0;i<loadarr.length;i++){
+			if(loadarr[i][0]==14){
+				loadstrflag=0;
+				break;				
+			}else{
+				loadstrflag=1;
+			}
+		}
+		
+		if(loadstrflag==1){
+			percentnum=parseInt(percentnum)+4;
+			loadInAction(percentnum);
+			loadarr.push([14,1]);
+		}
+	}else{
+		loadflag=0;
+		return loadflag;
+	}
+	
+	if(DECinit[0]==true){
+		loadflag=1;
+		for(var i=0;i<loadarr.length;i++){
+			if(loadarr[i][0]==15){
+				loadstrflag=0;
+				break;				
+			}else{
+				loadstrflag=1;
+			}
+		}
+		
+		if(loadstrflag==1){
+			percentnum=parseInt(percentnum)+4;
+			loadInAction(percentnum);
+			loadarr.push([15,1]);
+		}
+	}else{
+		loadflag=0;
+		return loadflag;
+	}
+	
+	if(ETinit[0]==true){
+		loadflag=1;
+		for(var i=0;i<loadarr.length;i++){
+			if(loadarr[i][0]==16){
+				loadstrflag=0;
+				break;				
+			}else{
+				loadstrflag=1;
+			}
+		}
+		
+		if(loadstrflag==1){
+			percentnum=parseInt(percentnum)+4;
+			loadInAction(percentnum);
+			loadarr.push([16,1]);
+		}
+	}else{
+		loadflag=0;
+		return loadflag;
+	}
+	
+	if(VDinit[0]==true){
+		loadflag=1;
+		for(var i=0;i<loadarr.length;i++){
+			if(loadarr[i][0]==17){
+				loadstrflag=0;
+				break;				
+			}else{
+				loadstrflag=1;
+			}
+		}
+		
+		if(loadstrflag==1){
+			percentnum=parseInt(percentnum)+4;
+			loadInAction(percentnum);
+			loadarr.push([17,1]);
+		}
+	}else{
+		loadflag=0;
+		return loadflag;
+	}
+	
+	if(PUMPinit[0]==true){
+		loadflag=1;
+		for(var i=0;i<loadarr.length;i++){
+			if(loadarr[i][0]==18){
+				loadstrflag=0;
+				break;				
+			}else{
+				loadstrflag=1;
+			}
+		}
+		
+		if(loadstrflag==1){
+			percentnum=parseInt(percentnum)+4;
+			loadInAction(percentnum);
+			loadarr.push([18,1]);
+		}
+	}else{
+		loadflag=0;
+		return loadflag;
+	}
+	
+	if(WDinit[0]==true){
+		loadflag=1;
+		for(var i=0;i<loadarr.length;i++){
+			if(loadarr[i][0]==19){
+				loadstrflag=0;
+				break;				
+			}else{
+				loadstrflag=1;
+			}
+		}
+		
+		if(loadstrflag==1){
+			percentnum=parseInt(percentnum)+4;
+			loadInAction(percentnum);
+			loadarr.push([19,1]);
+		}
+	}else{
+		loadflag=0;
+		return loadflag;
+	}
+	
+	if(PLCinit[0]==true){
+		loadflag=1;
+		for(var i=0;i<loadarr.length;i++){
+			if(loadarr[i][0]==20){
+				loadstrflag=0;
+				break;				
+			}else{
+				loadstrflag=1;
+			}
+		}
+		
+		if(loadstrflag==1){
+			percentnum=parseInt(percentnum)+4;
+			loadInAction(percentnum);
+			loadarr.push([20,1]);
+		}
+	}else{
+		loadflag=0;
+		return loadflag;
+	}
+	
+	if(TUNNELinit[0]==true){
+		loadflag=1;
+		for(var i=0;i<loadarr.length;i++){
+			if(loadarr[i][0]==21){
+				loadstrflag=0;
+				break;				
+			}else{
+				loadstrflag=1;
+			}
+		}
+		
+		if(loadstrflag==1){
+			percentnum=parseInt(percentnum)+4;
+			loadInAction(percentnum);
+			loadarr.push([21,1]);
+		}
+	}else{
+		loadflag=0;
+		return loadflag;
+	}
+	
+	if(PLANinit[0]==true){
+		loadflag=1;
+		for(var i=0;i<loadarr.length;i++){
+			if(loadarr[i][0]==22){
+				loadstrflag=0;
+				break;				
+			}else{
+				loadstrflag=1;
+			}
+		}
+		
+		if(loadstrflag==1){
+			percentnum=parseInt(percentnum)+4;
+			loadInAction(percentnum);
+			loadarr.push([22,1]);
+		}
+	}else{
+		loadflag=0;
+		return loadflag;
+	}
+	
+	if(Fireinit[0]==true){
+		loadflag=1;
+		for(var i=0;i<loadarr.length;i++){
+			if(loadarr[i][0]==23){
+				loadstrflag=0;
+				break;				
+			}else{
+				loadstrflag=1;
+			}
+		}
+		
+		if(loadstrflag==1){
+			percentnum=parseInt(percentnum)+4;
+			loadInAction(percentnum);
+			loadarr.push([23,1]);
+		}
+	}else{
+		loadflag=0;
+		return loadflag;
+	}
+	
+	if(CMSTEXTinit[0]==true){
+		loadflag=1;
+		for(var i=0;i<loadarr.length;i++){
+			if(loadarr[i][0]==24){
+				loadstrflag=0;
+				break;				
+			}else{
+				loadstrflag=1;
+			}
+		}
+		
+		if(loadstrflag==1){
+			percentnum=parseInt(percentnum)+4;
+			loadInAction(percentnum);
+			loadarr.push([24,1]);
+		}
+	}else{
+		loadflag=0;
+		return loadflag;
+	}
+	
+	if(GSCMSinit[0]==true){
+		loadflag=1;
+		for(var i=0;i<loadarr.length;i++){
+			if(loadarr[i][0]==25){
+				loadstrflag=0;
+				break;				
+			}else{
+				loadstrflag=1;
+			}
+		}
+		
+		if(loadstrflag==1){
+			percentnum=parseInt(percentnum)+4;
+			loadInAction(percentnum);
+			loadarr.push([25,1]);
+		}
+	}else{
+		loadflag=0;
+		return loadflag;
+	}
+}

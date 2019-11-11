@@ -1,0 +1,115 @@
+/** 
+ * @include "excel_const.js" 
+ * @include "excel_app.js" 
+ */ 
+Ext.namespace("Ext.icss"); 
+/** 
+ * 数据工具类的基类 
+ * @param {} config 
+ */ 
+Ext.icss.DataTool2 = function(config) { 
+    config = config || {}; 
+    this.initialConfig = config; 
+    Ext.icss.DataTool2.superclass.constructor.call(this); 
+}; 
+
+Ext.extend(Ext.icss.DataTool2,Ext.util.Observable, { 
+
+}); 
+
+/** 
+ * 数据工具类，此类主要实现将json数据导出到Microsoft Excel功能 
+ * @param {} config 
+ */ 
+Ext.icss.Data2ExcelTool2 = function(config) { 
+    config = config || {}; 
+    this.excelApp = Ext.icss.ExcelApp; 
+    Ext.icss.Data2ExcelTool2.superclass.constructor.call(this); 
+}; 
+Ext.extend(Ext.icss.Data2ExcelTool2,Ext.icss.DataTool2,{ 
+     
+    export2Excel:function(json,filename){ 
+            var worksheet = this.excelApp.getWorksheet(1); 
+            /* 
+            var worksheet = {}; 
+            worksheet.Cells = {}; 
+            */ 
+			if (!worksheet) { 
+                return; 
+            } 
+			worksheet.Application.Visible = false; //当显示excel时，鼠标点中一格后，会使循环停止，
+            var cells = this.fillWorksheet(worksheet,json,filename); 
+			worksheet.Application.Visible = true;
+			
+            //this.excelApp.close(); //关闭文件
+    }, 
+    fillWorksheet : function(worksheet,json,filename) { 
+            var cells = worksheet.Cells; 
+             
+            var rows = json.results;
+
+            //生成表头同时计算导入了多少列
+            this.columns = this.buildHeader(worksheet,json,cells,1,1);
+           
+            rows = this.buildBody(json,cells,2,1,worksheet); 
+			
+					
+			worksheet.Rows(1).Font.Bold = Excel.XlBoolean.True;
+			worksheet.Rows(1).HorizontalAlignment = 3; 
+			 
+		 	this.buildSumRow(json,cells,++rows,worksheet);
+	            	
+			worksheet.Range(cells(1, 1), cells(rows,this.columns)).Borders.LineStyle = Excel.XlBorderWeight.xlHairline; 
+			worksheet.Range(cells(1, 1), cells(rows,this.columns)).Columns.AutoFit();
+            return cells; 
+    }, 
+    /** 
+     * 根据json的cm，生成表格表头 
+     * @param {} json 
+     * @param {} cells excel cell对象 
+     * @param {} row 开始行 
+     * @param {} col 开始列 
+     */ 
+     
+    buildHeader:function(worksheet,json,cells,rowNumber,col){ 
+        var columnIndex = 0;//列计数
+
+        for (var key in json.cols[0]) {
+			this.excelApp.setCellValue(cells,rowNumber,col+columnIndex,key);   
+            ++columnIndex;
+        }
+        return columnIndex;
+    }, 
+    /** 
+     * 根据json,导出数据 
+     * @param {} json 
+     * @param {} cells 
+     * @param {} row 
+     * @param {} col 
+     */ 
+    buildBody : function(json, cells, row, col,worksheet) {
+		var columnIndex = 0;//列计数
+	    var end = json.results;
+        for (var i = 0; i<end; ++i,++row) { 
+			columnIndex = 0
+			for (var key in json.rows[i]) {
+				this.excelApp.setCellValue(cells, row, col + columnIndex, json.rows[i][key] );
+				columnIndex++;
+			}
+        }
+        return row;
+    }, 
+     
+    /** 
+     * 增加合计行 
+     * @param {} json 
+     * @param {} cells 
+     * @param {} row 
+     * @param {} col 
+     */ 
+    buildSumRow:function(json,cells,row,worksheet){ 
+		this.excelApp.setCellValue(cells,row,1,"合计"); 
+		this.excelApp.setCellValue(cells,row,2,json.results); 
+    } 
+     
+});

@@ -1,0 +1,1501 @@
+﻿function loadCheckbox(){
+	$.ajax({
+		type: "GET",
+		url : "json/getcheck.asp?itype=1&dc=" + new Date().getTime() + "",
+		//data:{},
+		dataType: "json",
+		success: function(data){
+			//alert(data.TS)
+			
+			for(var dataitem in data){
+				//alert(data[dataitem])
+				
+				if(data[dataitem]==1){
+					$("input[typename="+ dataitem +"]").attr("checked","");
+				}
+			}
+			
+			//赋值加载图
+			selectTunnel();
+		 },
+		error: function(json){}
+	});
+}
+
+function saveCheckbox(typevalue){
+	//alert(1);
+		$.ajax({
+			type: "GET",
+			url : "json/getcheck.asp?itype=0&name="+ typevalue +"&dc=" + new Date().getTime() + "",
+			//data:{},
+			dataType: "json",
+			success: function(data){
+				
+			 },
+			error: function(json){}
+		});
+}
+
+//加载隧道时
+function selectTunnel(){
+	for(i=0;i<$(".default-checkbox").length;i++){
+		if ($(".default-checkbox:eq("+ i +")").is(":checked")) {
+			typevalue=$(".default-checkbox:eq("+ i +")").attr("typename");			
+			//alert(typevalue);
+			
+			picclass=returnPicclass(typevalue);
+			
+			selectvalue=$("#default_place_select").val();
+			
+			defaultAjax(typevalue,selectvalue,picclass);
+		}	
+	}
+}
+
+function returnPicclass(typevalue){
+	switch(typevalue){
+		case "TS":
+			//交通信号灯
+			picclass="default-pic-TS";
+			break;
+		case "LS":
+			//车道指示标志
+			picclass="default-pic-LS";
+			break;
+		case "LIGHT":
+			//光强
+			picclass="default-pic-LIGHT";
+			break;
+		case "LED":
+			//照明
+			picclass="default-pic-LED";
+			break;
+		case "FAN":
+			//风机
+			picclass="default-pic-FAN";
+			break;
+		case "COVI":
+			//COVI
+			picclass="default-pic-COVI";
+			break;
+		case "FSFX":
+			//风速风向
+			picclass="default-pic-FSFX";
+			break;
+		case "FB":
+			//手报
+			picclass="default-pic-FB";
+			break;
+		case "FGS":
+			//烟感
+			picclass="default-pic-FGS";
+			break;
+		case "FGW":
+			//温感
+			picclass="default-pic-FGW";
+			break;
+		case "FGR":
+			//消防箱
+			picclass="default-pic-FGR";
+			break;
+		case "DOOR":
+			//防火门
+			picclass="default-pic-DOOR";
+			break;
+		case "CAM":
+			//摄像机
+			picclass="default-pic-CAM";
+			break;
+	}
+	
+	return picclass;
+}
+
+
+
+function defaultAjax(typevalue,selectvalue,picclass){
+	$.ajax({
+		type: "GET",
+		url : "json/getpara.asp?itype=1&DevTypeName="+ typevalue +"&Tunnel="+ selectvalue +"&dc=" + new Date().getTime() + "",
+		//data:{},
+		dataType: "json",
+		success: function(data){	
+		
+			for(i=0;i<data.results;i++){
+				//自适应
+				//初始设置背景图大小
+				pointX=data.rows[i].pointx;
+				pointY=data.rows[i].pointy;
+				screenW=data.rows[i].width;
+				screenH=data.rows[i].height;
+				
+				//状况
+				id=data.rows[i].id;
+				title=data.rows[i].title;
+				
+				state=data.rows[i].state;
+				shape=data.rows[i].shape;
+				updown=data.rows[i].updown;
+				i1=data.rows[i].i1;
+				i2=data.rows[i].i2;
+				n1=data.rows[i].n1;
+				n2=data.rows[i].n2;
+				
+				
+				//当前背景图大小
+				picW=$("#default_panel_img").width();
+				picH=$("#default_panel_img").height();
+				
+				//图片位置
+				thisLeft=picW/screenW*pointX;
+				thisTop=picH/screenH*pointY+Ht;
+				
+				//thisWidth=picH/screenH*30;
+				//thisHeight=picH/screenH*30;		
+				
+				//根据状况获取设备信息
+				picinfo=returnPicinfo(title,typevalue,state,shape,updown,i1,i2,n1,n2);
+				
+				
+				//根据状况获取图片地址
+				picurl=returnPicurl(typevalue,state,shape,updown,i1,i2);
+				
+				//alert(picurl);
+					
+				//style=\"width:"+ thisWidth +"px;height:"+ thisHeight +"px;\" 
+				$("#default_cover").append("<div id=\""+ id +"\" class=\""+ picclass +"\" style=\"top:"+ thisTop +"px;left:"+ thisLeft +"px\" state=\""+ state +"\" shape=\""+ shape +"\" updown=\""+ updown +"\" i1=\""+ i1 +"\" i2=\""+ i2 +"\" n1=\""+ n1 +"\" n2=\""+ n2 +"\" picurl=\""+ picurl +"\"><img title=\""+ picinfo +"\" src=\""+ picurl +"\" /></div>");
+								
+				
+				//拖动保存坐标
+				$("."+ picclass +"").draggable({
+					stop: function() {
+						//alert(1);
+						//alert($(this).offset().top);
+						//alert($(this).offset().left);
+						
+						Ht= parseInt($("#default_top_panel").height());
+						
+						id=$(this).attr("id");
+						
+						xvalue=$(this).offset().left;
+						yvalue=$(this).offset().top-Ht;
+						
+						wvalue=$("#default_panel_img").width();
+						hvalue=$("#default_panel_img").height();
+						
+						if($("#setmap").length!=0){
+							//alert(xvalue);alert(yvalue);alert(wvalue);alert(hvalue);
+							
+							
+							$.ajax({
+								type: "GET",
+								url : "json/sendxy.asp?itype=1&id="+ id +"&xvalue="+ xvalue +"&yvalue="+ yvalue +"&wvalue="+ wvalue +"&hvalue="+ hvalue +"&dc=" + new Date().getTime() + "",
+								//data:{},
+								dataType: "json",
+								success: function(data){
+									alert(data.msg);
+								}
+							})
+							
+						}
+					}								 
+				});
+				
+				//右键菜单
+				bindRightKey(picclass,shape)
+				
+			}				
+		 },
+		error: function(json){}
+	});
+}
+
+//右键设置状态
+function rightMenuAjax(id,state){
+	$.ajax({
+			type: "GET",
+			url : "json/sendstate.asp?itype=1&id="+ id +"&state="+ state +"&dc=" + new Date().getTime() + "",
+			//data:{},
+			dataType: "json",
+			success: function(data){
+				alert(data.msg);
+			}
+	  })
+}
+
+
+function updatePic(){
+	for(i=0;i<$(".default-checkbox").length;i++){
+		if ($(".default-checkbox:eq("+ i +")").is(":checked")) {
+			typevalue=$(".default-checkbox:eq("+ i +")").attr("typename");			
+			//alert(typevalue);
+			
+			picclass=returnPicclass(typevalue);
+			
+			selectvalue=$("#default_place_select").val();
+			
+			defaultUpdateAjax(typevalue,selectvalue,picclass);
+		}	
+	}
+}
+
+function defaultUpdateAjax(typevalue,selectvalue,picclass){
+	$.ajax({
+		type: "GET",
+		url : "json/getpara.asp?itype=1&DevTypeName="+ typevalue +"&Tunnel="+ selectvalue +"&dc=" + new Date().getTime() + "",
+		//data:{},
+		dataType: "json",
+		success: function(data){	
+		
+			for(i=0;i<data.results;i++){
+				//自适应
+				//初始设置背景图大小
+				pointX=data.rows[i].pointx;
+				pointY=data.rows[i].pointy;
+				screenW=data.rows[i].width;
+				screenH=data.rows[i].height;
+				
+				//状况
+				id=data.rows[i].id;
+				title=data.rows[i].title;
+				
+				state=data.rows[i].state;
+				shape=data.rows[i].shape;
+				updown=data.rows[i].updown;
+				i1=data.rows[i].i1;
+				i2=data.rows[i].i2;
+				n1=data.rows[i].n1;
+				n2=data.rows[i].n2;
+				
+				
+				//当前背景图大小
+				picW=$("#default_panel_img").width();
+				picH=$("#default_panel_img").height();
+				
+				//图片位置
+				thisLeft=picW/screenW*pointX;
+				thisTop=picH/screenH*pointY+Ht;
+				
+				//thisWidth=picH/screenH*30;
+				//thisHeight=picH/screenH*30;		
+				
+				//根据状况获取设备信息
+				//picurl=returnInfo();
+				
+				//根据状况获取图片地址
+				picurl=returnPicurl(typevalue,state,shape,updown,i1,i2);
+				
+				//过去图片
+				oldpicurl=$("#"+ id +"").attr("picurl");
+								
+				if(oldpicurl!=picurl){
+					
+					
+					$("#"+ id +"").remove();
+					
+					//style=\"width:"+ thisWidth +"px;height:"+ thisHeight +"px;\" 
+					
+					//"$("#default_cover").append("<div id=\""+ id +"\" class=\""+ picclass +"\" style=\"top:"+ thisTop +"px;left:"+ thisLeft +"px\" state=\""+ state +"\" shape=\""+ shape +"\" updown=\""+ updown +"\" i1=\""+ i1 +"\" i2=\""+ i2 +"\" n1=\""+ n1 +"\" n2=\""+ n2 +"\" picurl=\""+ picurl +"\"><img title=\""+ title +"\" src=\""+ picurl +"\" /></div>");
+							
+					picmodule="<div id=\""+ id +"\" class=\""+ picclass +"\" style=\"top:"+ thisTop +"px;left:"+ thisLeft +"px\" state=\""+ state +"\" shape=\""+ shape +"\" updown=\""+ updown +"\" i1=\""+ i1 +"\" i2=\""+ i2 +"\" n1=\""+ n1 +"\" n2=\""+ n2 +"\" picurl=\""+ picurl +"\">";
+					picmodule=picmodule+"<img title=\""+ title +"\" src=\""+ picurl +"\" />";
+					//picmodule=picmodule+"abcd";
+					picmodule=picmodule+"</div>";
+					
+					$("#default_cover").append(picmodule);
+					//拖动保存坐标
+					$("."+ picclass +"").draggable({
+						stop: function() {
+							//alert(1);
+							//alert($(this).offset().top);
+							//alert($(this).offset().left);
+							
+							Ht= parseInt($("#default_top_panel").height());
+							
+							id=$(this).attr("id");
+							
+							xvalue=$(this).offset().left;
+							yvalue=$(this).offset().top-Ht;
+							
+							wvalue=$("#default_panel_img").width();
+							hvalue=$("#default_panel_img").height();
+							
+							if($("#setmap").length!=0){
+								//alert(xvalue);alert(yvalue);alert(wvalue);alert(hvalue);
+								
+								
+								$.ajax({
+									type: "GET",
+									url : "json/sendxy.asp?itype=1&id="+ id +"&xvalue="+ xvalue +"&yvalue="+ yvalue +"&wvalue="+ wvalue +"&hvalue="+ hvalue +"&dc=" + new Date().getTime() + "",
+									//data:{},
+									dataType: "json",
+									success: function(data){
+										alert(data.msg);
+									}
+								})
+								
+							}
+						}								 
+					});
+					
+					//右键菜单
+					bindRightKey(picclass,shape);
+				
+				}
+				
+			}				
+		 },
+		error: function(json){}
+	});
+}
+
+//右键菜单
+function bindRightKey(picclass,shape){
+	switch(picclass){
+		case "default-pic-TS":
+			//右键
+			$("div .default-pic-TS").contextMenu('menu_TS', {
+			  menuStyle:{
+				  
+				//margin:'-100px 0 0 0'
+			  },onContextMenu:function(e){
+                var obj = e.target;//鼠标点击的目标
+                /*然后对鼠标点击的目标进行一些特定的操作*/
+           		var $this = this;
+				
+				var startX = e.pageX;
+				var startY = e.pageY;
+		   
+                return true;//返回true则显示小菜单，返回false则不显示小菜单
+              },
+			  onShowMenu: function(e, menu) {
+				  var $this = this;
+				  $this.shadow = false;//去除阴影
+				  
+				  //console.log($(menu[0])[0]);
+				  
+				  menuWidth=$($(menu[0])[0]).width();
+				  menuHeight=$($(menu[0])[0]).height();
+				  
+				  setTimeout(function(){
+				  	onShowMenu(e.pageX,e.pageY,menuWidth,menuHeight);				  
+				  },1); 
+				  
+				  return menu;
+			  },
+			  bindings:{	
+				'TS_red': function(t) {	
+				   
+					 rightMenuAjax(t.id,1)
+				  
+				},				
+				'TS_yellow': function(t) {	
+				
+					  rightMenuAjax(t.id,2)
+					  
+				},				
+				'TS_green': function(t) {	
+				
+					  rightMenuAjax(t.id,4)
+					  
+				},
+				'TS_turnleft': function(t) {
+					
+					  rightMenuAjax(t.id,8)
+				  
+				}	
+			  }				
+			});
+			
+			break;
+		case "default-pic-LS":
+			
+			getLSMenu(shape);
+			
+			break;
+		case "default-pic-LED":
+				
+			$("div .default-pic-LED").contextMenu('menu_LED', {
+			  onShowMenu: function(e, menu) {
+				  this.shadow = false;//去除阴影
+				  
+				  //定位菜单
+				  setTimeout(function(){
+				  	onShowMenu(e.pageX,e.pageY,$($(menu[0])[0]).width(),$($(menu[0])[0]).height());				  
+				  },1); 
+				  
+				  return menu;
+			  },
+			  bindings:{				
+				'LED_close': function(t) {	
+				
+					  rightMenuAjax(t.id,0)
+					  
+				},				
+				'LED_open': function(t) {	
+				   
+					  rightMenuAjax(t.id,1)
+				  
+				}			
+				
+			  }				
+			});
+			
+			break;
+		case "default-pic-FAN":
+		
+			$("div .default-pic-FAN").contextMenu('menu_FAN', {
+			  onShowMenu: function(e, menu) {
+				  this.shadow = false;//去除阴影
+				  
+				  //定位菜单
+				  setTimeout(function(){
+				  	onShowMenu(e.pageX,e.pageY,$($(menu[0])[0]).width(),$($(menu[0])[0]).height());				  
+				  },1); 
+				  
+				  return menu;
+			  },
+			  bindings:{				
+				'FAN_stop': function(t) {	
+				
+					  rightMenuAjax(t.id,0)
+					  
+				},				
+				'FAN_right': function(t) {	
+				   
+					  rightMenuAjax(t.id,1)
+				  
+				},				
+				'FAN_left': function(t) {	
+				   
+					  rightMenuAjax(t.id,2)
+				  
+				}			
+				
+			  }				
+			});
+			
+			break;
+		case "default-pic-DOOR":
+			
+			break;
+	}
+}
+
+//车道指示标志右键类别
+function getLSMenu(shape){
+	shape=parseInt(shape);
+	
+	switch(shape){
+		case 1:
+			$("div .default-pic-LS").contextMenu('menu_LS_1', {
+			  onShowMenu: function(e, menu) {
+				  this.shadow = false;//去除阴影
+				  
+				  //定位菜单
+				  setTimeout(function(){
+				  	onShowMenu(e.pageX,e.pageY,$($(menu[0])[0]).width(),$($(menu[0])[0]).height());				  
+				  },1); 
+				  
+				  return menu;
+			  },
+			  bindings:{				
+				'LS_stop': function(t) {	
+					  rightMenuAjax(t.id,0);
+				},				
+				'LS_go': function(t) {	
+					  rightMenuAjax(t.id,1);
+				}			
+				
+			  }				
+			});
+			break;
+		case 2:
+			$("div .default-pic-LS").contextMenu('menu_LS_2', {
+			  onShowMenu: function(e, menu) {
+				  this.shadow = false;//去除阴影
+				  
+				  //定位菜单
+				  setTimeout(function(){
+				  	onShowMenu(e.pageX,e.pageY,$($(menu[0])[0]).width(),$($(menu[0])[0]).height());				  
+				  },1); 
+				  
+				  return menu;
+			  },
+			  bindings:{				
+				'LS_twoway': function(t) {	
+					  rightMenuAjax(t.id,0);
+				},				
+				'LS_right': function(t) {	
+					  rightMenuAjax(t.id,1);
+				}				
+				
+			  }				
+			});
+			break;
+		case 3:
+			$("div .default-pic-LS").contextMenu('menu_LS_3', {
+			  onShowMenu: function(e, menu) {
+				  this.shadow = false;//去除阴影
+				  
+				  //定位菜单
+				  setTimeout(function(){
+				  	onShowMenu(e.pageX,e.pageY,$($(menu[0])[0]).width(),$($(menu[0])[0]).height());				  
+				  },1); 
+				  
+				  return menu;
+			  },
+			  bindings:{				
+				'LS_twoway': function(t) {	
+					  rightMenuAjax(t.id,0);
+				},				
+				'LS_right': function(t) {	
+					  rightMenuAjax(t.id,1);
+				},				
+				'LS_left': function(t) {	
+					  rightMenuAjax(t.id,3);
+				}				
+				
+			  }				
+			});
+			break;
+		case 4:
+			$("div .default-pic-LS").contextMenu('menu_LS_4', {
+			  onShowMenu: function(e, menu) {
+				  this.shadow = false;//去除阴影
+				  
+				  //定位菜单
+				  setTimeout(function(){
+				  	onShowMenu(e.pageX,e.pageY,$($(menu[0])[0]).width(),$($(menu[0])[0]).height());				  
+				  },1); 
+				  
+				  return menu;
+			  },
+			  bindings:{				
+				'LS_twoway': function(t) {	
+					  rightMenuAjax(t.id,0);
+				},				
+				'LS_right': function(t) {	
+					  rightMenuAjax(t.id,1);
+				},				
+				'LS_left': function(t) {	
+					  rightMenuAjax(t.id,3);
+				},				
+				'LS_turnleft': function(t) {	
+					  rightMenuAjax(t.id,5);
+				}				
+				
+			  }				
+			});
+			break;
+	}
+}
+
+//定位右键位置
+function onShowMenu(pageX,pageY,menuW,menuH){
+	//alert(pageX+","+pageY+","+menuW+","+menuH);
+	
+	if(pageX+menuW>W){
+		$("#jqContextMenu").css("left",W-menuW-10);
+	}
+	if(pageY+menuH>H){
+		$("#jqContextMenu").css("top",H-menuH-10);
+	}
+}
+
+
+//返回图片
+function returnPicurl(typevalue,state,shape,updown,i1,i2){
+	picurl="";
+	
+	state=parseInt(state);
+	shape=parseInt(shape);
+	updown=parseInt(updown);
+	i1=parseInt(i1);
+	i2=parseInt(i2);
+	
+	//alert(typevalue+","+state+","+shape+","+updown+","+i1+","+i2+","+n1+","+n2);
+	
+	//正常或采集器异常
+	if(state==1||state==3){
+	
+		switch(typevalue){
+			case "TS":
+				//交通信号灯
+				switch(i1){
+					case 0:
+						//关闭
+						picurl="../pic/roadsig5.png";
+						break;
+					case 1:
+						//红灯
+						picurl="../pic/roadsig2.png";
+						break;
+					case 2:
+						//黄灯
+						picurl="../pic/roadsig1.png";
+						break;
+					case 4:
+						//绿灯
+						picurl="../pic/roadsig0.png";
+						break;
+					case 8:
+						//左转
+						switch(updown){
+							case 1:
+								picurl="../pic/errorpic/roadsig4.png";
+								break;
+							case 0:
+								picurl="../pic/errorpic/roadsig3.png";
+								break;	
+						}	
+						
+						break;
+					default:
+						picurl="";
+						break;
+				}
+				
+				break;
+			case "LS":
+				//车道指示标志
+				switch(shape){
+					case 1:
+						switch(i1){
+							case 0:
+								//禁止
+								picurl="../pic/sigF.png";
+								break;
+							case 1:
+								//通行
+								picurl="../pic/sigG.png";
+								break;
+						}
+						
+						break;
+					case 2:
+						switch(i1){
+							case 0:
+								//双向禁止
+								picurl="../pic/sigC.png";
+								break;
+							case 1:
+								//正向通行
+								switch(updown){
+									case 1:
+										//禁止
+										picurl="../pic/sigA.png";
+										break;
+									case 0:
+										//通行
+										picurl="../pic/sigB.png";
+										break;
+								}
+								
+								break;
+						}
+					
+						break;
+					case 3:
+						switch(i1){
+							case 0:
+								//双向禁止
+								picurl="../pic/sigC.png";
+								break;
+							case 1:
+								//正向通行
+								switch(updown){
+									case 1:
+										picurl="../pic/sigA.png";
+										break;
+									case 0:
+										picurl="../pic/sigB.png";
+										break;
+								}
+								
+								break;
+							case 3:
+								//反向通行
+								switch(updown){
+									case 1:
+										picurl="../pic/sigB.png";
+										break;
+									case 0:
+										picurl="../pic/sigA.png";
+										break;
+								}
+								
+								break;
+						}
+						
+						break;
+					//4态和5态一样
+					case 4:
+						switch(i1){
+							case 0:
+								//双向禁止
+								picurl="../pic/sigC.png";
+								break;
+							case 1:
+								//正向通行
+								switch(updown){
+									case 1:
+										picurl="../pic/sigA.png";
+										break;
+									case 0:
+										picurl="../pic/sigB.png";
+										break;
+								}
+								
+								break;
+							case 3:
+								//反向通行
+								switch(updown){
+									case 1:
+										picurl="../pic/sigB.png";
+										break;
+									case 0:
+										picurl="../pic/sigA.png";
+										break;
+								}
+								
+								break;
+							case 5:
+								//左转通行
+								switch(updown){
+									case 1:
+										picurl="../pic/sigD.png";
+										break;
+									case 0:
+										picurl="../pic/sigE.png";
+										break;
+								}
+								
+								break;
+						}
+						
+						break;
+					case 5:
+						switch(i1){
+							case 0:
+								//双向禁止
+								picurl="../pic/sigC.png";
+								
+								break;
+							case 1:
+								//正向通行
+								switch(updown){
+									case 1:
+										picurl="../pic/sigA.png";
+										break;
+									case 0:
+										picurl="../pic/sigB.png";
+										break;
+								}
+								
+								break;
+							case 3:
+								//反向通行
+								switch(updown){
+									case 1:
+										picurl="../pic/sigB.png";
+										break;
+									case 0:
+										picurl="../pic/sigA.png";
+										break;
+								}
+								
+								break;
+							case 5:
+								//左转通行
+								switch(updown){
+									case 1:
+										picurl="../pic/sigD.png";
+										break;
+									case 0:
+										picurl="../pic/sigE.png";
+										break;
+								}
+								
+								break;
+						}
+						
+						break;
+				}
+				
+				break;
+			case "LIGHT":
+				//光强
+				picurl="../pic/ld.png";
+				
+				break;
+			case "LED":
+				//照明
+				switch(i1){
+					case 0:
+						//关
+						switch(updown){
+							case 1:
+								picinfo="../pic/light_offB.png";
+								break;
+							case 0:
+								picinfo="../pic/light_offA.png";
+								break;
+						}
+						
+						break;
+					case 1:
+						//开
+						switch(updown){
+							case 1:
+								picinfo="../pic/light_onB.png";
+								break;
+							case 0:
+								picinfo="../pic/light_onA.png";
+								break;
+						}
+						
+						break;
+				}		
+				
+				break;
+			case "FAN":
+				//风机
+				switch(i1){
+					case 0:
+						//停止	
+						switch(i2){
+							case 0:
+								switch(updown){
+									case 1:
+										picurl="../pic/fan5.gif";
+										break;
+									case 0:
+										picurl="../pic/fan2.gif";
+										break;
+								}
+								
+								break;
+							case 1:
+								switch(updown){
+									case 1:
+										picurl="../pic/falsepic/false-fan5.png";
+										break;
+									case 0:
+										picurl="../pic/falsepic/false-fan2.png";
+										break;
+								}
+								
+								break;
+						}
+						
+						break;
+					case 1:
+						//正转
+						switch(i2){
+							case 0:
+								switch(updown){
+									case 1:
+										picurl="../pic/fan4.gif";
+										break;
+									case 0:
+										picurl="../pic/fan1.gif";
+										break;
+								}
+								break;
+							case 1:
+								switch(updown){
+									case 1:
+										picurl="../pic/falsepic/false-fan4.png";
+										break;
+									case 0:
+										picurl="../pic/falsepic/false-fan1.png";
+										break;
+								}
+								break;
+						}
+						
+						break;
+					case 2:
+						//反转
+						switch(i2){
+							case 0:
+								switch(updown){
+									case 1:
+										picurl="../pic/fan3.gif";
+										break;
+									case 0:
+										picurl="../pic/fan0.gif";
+										break;
+								}
+								break;
+							case 1:
+								switch(updown){
+									case 1:
+										picurl="../pic/falsepic/false-fan3.png";
+										break;
+									case 0:
+										picurl="../pic/falsepic/false-fan0.png";
+										break;
+								}
+								break;
+						}
+						
+						break;
+				}
+				
+				break;
+			case "COVI":
+				//COVI
+				picurl="../pic/covi.png";
+				break;
+			case "FSFX":
+				//风速风向
+				picurl="../pic/fsfx.png";
+				break;
+			case "FB":
+				//手报
+				switch(i1){
+					case 0:
+						//正常
+						picurl="../pic/fire2.gif";
+						break;
+					case 1:
+						//火警
+						picurl="../pic/fire1.gif";
+						break;
+				}
+				break;
+			case "FGS":
+				//烟感
+				switch(i1){
+					case 0:
+						//正常
+						picurl="../pic/fire4.gif";
+						break;
+					case 1:
+						//火警
+						picurl="../pic/fire3.gif";
+						break;
+				}
+				
+				break;
+			case "FGW":
+				//温感
+				switch(i1){
+					case 0:
+						//正常
+						picurl="../pic/fire7.gif";
+						break;
+					case 1:
+						//火警
+						picurl="../pic/fire8.gif";
+						break;
+				}
+				
+				break;
+			case "FGR":
+				//消防箱
+				switch(i1){
+					case 0:
+						//正常
+						picurl="../pic/fire1.gif";
+						break;
+					case 1:
+						//火警
+						picurl="../pic/fire0.gif";
+						break;
+				}
+				
+				break;
+			case "DOOR":
+				//防火门
+				switch(i1){
+					case 1:
+						//上位
+						picurl="../pic/doorC.gif";
+						break;
+					case 2:
+						//中位
+						picurl="../pic/doorB.gif";
+						break;
+					case 3:
+						//下位
+						picurl="../pic/doorA.gif";
+						break;
+				}
+				
+				break;
+			case "CAM":
+				//摄像机
+				switch(updown){
+					case 1:
+						picurl="../pic/camer2.ico";
+						break;
+					case 0:
+						picurl="../pic/camer1.ico";
+						break;
+				}
+				
+				break;
+		}
+	}
+	
+	//故障
+	if(state==2){
+		switch(typevalue){
+			case "TS":
+				//交通信号灯
+				picurl="../pic/errorpic/error-roadsig.png";
+				break;
+			case "LS":
+				//车道指示标志
+				picurl="../pic/errorpic/error-sig.png";
+				break;
+			case "LIGHT":
+				//光强
+				picurl="../pic/errorpic/error-ld.png";
+				break;
+			case "LED":
+				//照明
+				picurl="../pic/errorpic/error-linght.png";
+				break;
+			case "FAN":
+				//风机
+				switch(updown){
+					case 0:
+						//停止
+						picurl="../pic/errorpic/error-fan2.png";
+						break;
+					case 1:
+						//正转
+						picurl="../pic/errorpic/error-fan.png";
+						break;	
+				}	
+				break;
+			case "COVI":
+				//COVI
+				picurl="../pic/errorpic/error-covi.png";
+				break;
+			case "FSFX":
+				//风速风向
+				picurl="../pic/errorpic/error-fsfx.png";
+				break;
+			case "FB":
+				//手报
+				picurl="../pic/errorpic/error-fire2.png";
+				break;
+			case "FGS":
+				//烟感
+				picurl="../pic/errorpic/error-fire4.png";
+				break;
+			case "FGS":
+				//温感
+				picurl="../pic/errorpic/error-fire7.png";
+				break;
+			case "FGR":
+				//消防箱
+				picurl="../pic/errorpic/error-fire11.png";
+				break;
+			case "DOOR":
+				//防火门
+				picurl="../pic/errorpic/error-doorA.png";
+				break;
+			case "CAM":
+				//摄像机
+				switch(num){
+					case 0:
+						//停止
+						picurl="../pic/errorpic/error-camer1.png";
+						break;
+					case 1:
+						//正转
+						picurl="../pic/errorpic/error-camer2.png";
+						break;	
+				}	
+				break;
+		}
+	}
+	
+	
+	return picurl;
+}
+
+//返回设备信息
+function returnPicinfo(title,typevalue,state,shape,updown,i1,i2,n1,n2){
+	picinfo="";
+	
+	state=parseInt(state);
+	shape=parseInt(shape);
+	updown=parseInt(updown);
+	i1=parseInt(i1);
+	i2=parseInt(i2);
+	
+	//alert(typevalue+","+state+","+shape+","+updown+","+i1+","+i2+","+n1+","+n2);
+	
+	//正常或采集器异常
+	if(state==1||state==3){
+	
+		switch(typevalue){
+			case "TS":
+				//交通信号灯
+				switch(i1){
+					case 0:
+						//关闭
+						picinfo="关闭";
+						break;
+					case 1:
+						//红灯
+						picinfo="红灯";
+						break;
+					case 2:
+						//黄灯
+						picinfo="黄灯";
+						break;
+					case 4:
+						//绿灯
+						picinfo="绿灯";
+						break;
+					case 8:
+						//左转
+						picinfo="左转";
+						break;
+				}
+				
+				break;
+			case "LS":
+				//车道指示标志
+				switch(shape){
+					case 1:
+						switch(i1){
+							case 0:
+								//禁止
+								picinfo="禁止";
+								break;
+							case 1:
+								//通行
+								picinfo="通行";
+								break;
+						}
+						
+						break;
+					case 2:
+						switch(i1){
+							case 0:
+								//双向禁止
+								picinfo="双向禁止";
+								break;
+							case 1:
+								//正向通行
+								picinfo="正向通行";
+								break;
+						}
+					
+						break;
+					case 3:
+						switch(i1){
+							case 0:
+								//双向禁止
+								picinfo="双向禁止";
+								break;
+							case 1:
+								//正向通行
+								picinfo="正向通行";
+								
+								break;
+							case 3:
+								//反向通行
+								picinfo="反向通行";
+								
+								break;
+						}
+						
+						break;
+					//4态和5态一样
+					case 4:
+						switch(i1){
+							case 0:
+								//双向禁止
+								picinfo="双向禁止";
+								break;
+							case 1:
+								//正向通行
+								picinfo="正向通行";
+								
+								break;
+							case 3:
+								//反向通行
+								picinfo="反向通行";
+								
+								break;
+							case 5:
+								//左转通行
+								picinfo="左转通行";
+								
+								break;
+						}
+						
+						break;
+					case 5:
+						switch(i1){
+							case 0:
+								//双向禁止
+								picinfo="双向禁止";
+								break;
+							case 1:
+								//正向通行
+								icinfo="正向通行";
+								
+								break;
+							case 3:
+								//反向通行
+								picinfo="反向通行";
+								
+								break;
+							case 5:
+								//左转通行
+								picinfo="左转通行";
+								
+								break;
+						}
+						
+						break;
+
+				}
+				
+				break;
+			case "LIGHT":
+				//光强
+				picinfo="正常&#10;";
+				picinfo=picinfo+"洞内值:"+n1+" (lux)&#10;";
+				picinfo=picinfo+"洞外值:"+n2+" (cd/m2)";
+				
+				break;
+			case "LED":
+				//照明
+				switch(i1){
+					case 0:
+						//关
+						picinfo="关";
+						
+						break;
+					case 1:
+						//开
+						picinfo="开";
+						
+						break;
+				}	
+				
+				break;
+			case "FAN":
+				//风机
+				switch(i1){
+					case 0:
+						//停止	
+						switch(i2){
+							case 0:
+								picinfo="停止-正常";
+								
+								break;
+							case 1:
+								picinfo="停止-异常";
+								
+								break;
+						}
+						
+						break;
+					case 1:
+						//正转
+						switch(i2){
+							case 0:
+								picinfo="正转-正常";
+								break;
+							case 1:
+								picinfo="正转-异常";
+								break;
+						}
+						
+						break;
+					case 2:
+						//反转
+						switch(i2){
+							case 0:
+								picinfo="反转-正常";							
+								
+								break;
+							case 1:
+								picinfo="反转-异常";
+								break;
+						}
+						
+						break;
+				}
+				
+				break;
+			case "COVI":
+				//COVI
+				picinfo="正常&#10;";
+				picinfo=picinfo+"CO:"+n1+" (ppm)&#10;";
+				picinfo=picinfo+"VI:"+n2+" (km1)";
+				
+				break;
+			case "FSFX":
+				//风速风向
+				picinfo="正常&#10;";
+				picinfo=picinfo+"风速:"+n1+" (m)&#10;";
+				
+				switch(i1){
+					case 0:
+						
+						picinfo=picinfo+"风向：顺车行方向";
+						break;
+					case 1:
+						//火警
+						picinfo=picinfo+"风向：逆车行方向";
+						break;
+				}
+				
+				
+				break;
+			case "FB":
+				//手报
+				switch(i1){
+					case 0:
+						//正常
+						picinfo="正常";
+						break;
+					case 1:
+						//火警
+						picinfo="火警";
+						break;
+				}
+				break;
+			case "FGS":
+				//烟感
+				switch(i1){
+					case 0:
+						//正常
+						picinfo="正常";
+						break;
+					case 1:
+						//火警
+						picinfo="火警";
+						break;
+				}
+				
+				break;
+			case "FGW":
+				//温感
+				switch(i1){
+					case 0:
+						//正常
+						picinfo="正常";
+						break;
+					case 1:
+						//火警
+						picinfo="火警";
+						break;
+				}
+				
+				break;
+			case "FGR":
+				//消防箱
+				switch(i1){
+					case 0:
+						//正常
+						picinfo="正常";
+						break;
+					case 1:
+						//火警
+						picinfo="火警";
+						break;
+				}
+				
+				break;
+			case "DOOR":
+				//防火门
+				switch(i1){
+					case 1:
+						//上位
+						picinfo="上位";
+						break;
+					case 2:
+						//中位
+						picinfo="中位";
+						break;
+					case 3:
+						//下位
+						picinfo="下位";
+						break;
+				}
+				
+				break;
+			case "CAM":
+				//摄像机
+				picinfo="正常";
+				
+				break;
+		}
+	}
+	
+	//故障
+	if(state==2){
+		switch(typevalue){
+			case "TS":
+				//交通信号灯
+				picinfo="交通信号灯故障";
+				break;
+			case "LS":
+				//车道指示标志
+				picinfo="车道指示标志故障";
+				break;
+			case "LIGHT":
+				//光强
+				picinfo="光强故障";
+				break;
+			case "LED":
+				//照明
+				picinfo="照明故障";
+				break;
+			case "FAN":
+				//风机
+				picinfo="风机故障";
+				break;
+			case "COVI":
+				//COVI
+				picinfo="COVI故障";
+				break;
+			case "FSFX":
+				//风速风向
+				picinfo="风速风向故障";
+				break;
+			case "FB":
+				//手报
+				picinfo="手报故障";
+				break;
+			case "FGS":
+				//烟感
+				picinfo="烟感故障";
+				break;
+			case "FGS":
+				//温感
+				picinfo="温感故障";
+				break;
+			case "FGR":
+				//消防箱
+				picinfo="消防箱故障";
+				break;
+			case "DOOR":
+				//防火门
+				picinfo="防火门故障";
+				break;
+			case "CAM":
+				//摄像机
+				picinfo="摄像机故障";
+				break;
+		}
+	}
+	
+	
+	return title+"&#10;"+picinfo;
+}

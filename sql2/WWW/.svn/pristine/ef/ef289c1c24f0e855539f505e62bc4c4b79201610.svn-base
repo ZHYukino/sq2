@@ -1,0 +1,60 @@
+<%
+'http://www.cnblogs.com/cooska/archive/2010/12/03/1990781.html
+'==================================================
+'函数名：BytesToBstr
+'作 用：将获取的源码转换为中文
+'参 数：Body ------要转换的变量
+'参 数：Cset ------要转换的类型
+'==================================================
+Function BytesToBstr(Body,Cset)
+	Dim Objstream
+	Set Objstream = Server.CreateObject("adodb.stream")
+	objstream.Type = 1
+	objstream.Mode =3
+	objstream.Open
+	objstream.Write body
+	objstream.Position = 0
+	objstream.Type = 2
+	objstream.Charset = Cset
+	BytesToBstr = objstream.ReadText 
+	objstream.Close
+	set objstream = nothing
+End Function
+
+Function PostHttpPage(RefererUrl,PostUrl,PostData) 	
+	Dim xmlHttp 
+	Dim RetStr
+	 
+	'Set xmlHttp = CreateObject("Msxml2.XMLHTTP") 
+	Set xmlHttp = CreateObject("WinHTTP.WinHTTPRequest.5.1")
+	xmlHttp.Open "POST", PostUrl, false
+	
+	'response.write PostData & "<br>"
+	xmlHttp.setRequestHeader "Accept", "text/javascript, text/html, application/xml, text/xml, */*"
+	xmlHttp.setRequestHeader "Accept-Language", "zh-cn"
+	xmlHttp.setRequestHeader "x-request", "JSON"
+	xmlHttp.setRequestHeader "Referer", RefererUrl
+	xmlHttp.setRequestHeader "x-requested-with", "XMLHTTPRequest"
+	xmlHttp.setRequestHeader "Content-Type", "application/x-www-form-urlencoded"
+	xmlHttp.setRequestHeader "Accept-Encoding", "gzip, deflate"
+	xmlHttp.setRequestHeader "Connection", "Keep-Alive"
+	xmlHttp.setRequestHeader "Cache-Control", "no-cache"
+	xmlHttp.setRequestHeader "Cookie", "DHLangCookie30=SimpChinese; DHVideoWHMode=Adaptive%20Window; DhWebCookie=%7B%22username%22%3A%22admin%22%2C%22pswd%22%3A%22%22%2C%22talktype%22%3A1%2C%22logintype%22%3A0%7D; DhWebVideoPath1=C%3A%5CUsers%5CAdministrator%5CWebDownload%5CLiveSnapshot; DhWebVideoPath2=C%3A%5CUsers%5CAdministrator%5CWebDownload%5CLiveRecord; DhWebVideoPath3=C%3A%5CUsers%5CAdministrator%5CWebDownload%5CPlaybackSnapshot; DhWebVideoPath4=C%3A%5CUsers%5CAdministrator%5CWebDownload%5CPlaybackRecord; DhWebVideoPath5=C%3A%5CUsers%5CAdministrator%5CWebDownload%5CVideoClips"
+	XmlHTTP.setRequestHeader "Content-Length",Len(PostData)	
+	
+	xmlHttp.Send PostData 
+	If Err.Number <> 0 Then 
+		Set xmlHttp=Nothing
+		PostHttpPage = "$False$"
+		Exit Function
+	End If
+	PostHttpPage = bytesToBSTR(xmlHttp.responseBody,"GB2312")
+	Set xmlHttp = nothing
+End Function
+
+a = Request.QueryString("ip")
+b = Request.Form
+
+c = PostHttpPage("http://" & a & "/","http://" & a & "/RPC2_Login",b)
+response.write c
+%>

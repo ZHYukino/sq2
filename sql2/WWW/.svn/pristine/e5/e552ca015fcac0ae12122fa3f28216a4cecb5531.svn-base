@@ -1,0 +1,232 @@
+<!--#include file="../comm/mconn.asp"-->
+<!--#include file="../comm/RWIniFile.inc"-->
+<%
+	Session.CodePage = 65001
+	Response.Charset = "UTF-8"
+	itype = Request.QueryString("itype")
+	username = session("user")
+	id = int(Request.QueryString("id"))
+	state = int(Request.QueryString("state"))
+	msg = ""
+	result = 0
+	If username <> "" Then
+		'Dim mRs
+		'Set mRs = Server.CreateObject("Adodb.RecordSet")
+		'mRs.open "select Account from Popedom where Have=0 and Account='" & username & "'", conn, 1, 2
+		'if not mRs.eof Then
+			'mRs.close
+			if itype = 1 And id <> "" And state <> "" Then
+				Dim mRs
+				Set mRs = Server.CreateObject("Adodb.RecordSet")
+				mRs.open "select a.DevTypeName name,a.Shape shape,a.DevCName cname,b.i1 i1,c.RunMode runmode from Devpara a left join Devsend b on a.DevID=b.DevID left join PLCstate c on a.PLCID=c.PLCID where a.DevID=" & id, conn, 1, 2
+				If Not mRs.eof Then
+					name = mRs("name")
+					cname = mRs("cname")
+					shape = mRs("shape")
+					i1 = mRs("i1")
+					runmode = mRs("runmode")
+					If i1 <> state Then
+						flag = 1
+						If (name = "TS" Or name = "LS" Or name = "DOOR") Then
+							If runmode =0 Then
+								msg = "PLC在本地控制模式,不能发送命令"
+								flag = 0
+							End If
+						Else
+							If (name = "LED" Or name = "FAN") Then
+								If runmode =0 Then
+									msg = "设备在手动(本地)控制模式,不能发送命令"
+									flag = 0
+								End If
+								If name = "LED" And ReadIni("/opt.ini","config","ZMMode") <> 0 Then
+									msg = "照明控制模式不是手动控制模式，无法控制"
+									flag = 0
+								End If
+								If name = "FAN" And ReadIni("/opt.ini","config","FJMode") <> 0 Then
+									msg = "风机控制模式不是手动控制模式，无法控制"
+									flag = 0
+								End if
+							Else
+								msg = "该类型设备不允许更改状态"
+								flag = 0
+							End If
+						End If
+						If flag = 1 Then
+							tip = ""
+							changetype = ""
+							Select Case name
+								Case "TS"
+									changetype = "信息灯控制"
+									Select Case state
+										Case 1
+											tip = "调整红灯"
+										Case 2
+											tip = "调整黄灯"
+										Case 4
+											tip = "调整绿灯"
+										Case 8
+											tip = "调整左转"
+										Case Else
+											flag = 0
+									End select
+								Case "LS"
+									changetype = "信息灯控制"
+									Select Case shape
+										Case 1
+											Select Case state
+												Case 0
+													tip = "禁止"
+												Case 1
+													tip = "通行"
+												Case Else
+													flag = 0
+											End select
+										Case 2
+											Select Case state
+												Case 0
+													tip = "双向禁行"
+												Case 1
+													tip = "正向通行"
+												Case Else
+													flag = 0
+											End select
+										Case 3
+											Select Case state
+												Case 0
+													tip = "双向禁止"
+												Case 1
+													tip = "正向通行"
+												Case 3
+													tip = "反向通行"
+												Case Else
+													flag = 0
+											End select
+										Case 4
+											Select Case state
+												Case 0
+													tip = "双向禁止"
+												Case 1
+													tip = "正向通行"
+												Case 3
+													tip = "反向通行"
+												Case 5
+													tip = "左转通行"
+												Case Else
+													flag = 0
+											End select
+										Case 5
+											Select Case state
+												Case 0
+													tip = "双向禁止"
+												Case 1
+													tip = "正向通行"
+												Case 3
+													tip = "反向通行"
+												Case 5
+													tip = "左转通行"
+												Case Else
+													flag = 0
+											End select
+										Case Else
+											msg = "数据库有问题"
+											flag = -1
+									End select
+								Case "LED"
+									changetype = "照明控制"
+									Select Case state
+										Case 0
+											tip = "关灯"
+										Case 1
+											tip = "开灯"
+										Case Else
+											flag = 0
+									End select
+								Case "DOOR"
+									changetype = "横洞门控制"
+									Select Case state
+										Case 1
+											tip = "上升"
+										Case 2
+											tip = "停止"
+										Case 3
+											tip = "下降"
+										Case Else
+											flag = 0
+									End select
+								Case "FAN"
+									changetype = "风机控制"
+									mRs.close
+									mRs.open "select i1 from devsend where DevID=(select DevID from devpara where GroupID=(select GroupID from devpara where DevID=" & id & ") and DevTypeName='FAN' and DevID <>" & id & ")", conn, 1, 2
+									otherone = 0
+									If Not mRs.eof Then
+										otherone = mRs("i1")
+									End If
+									Select Case state
+										Case 0
+											tip = "停止"
+										Case 1
+											If otherone = 2 Then
+												msg = "同组另一台风机正在反转,不能执行正转操作"
+												flag = -1
+											Else
+												If i1 = 2 Then
+													msg = "本台风机正在反转,不能执行正转操作"
+													flag = -1
+												Else
+													tip = "正转"
+												End if
+											End if
+										Case 2
+											If otherone = 1 Then
+												msg = "同组另一台风机正在正转,不能执行反转操作"
+												flag = -1
+											Else
+												If i1 = 1 Then
+													msg = "本台风机正在正转,不能执行反转操作"
+													flag = -1
+												Else
+													tip = "反转"
+												End if
+											End if
+										Case Else
+											flag = 0
+									End select
+							End Select
+							If flag = 1 then
+								mRs.close
+								sql = ""
+								If i1 = "" Then
+									sql = "insert into Devsend(DevID,SendTime,State,i1) values(" & id & ",GETDATE(),-1," & state & ")"
+								else
+									sql = "update Devsend set i1=" & state & ",State=-1,SendTime=GETDATE() where DevID=" & id
+								End if
+								Conn.Execute(sql)
+								'日志
+								ssql = "insert into LogSys(logman,LogTime,Logdesc,LogMemo,logtype) values ('" & username & "',GETDATE(),'" & changetype & "','" & cname & " " & tip & "',3)"
+								Conn.Execute(ssql)
+								result = 1
+								msg = tip & "发送成功"
+							End If
+							If flag = 0 then
+								msg = "请求状态值异常(没有" & state & "这状态)"
+							End if
+						end If
+					Else
+						msg = "更改状态为当前状态"
+					End if
+				Else
+					msg = "无该设备(DevID为" & id & ")"
+				End If
+				mRs.close
+			Else
+				msg = "请求参数异常"
+			end if
+		'Else
+		'	msg = "没有权限进行操作(0)"
+		'End If
+		'mRs.close
+	Else
+		msg = "未登录不可进行操作"
+	End if
+	Response.write "{""result"":" & result & ",""msg"":""" & msg & """}"
+%>

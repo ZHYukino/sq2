@@ -1,0 +1,11 @@
+﻿var arr_tcms = new Array();//ID,数组序号，状态，地图Marker，设备状态内容，设备名称
+var arr_scms = new Array();
+var arr_fcms = new Array();
+var arr_cms = new Array();
+var arr_vd = new Array();
+var arr_wd = new Array();
+var arr_et = new Array();
+var arr_CCTV = new Array();
+var arr_dlEvent = new Array();//id,序号，存在否(0不存在，1存在)，地图Marker，
+var arr_yhEvent = new Array();
+var arr_flow = new Array();

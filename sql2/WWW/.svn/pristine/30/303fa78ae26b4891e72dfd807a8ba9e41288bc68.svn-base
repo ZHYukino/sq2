@@ -1,0 +1,149 @@
+﻿Ext.namespace('Ext.CXPasswordEdit');
+
+Ext.CXPasswordEdit.xmlhttppasswordedit;
+Ext.CXPasswordEdit.xmlhttppasswordedit2;
+Ext.CXPasswordEdit.savedate=function(){
+	if (Ext.getCmp('passwordedit1').getValue()==''){
+		Ext.Msg.alert('系统提示','旧密码不能为空');
+		return false;
+	} else if (Ext.getCmp('passwordedit2').getValue()==''){
+		Ext.Msg.alert('系统提示','新密码不能为空');
+		return false;
+	} else if (Ext.getCmp('passwordedit3').getValue()==''){
+		Ext.Msg.alert('系统提示','验证密码不能为空');
+		return false;
+	} else if (Ext.getCmp('passwordedit2').getValue()!=Ext.getCmp('passwordedit3').getValue()){
+			Ext.Msg.alert('系统提示','两次输入密码不一致');
+			return false;
+	} else {
+		var passwordeditdata='q1='+escape(username)+'&q2='+escape(Ext.getCmp('passwordedit1').getValue())//含有空格，相当于特殊字符，需要加，否则空格被忽列
+		var passwordediturl='json/getuser.asp?sid='+Math.random()+'&itype=7';
+			Ext.CXPasswordEdit.xmlhttppasswordedit= ajaxcreateXMLHttpRequest();
+			Ext.CXPasswordEdit.xmlhttppasswordedit.open("post", passwordediturl, false);
+			Ext.CXPasswordEdit.xmlhttppasswordedit.setRequestHeader("Content-Type","application/x-www-form-urlencoded");//用post一定要加这句话
+			Ext.CXPasswordEdit.xmlhttppasswordedit.send(passwordeditdata);				
+			if (Ext.CXPasswordEdit.xmlhttppasswordedit.readyState==4 && Ext.CXPasswordEdit.xmlhttppasswordedit.status==200){
+				var jsonresponsetext;
+				var jsonObject;	
+				jsonresponsetext=Ext.CXPasswordEdit.xmlhttppasswordedit.responseText;
+				jsonObject=eval("("+jsonresponsetext+")");
+				if (jsonObject.rows[0].num==0){
+					Ext.Msg.alert('系统提示','旧密码不对,请重新输入');
+					return false;						
+				}
+			}	
+	}
+	var passwordeditdata2='q1='+escape(username)+'&q2='+escape(Ext.getCmp('passwordedit2').getValue())//含有空格，相当于特殊字符，需要加，否则空格被忽列
+	var passwordediturl2='json/getuser.asp?sid='+Math.random()+'&itype=8';
+	Ext.CXPasswordEdit.xmlhttppasswordedit2= ajaxcreateXMLHttpRequest();
+	Ext.CXPasswordEdit.xmlhttppasswordedit2.open("post", passwordediturl2, false);
+	Ext.CXPasswordEdit.xmlhttppasswordedit2.setRequestHeader("Content-Type","application/x-www-form-urlencoded");//用post一定要加这句话
+	Ext.CXPasswordEdit.xmlhttppasswordedit2.send(passwordeditdata2);				
+	if (Ext.CXPasswordEdit.xmlhttppasswordedit2.readyState==4 && Ext.CXPasswordEdit.xmlhttppasswordedit2.status==200){
+		var jsonresponsetext2;
+		var jsonObject2;	
+		jsonresponsetext2=Ext.CXPasswordEdit.xmlhttppasswordedit2.responseText;
+		if (jsonresponsetext2!='true'){
+			Ext.Msg.alert('系统提示','保存失败('+jsonresponsetext2+')');	
+			return false;
+		}
+	}		
+	return true;
+}
+Ext.CXPasswordEdit.MyWindow=Ext.extend(Ext.Window ,{
+	id:'passwordeditwin',									
+	xtype:"window",
+	title:"修改密码",
+	width:300,
+	height:145,
+	autoScroll:false,
+	layout:"absolute",
+	modal:true,//模态窗口
+	initComponent: function(){
+		this.items=[
+			{
+				xtype:"label",
+				text:"旧密码:",
+				x:15,
+				y:15
+			},
+			{
+				xtype:"label",
+				text:"新密码:",
+				x:15,
+				y:50
+			},
+			{
+				xtype:"label",
+				text:"验证密码:",
+				x:15,
+				y:85
+			},
+			{
+				xtype:"textfield",
+				id:"passwordedit1",
+				fieldLabel:"标签",
+				anchor:"",
+				inputType:'password',
+				x:70,
+				y:10
+			},
+			{
+				xtype:"textfield",
+				id:"passwordedit2",
+				fieldLabel:"标签",
+				anchor:"",
+				inputType:'password',
+				x:70,
+				y:45
+			},
+			{
+				xtype:"textfield",
+				id:"passwordedit3",
+				fieldLabel:"标签",
+				anchor:"",
+				inputType:'password',
+				x:70,
+				y:80
+			},
+			{
+				xtype:"button",
+				text:"保存",
+				x:215,
+				y:30,
+				minWidth:60,
+				handler:function(){ 
+					if (!Ext.CXPasswordEdit.savedate()){return};
+					Ext.CXSysLog.insertdata(username,1,"修改密码",-1,userip);
+					Ext.Msg.alert('系统提示','保存成功');
+					Ext.getCmp('passwordeditwin').close();
+				}
+			},
+			{
+				xtype:"button",
+				text:"取消",
+				x:215,
+				y:65,
+				minWidth:60,
+				handler:function(){ 
+					Ext.Msg.confirm('系统提示','数据未保存,是否退出？',
+						function(btn){
+							if(btn=='yes'){
+								Ext.getCmp('passwordeditwin').close();	
+							}
+					  	},this);
+				}
+			}
+		]
+		Ext.CXPasswordEdit.MyWindow.superclass.initComponent.call(this);
+	},
+	listeners:{ 
+				beforeshow : function(){  
+					this.setTitle("修改密码(当前用户"+username+")") 
+				},
+				close : function(){  
+					
+				}
+	}
+})		
+	

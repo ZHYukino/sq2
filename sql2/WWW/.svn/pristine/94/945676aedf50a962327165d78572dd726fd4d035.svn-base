@@ -1,0 +1,175 @@
+﻿<!--#include file="../comm/mconn.asp"-->
+<%
+Session.CodePage=65001
+Response.Charset="UTF-8"
+function ConvOutType(s)
+	s = replace(s,"""","")
+	if s = "直接显示" then
+		ConvOutType = 0
+	elseif s = "从上往下" then
+		ConvOutType = 1
+	elseif s = "从下往上" then
+		ConvOutType = 2
+	elseif s = "从左往右" then
+		ConvOutType = 3
+	elseif s = "从右往左" then
+		ConvOutType = 4
+	end if		
+end function
+
+function ConvFontName(s)
+	s = replace(s,"""","")
+	if s = "宋体" then
+		ConvFontName = 0
+	elseif s = "楷体" then
+		ConvFontName = 1
+	elseif s = "黑体" then
+		ConvFontName = 2
+	end if
+end function
+
+function ConvFontSize(s)
+	s = replace(s,"""","")
+	if s = "48*48" then
+		ConvFontSize = 0
+	elseif s = "40*40" then
+		ConvFontSize = 1
+	elseif s = "32*32" then
+		ConvFontSize = 2
+	elseif s = "24*24" then
+		ConvFontSize = 3
+	elseif s = "20*20" then
+		ConvFontSize = 4
+	elseif s = "16*16" then
+		ConvFontSize = 5
+	end if
+end function
+
+function ConvFontColor(s)
+	s = replace(s,"""","")
+	if s = "红色" then
+		ConvFontColor = 0
+	elseif s = "绿色" then
+		ConvFontColor = 1
+	elseif s = "黄色" then
+		ConvFontColor = 2
+	end if
+end function
+
+function ConvGetSet(s)
+	s = replace(s,"""","")
+	if s = "0" then
+		ConvGetSet = "获取亮度"
+	elseif s = "1" then
+		ConvGetSet = "设置亮度"
+	elseif s = "2" then
+		ConvGetSet = "设置亮度"
+	end if
+end function
+
+itype = Request.QueryString("itype")
+if itype = 1 then
+	sRecv = request.form
+	//response.write sRecv
+	//response.End()
+	sRecv = mid(sRecv,2,len(sRecv)-2)
+	strArr=split(sRecv,",")   
+	DevCount = strArr(0)
+	CommCount = strArr(devCount*2+1)
+	Dim mRs
+	Set mRs=Server.CreateObject("Adodb.RecordSet")
+	
+	for i = 1 to devCount
+		dev_name = replace(strArr(i*2-1),"""","")
+		dev_id = strArr(i*2)
+		sname = sname & dev_name & ","
+		
+		ssql = "insert into sendcms (devid,devno,sendtype,sendtime,state) values ("& dev_id & ",'" & dev_name & "',0,GETDATE(),-1)"
+		Conn.Execute(ssql)
+		Set mRs=Conn.Execute("SELECT @@IDENTITY as newIDValue")
+		cid = mRs("newIDValue")
+		scid = scid & cid  & ","
+		
+		iStart = devCount*2 + 2
+		for j = 0 to CommCount -1
+			ssql = "insert into SendCmsDet (JobNo,RowOrder,SendText,TextFormat) values (" & cid & "," & j & ","
+			ssql = ssql & "'" & replace(strArr(iStart + 8),"""","") & "','"
+			ssql = ssql & ConvOutType(strArr(iStart + 2)) & "," & strArr(iStart + 1) & ","
+			ssql = ssql & strArr(iStart) & "," & ConvFontSize(strArr(iStart + 6)) & ","
+			ssql = ssql & ConvFontName(strArr(iStart + 3)) & "," & ConvFontColor(strArr(iStart + 7)) & ",0,"
+			ssql = ssql & strArr(iStart + 4) & "," & strArr(iStart + 5) & "')"
+			Conn.Execute(ssql)
+			iStart = iStart + 9
+		next
+		ssql2 = "insert into syslog(useracc,dt,logtype,joinid,logmemo,userip) values ('"& session("user") & "',GETDATE(),2," & cid &  ",'下发情报板信息','"& session("userip") & "')"
+		Conn.Execute(ssql2)
+	next
+	sname = mid(sname,1,len(sname)-1)
+	scid = mid(scid,1,len(scid)-1)
+%>
+{name:"<%= sname%>", result:"OK", cid:"<%= scid%>"}
+<%
+elseif itype = 2 then
+	sRecv = request.form
+	//response.write sRecv
+	//response.End()
+	sRecv = mid(sRecv,2,len(sRecv)-2)
+	strArr=split(sRecv,",") 
+	for i = 0 to Ubound(strArr)
+		sid=sid & " or jobNO=" & replace(strArr(i),"""","")
+	next
+	Dim mRs2
+	Set mRs2=Server.CreateObject("Adodb.RecordSet")	
+	mRs2.open "Select * from sendcms where 1=2" & sid, conn, 1,2
+	
+	if not mRs2.eof then
+		response.write "["
+		do while not mRs2.eof
+			response.write "{'devno':'" & mRs2("devno") & "',state:'" & mRs2("State") & "',cid:'" & mRs2("jobNO") & "',TextFormat:'" & mRs2("TextFormat") & "'}"
+			mRs2.movenext
+			if not mRs2.eof then
+				response.write ","
+			end if				
+		loop
+		response.write "]"
+	end if
+	mRs2.close
+%>
+<%
+elseif itype = 3 then
+	sRecv = request.form
+	//response.write sRecv
+	//response.End()
+	sRecv = mid(sRecv,2,len(sRecv)-2)
+	strArr=split(sRecv,",")   
+	DevCount = strArr(0)
+	Dim mRs3
+	Set mRs3=Server.CreateObject("Adodb.RecordSet")
+	
+	for i = 1 to devCount
+		dev_name = replace(strArr(i*2-1),"""","")
+		dev_id = strArr(i*2)
+		sname = sname & dev_name & ","
+		
+		ssql3 = "insert into sendcms (devid,devno,sendtype,sendtime,state) values ("& dev_id & ",'" & dev_name & "',"&strArr(devCount*2+1)&",GETDATE(),-1)"
+		Conn.Execute(ssql3)
+		Set mRs3=Conn.Execute("SELECT @@IDENTITY as newIDValue")
+		cid = mRs3("newIDValue")
+		scid = scid & cid  & ","
+		
+		iStart = devCount*2 + 2
+		ss=ConvGetSet(strArr(iStart))
+		ssql3 = "insert into SendCmsDet (JobNo,RowOrder,SendText,TextFormat) values (" & cid & ",-1,'"
+		ssql3 = ssql3 & ss & "','"
+		ssql3 = ssql3 & strArr(iStart) & "," & strArr(iStart+1) & "')"
+		Conn.Execute(ssql3)
+			
+	
+		ssql4 = "insert into syslog(useracc,dt,logtype,joinid,logmemo,userip) values ('"& session("user") & "',GETDATE(),2," & cid &  ",'情报板" & ss & "','"& session("userip") & "')"
+		Conn.Execute(ssql4)
+	next
+	sname = mid(sname,1,len(sname)-1)
+	scid = mid(scid,1,len(scid)-1)
+	response.write "{name:'"&sname&"',result:'OK', cid:'"&scid&"'}"
+end if
+%>

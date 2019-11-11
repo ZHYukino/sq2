@@ -1,0 +1,277 @@
+﻿Ext.namespace('Ext.SysSet');
+
+Ext.SysSet.ID='';
+Ext.SysSet.enablevd=false;
+Ext.SysSet.enablewd=false;
+Ext.SysSet.intervd=1;
+Ext.SysSet.interwd=1;
+Ext.SysSet.flow=0;
+Ext.SysSet.occ=0;
+Ext.SysSet.nengjiandu=0;
+Ext.SysSet.timvd=null;
+Ext.SysSet.timwd=null;
+Ext.SysSet.intervdold=-1;
+Ext.SysSet.interwdold=-1;
+
+Ext.SysSet.Search=function (){	
+	$.ajax({  
+	    url: 'json/getsysset.asp?sid='+Math.random()+'&itype=1' ,
+	    data: {'q':''},  
+	    type:'post',  
+	    contentType: "application/x-www-form-urlencoded",
+	    cache:false,
+	    //async : false, //默认为true 异步    
+	    dataType:'json',  //json
+		success:function(data, textStatus) { 
+	    	if (data) {
+				if (data.results==1){
+					Ext.SysSet.ID=data.rows[0].id;
+					Ext.getCmp('syssetvd').setValue(data.rows[0].EnableVD);		
+					Ext.getCmp('syssetintervd').setValue(data.rows[0].IntervalVD);
+					Ext.getCmp('syssetflow').setValue(data.rows[0].flow);
+					Ext.getCmp('syssetocc').setValue(data.rows[0].occ);
+					Ext.getCmp('syssetwd').setValue(data.rows[0].EnableWD);		
+					Ext.getCmp('syssetinterwd').setValue(data.rows[0].IntervalWD);
+					Ext.getCmp('syssetnengjiandu').setValue(data.rows[0].nengjiandu);
+					if (data.rows[0].EnableVD){
+						Ext.getCmp('syssetflow').enable();
+						Ext.getCmp('syssetocc').enable();
+						Ext.getCmp('syssetintervd').enable();
+					} else {
+						Ext.getCmp('syssetflow').disable();
+						Ext.getCmp('syssetocc').disable();	
+						Ext.getCmp('syssetintervd').disable();
+					}	
+					if (data.rows[0].EnableWD){
+						Ext.getCmp('syssetnengjiandu').enable();	
+						Ext.getCmp('syssetinterwd').enable();
+					} else {
+						Ext.getCmp('syssetnengjiandu').disable();	
+						Ext.getCmp('syssetinterwd').disable();
+					}									
+				}    
+	     	}
+	    },  
+	    error : function(XMLHttpRequest, textStatus, errorThrown) {
+	          alert("异常！\n" + textStatus);  
+	     }
+	});
+}
+Ext.SysSet.Save=function (){
+	var a = {"id":Ext.SysSet.ID,"enablevd":Ext.getCmp('syssetvd').getValue()?1:0,"intervd":Ext.getCmp('syssetintervd').getValue(),"flow":Ext.getCmp('syssetflow').getValue(),"occ":Ext.getCmp('syssetocc').getValue(),"occ":Ext.getCmp('syssetocc').getValue(),"enablewd":Ext.getCmp('syssetwd').getValue()?1:0,"interwd":Ext.getCmp('syssetinterwd').getValue(),"nengjiandu":Ext.getCmp('syssetnengjiandu').getValue()};
+	$.ajax({  
+	    url: 'json/getsysset.asp?sid='+Math.random()+'&itype=2' ,
+	    data: a,  
+	    type:'post',  
+	    contentType: "application/x-www-form-urlencoded",
+	    cache:false,
+	    //async : false, //默认为true 异步    
+	    dataType:'text',  //json
+		success:function(data, textStatus) { 
+	    	if (data) {
+				if (data=='true'){
+					Ext.SysSet.enablevd=Ext.getCmp('syssetvd').getValue();
+					Ext.SysSet.enablewd=Ext.getCmp('syssetwd').getValue();
+					Ext.SysSet.intervd=Ext.getCmp('syssetintervd').getValue();
+					Ext.SysSet.interwd=Ext.getCmp('syssetinterwd').getValue();
+					Ext.SysSet.flow=Ext.getCmp('syssetflow').getValue();
+					Ext.SysSet.occ=Ext.getCmp('syssetocc').getValue();
+					Ext.SysSet.nengjiandu=Ext.getCmp('syssetnengjiandu').getValue();
+					updateAlarm();
+					Ext.Msg.alert('系统提示','保存成功');	
+				} else{
+					Ext.Msg.alert('系统提示','保存失败');	
+				}
+	     	}
+	    },  
+	    error : function(XMLHttpRequest, textStatus, errorThrown) {
+	          alert("异常！\n" + textStatus);  
+	     }
+	});
+}
+Ext.SysSet.MyWindow=function (){
+	var desktop = MyDesktop.getDesktop();
+	return desktop.createWindow({
+		id:'syssetwin',
+		xtype:"window",
+		title:"系统设置",
+		width:335,
+		height:287,
+		closable:true,
+		resizable:false,
+		footer:false,
+		collapsible:false,
+		border:false,
+		layout:"absolute",
+		minimizable:true,
+		maximizable:false,
+		items:[
+				{
+					xtype:"panel",
+					title:"交通流量报警",
+					x:5,
+					y:0,
+					width:310,
+					height:120,
+					bodyStyle:"background:#dfe8f6;",
+					layout:"absolute",
+					autoScroll:false,
+					items:[
+						{
+							xtype:"checkbox",
+							id:"syssetvd",
+							fieldLabel:"标签",
+							boxLabel:"是否启用车检数据报警功能",
+							anchor:"100%",
+							x:10,
+							y:5,
+							checked:false,
+							listeners:{
+								check:function(cb,v){
+									if (v){
+										Ext.getCmp('syssetflow').enable();
+										Ext.getCmp('syssetocc').enable();	
+										Ext.getCmp('syssetintervd').enable();
+									} else {
+										Ext.getCmp('syssetflow').disable();
+										Ext.getCmp('syssetocc').disable();	
+										Ext.getCmp('syssetintervd').disable();
+									}
+								},
+								statesave:function(cb,state) {
+								alert("F")	
+								}
+							}
+						},
+						{
+							xtype:"label",
+							text:"流量报警(大于设定值)",
+							x:35,
+							y:35
+						},
+						{
+							xtype:"label",
+							text:"占有率报警(大于设定值)",
+							x:35,
+							y:65
+						},
+						{
+							xtype:"numberfield",
+							id:"syssetflow",
+							fieldLabel:"标签",
+							anchor:"",
+							x:170,
+							y:30,
+							width:100
+						},
+						{
+							xtype:"numberfield",
+							id:"syssetocc",
+							fieldLabel:"标签",
+							anchor:"",
+							x:170,
+							y:60,
+							width:100
+						},
+						{
+							xtype:"label",
+							text:"报警间隔(分):",
+							x:190,
+							y:10
+						},
+						{
+							xtype:"numberfield",
+							id:"syssetintervd",
+							fieldLabel:"标签",
+							anchor:"",
+							x:270,
+							y:5,
+							width:30
+						}
+					]
+				},
+				{
+					xtype:"panel",
+					title:"能见度报警",
+					x:5,
+					y:130,
+					width:310,
+					height:95,
+					bodyStyle:"background:#dfe8f6;",
+					layout:"absolute",
+					items:[
+						{
+							xtype:"checkbox",
+							id:"syssetwd",
+							fieldLabel:"标签",
+							boxLabel:"是否启用能见度数据报警功能",
+							anchor:"100%",
+							x:10,
+							y:10,
+							checked:false,
+							listeners:{
+								check:function(cb,v){
+									if (v){
+										Ext.getCmp('syssetnengjiandu').enable();	
+										Ext.getCmp('syssetinterwd').enable();	
+									} else {
+										Ext.getCmp('syssetnengjiandu').disable();
+										Ext.getCmp('syssetinterwd').disable();
+									}
+								}
+							}							
+						},
+						{
+							xtype:"label",
+							text:"报警阀值(低于设定值)",
+							x:40,
+							y:40
+						},
+						{
+							xtype:"numberfield",
+							id:"syssetnengjiandu",
+							fieldLabel:"标签",
+							anchor:"",
+							x:170,
+							y:35,
+							width:100
+						},
+						{
+							xtype:"label",
+							text:"报警间隔(分):",
+							x:190,
+							y:10
+						},
+						{
+							xtype:"numberfield",
+							id:"syssetinterwd",
+							fieldLabel:"标签",
+							anchor:"",
+							x:270,
+							y:5,
+							width:30
+						}						
+					]
+				},
+				{
+					xtype:"button",
+					text:"保存",
+					x:255,
+					y:230,
+					width:60,
+					handler: function () {
+						Ext.SysSet.Save();
+					}
+				}
+			],
+		listeners:{  
+					render : function(){  
+						Ext.SysSet.Search();
+						//alert("d")
+						//提示是否关闭窗口
+					},
+					close : function(){  
+				
+					}
+		}
+})}

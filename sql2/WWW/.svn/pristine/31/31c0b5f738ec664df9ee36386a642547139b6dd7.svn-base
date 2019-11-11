@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>创想交通科技有限公司</title>
+<!-- layui组件 -->
+	<link rel="stylesheet" type="text/css" href="jspackage/layui/css/layui.css" media="all"/>
+
+</head>
+<body>
+<script>
+
+</script>
+<button class="layui-btn layui-btn-small" data-method="show1">生产计划</button>
+
+<!-- layui -->
+	<script type="text/javascript" src="jspackage/layui/layui.js"></script>
+	<script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
+<script>
+//弹层
+layui.use(['form','layer'], function(){
+	var form = layui.form();
+	  var layer = layui.layer;
+
+
+	var active={
+		show1: function(){
+			layer.open({
+				type: 1 //此处以iframe举例
+			,title: $("#default_button_selectsb").html()
+			,area: ['800px', '480px']
+			,shade: 0
+			,maxmin: true
+			,offset: ''
+			,id: 'LAY_show' //防止重复弹出
+			,content:'abc'
+			,btn: ['关闭'] //只是为了演示
+			,yes: function(index, layero){
+			  layer.close(index);
+			}
+			
+			,zIndex: layer.zIndex //重点1
+			,success: function(layero){
+			  layer.setTop(layero); //重点2
+			}
+			});
+		}
+ 	};
+	
+	$('.layui-btn').on('click', function(){
+		var othis = $(this), method = othis.data('method');
+		active[method] ? active[method].call(this, othis) : '';
+  	});
+});
+</script>
+</body>
+</html>

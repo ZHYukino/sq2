@@ -1,0 +1,86 @@
+﻿<!--#include file="../comm/mconn2.asp"-->
+<%
+	Session.CodePage = 65001
+	Response.Charset = "UTF-8"
+	itype = Request.QueryString("itype")
+	Dim mRs
+	Set mRs = Server.CreateObject("Adodb.RecordSet")
+	if itype = 1 then
+		mRs.open "Select preinfoid,preinfocontent from preinfocms where enable=1", conn, 1, 2
+		if not mRs.eof then
+			response.write "{""results"":" & mRs.recordcount & ",""rows"":["
+			do while not mRs.eof
+				response.write "{""preinfoid"":" & mRs("preinfoid") & ",""preinfocontent"":""" & mRs("preinfocontent") & """}"
+				mRs.movenext
+				if not mRs.eof then
+					response.write ","
+				end if
+			loop
+			response.write "]}"
+		end if
+		mRs.close
+	elseif itype = 2 then
+		index = int(Request.QueryString("start"))
+		pageSize = int(Request.QueryString("limit"))
+		mRs.open "Select preinfoid,preinfocontent from preinfocms where enable=1", conn, 1, 2
+		if mRs.recordcount = 0 then
+			response.write "{""results"":" & mRs.recordcount & ",""rows"":[]}"
+			response.End()
+		end if
+		if not mRs.eof then
+			if index + 1 > mRs.recordcount then
+				response.End()
+			end if
+			mRs.absoluteposition = index + 1
+			dim yy
+			if mRs.recordcount > index + pageSize - 1 then
+				yy = index + pageSize - 1
+			else
+			 	yy = mRs.recordcount - 1
+			end if
+			response.write "{""results"":" & mRs.recordcount & ",""rows"":["
+			for i = index to yy
+				response.write "{""preinfoid"":" & mRs("preinfoid") & ",""preinfocontent"":""" & mRs("preinfocontent") & """}"
+				if i < yy then
+					response.write ","
+				end if
+				mRs.movenext
+			next
+			response.write "]}"
+		end if
+		mRs.close
+	elseif itype = 3 then
+		ssql = "insert into PreInfoCms(PreinfoType,PreinfoContent,Enable) values(" & Request("type") & ",'" & mid(Request("content"),2,len(Request("content"))-2) & "',1)"
+		err.clear
+		On Error Resume Next
+		Conn.Execute(ssql)
+		if err.number <> 0 then
+			response.write err.description & ssql3
+			err.clear
+		else
+			response.write "true"
+		end if
+	elseif itype = 4 then
+		ssql = "update PreInfoCms set Enable=0 where preinfoid=" & Request("id")
+		err.clear
+		On Error Resume Next
+		Conn.Execute(ssql)
+		if err.number <> 0 then
+			response.write err.description
+			err.clear
+		else
+			response.write "true"
+		end if
+	elseif itype = 5 then
+		ssql = "update PreInfoCms set PreinfoContent='" & mid(Request("content"),2,len(Request("content"))-2)& "' where preinfoid=" & Request("id")
+		err.clear
+		On Error Resume Next
+		Conn.Execute(ssql)
+		if err.number <> 0 then
+			response.write err.description
+			err.clear
+		else
+			response.write "true"
+		end if
+	end if
+%>

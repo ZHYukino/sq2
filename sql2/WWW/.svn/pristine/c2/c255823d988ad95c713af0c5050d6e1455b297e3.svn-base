@@ -1,0 +1,45 @@
+<!--#include file="../comm/mconn.asp"-->
+<%
+	Session.CodePage = 65001
+	Response.Charset = "UTF-8"
+	itype = Request.QueryString("itype")
+	tunnel = int(Request.QueryString("Tunnel"))
+	If itype = 1 And tunnel <> "" Then
+		Dim mRs
+		Set mRs = Server.CreateObject("Adodb.RecordSet")
+		mRs.open "select DevID,DevTypeName,DevEName,DevCName,Shape from Devpara where Enabled=1 and DevTypeName in('LS','TS') and Tunnel=" & tunnel & " order by UpDown,DevID", conn, 1, 2
+		If Not mRs.eof Then
+			response.write "{""total"":" & mRs.recordcount & ",""rows"":["
+			do while not mRs.eof
+				response.write "{""devid"":""" & mRs("DevID") & """,""devtype"":""" & mRs("DevTypeName") & """,""ename"":""" & mRs("DevEName") & """,""cname"":""" & mRs("DevCName") & """,""shape"":""" & mRs("Shape") & """}"
+				mRs.movenext
+				if not mRs.eof then
+					response.write ","
+				end If
+			Loop
+			response.write "]}"
+		Else
+			Response.write "{""total"":0,""rows"":[]}"
+		End If
+		mRs.close
+	End If
+	If itype = 2 And tunnel <> "" Then
+		Dim mRs2
+		Set mRs2 = Server.CreateObject("Adodb.RecordSet")
+		mRs2.open "select FID,Name from SigPlan where Enabled=1 and Tunnel=" & tunnel, conn, 1, 2
+		If Not mRs2.eof Then
+			response.write "{"
+			do while not mRs2.eof
+				response.write """" & mRs2("FID") & """:{""name"":""" & mRs2("Name") & """}"
+				mRs2.movenext
+				if not mRs2.eof then
+					response.write ","
+				end If
+			Loop
+			response.write "}"
+		Else
+			Response.write ""
+		End If
+		mRs2.close
+	End If
+%>

@@ -1,0 +1,286 @@
+*{margin:0;padding:0;}
+html,body,h1,h2,h3,h4,h5,input,textarea{ 
+	font-family: Microsoft YaHei,Arial,Verdana,"ËÎÌו","Lucida Grande", Lucida, Helvetica, sans-serif;
+}
+html,body,h1,h2,h3,h4,h5{font-size:14px;color:#333;}
+html,body{margin:0;padding:0;line-height:100%;height:auto;height:100%;}
+.ch{clear:both;font-size:1px;width:1px;height:0;visibility:hidden;line-height:0;}
+h1,h2{font-weight:600;margin:0;font-size:14px;display:inline;word-spacing:0;}
+body a{outline:none;blr:expression(this.onFocus=this.blur());}
+a {outline: none; /* for Firefox*/  }
+a {text-decoration:none;}
+a:hover {color:#a10000;text-decoration:underline;}
+/*a:link {color:#000;}
+a:visited {color:#000;}
+a:hover {color:#a10000;text-decoration:underline;}
+a:active {color:#000;}
+*/
+img{border:0;}
+form{display:inline;}
+.clear:after{content:".";height:0;display:block;clear:both;visibility:hidden;font-size:0;}
+.fl{float:left;}
+.fr{float:right;}
+ul{list-style:none;margin:0;padding:0}
+.dn{display:none;}
+.db{display:block;}
+.ta{text-align:center;}
+.div_margin{margin:3px auto;}
+.red{color:red;}
+.font_darkred{color:#a10000;}
+.font_black{color:#000;}
+.div_span{padding:2px 5px 0 0;}
+.ch{clear:both;}
+
+body{
+	background:#ddd;
+	overflow-y:visible;
+	overflow-x:visible;
+}
+
+/* ----------  default start   -----------*/ 
+#default_top_panel{
+	position:absolute;
+	width:100%;
+	height:80px;
+	background:#083F82;
+	z-index:99999;
+}
+
+.default-top-title{
+	font-size:18px;
+	margin:10px 20px 10px 10px;;
+	height:20px;
+	line-height:20px;
+	overflow:hidden;
+	color:#fff;
+}
+
+.default-top-title-line{
+	width:500px;
+	height:1px;
+	margin:0px auto;
+	padding:0px;
+	background-color:#fff;
+	overflow:hidden;
+	display:inline;
+}
+
+.default-top-content{
+	font-size:11px;
+	margin:5px 10px;
+}
+
+.default-top-content-button{
+	width:400px;
+}
+.default-top-content-select{
+	width:200px;
+}
+
+#default_panel{
+	position:absolute;
+	top:80px;
+	left:0;
+}
+
+#default_panel img{
+}
+
+.default-panel-img{
+	
+}
+
+.default-control-panel{
+	height:200px;
+	border:none;
+	border-top:1px solid #000;
+	background:#ddd;
+	position:absolute;
+	bottom:-10px;
+	z-index:99998;
+	overflow:hidden;
+}
+
+.panel-button{
+	float:left;
+	padding:5px;
+}
+/* ----------  default end   -----------*/ 
+
+/* ----------  control start   -----------*/ 
+.control-panel-list{
+   width:200px;
+   position:absolute;	
+   z-index:99999;;
+   top:40px;
+   right:0;
+   background:#fff;
+   border:1px solid #D2D2D2;
+}
+
+.panel-menu{
+	width:180px;
+	height:20px;
+	line-height:20px;
+	padding:10px;
+	font-size:14px;
+	cursor:pointer;
+}
+
+.panel-menu a{
+	text-decoration:none;
+}
+
+.panel-menu:hover{
+	
+	background:#ddd;
+}
+/* ----------  control end   -----------*/ 
+/* ----------
+	width:100%;
+	height:218px;
+	border:1px solid #ddd;
+	background:#f5f5f5;
+	position:absolute;
+	bottom:0;
+-----------*/ 
+
+/* ----------  loadpic start   -----------*/ 
+.default_cover{
+	position:relative;	
+	z-index:10;
+}
+
+.default-pic-TS{
+	position:absolute;	
+	z-index:10;
+}
+
+.default-pic-TS img{
+	cursor:pointer;
+}
+
+.default-pic-LS{
+	position:absolute;	
+	z-index:10;
+}
+
+.default-pic-LS img{
+	cursor:pointer;
+}
+
+.default-pic-LIGHT{
+	position:absolute;	
+	z-index:10;
+}
+
+.default-pic-LIGHT img{
+	cursor:pointer;
+}
+
+.default-pic-LED{
+	position:absolute;	
+	z-index:10;
+}
+
+.default-pic-LED img{
+	cursor:pointer;
+}
+
+.default-pic-FAN{
+	position:absolute;	
+	z-index:10;
+}
+
+.default-pic-FAN img{
+	cursor:pointer;
+}
+
+.default-pic-COVI{
+	position:absolute;
+	z-index:10;
+}
+
+.default-pic-COVI img{
+	cursor:pointer;
+}
+
+.default-pic-FSFX{
+	position:absolute;
+	z-index:10;
+}
+
+.default-pic-FSFX img{
+	cursor:pointer;
+}
+
+.default-pic-FB{
+	position:absolute;
+	z-index:10;
+}
+
+.default-pic-FB img{
+	cursor:pointer;
+}
+
+.default-pic-FGS{
+	position:absolute;
+	z-index:10;
+}
+
+.default-pic-FGS img{
+	cursor:pointer;
+}
+
+.default-pic-FGW{
+	position:absolute;
+	z-index:10;
+}
+
+.default-pic-FGW img{
+	cursor:pointer;
+}
+
+.default-pic-FGR{
+	position:absolute;
+	z-index:10;
+}
+
+.default-pic-FGR img{
+	cursor:pointer;
+}
+
+.default-pic-DOOR{
+	position:absolute;
+	z-index:10;
+}
+
+.default-pic-DOOR img{
+	cursor:pointer;
+}
+
+.default-pic-CAM{
+	position:absolute;
+	z-index:10;
+}
+
+.default-pic-CAM img{
+	cursor:pointer;
+}
+/* ----------  loadpic end   -----------*/ 
+
+/* -----checkbox start----- */
+.checkbox-list-div{
+	margin:5px 3px;
+}
+
+.checkbox-control-div{
+	margin:5px 3px;
+}
+/* -----checkbox end----- */
+
+/* -----select start----- */
+#default_place_select{
+	color:#000;
+}
+/* -----select start----- */

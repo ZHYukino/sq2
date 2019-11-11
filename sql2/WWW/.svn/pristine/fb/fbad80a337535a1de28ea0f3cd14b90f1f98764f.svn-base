@@ -1,0 +1,158 @@
+<!--#include file="../comm/mconn.asp"-->
+<!--#include file="../comm/RWIniFile.inc"-->
+<%
+	Session.CodePage = 65001
+	Response.Charset = "UTF-8"
+	username = session("user")
+	itype = Request.QueryString("itype") '1 风机 2 光照
+	name = Request.QueryString("name") '设备名
+	msg = ""
+	result = 0
+	If username <> "" Then
+		if itype = 1 And name <> "" Then
+			c1cmin = Request.QueryString("c1cmin")
+			c1cmax = Request.QueryString("c1cmax")
+			c1vmin = Request.QueryString("c1vmin")
+			c1vmax = Request.QueryString("c1vmax")
+			c2cmin = Request.QueryString("c2cmin")
+			c2cmax = Request.QueryString("c2cmax")
+			c2vmin = Request.QueryString("c2vmin")
+			c2vmax = Request.QueryString("c2vmax")
+			c3cmin = Request.QueryString("c3cmin")
+			c3cmax = Request.QueryString("c3cmax")
+			c3vmin = Request.QueryString("c3vmin")
+			c3vmax = Request.QueryString("c3vmax")
+			c1hint = Request.QueryString("c1hint")
+			c2hint = Request.QueryString("c2hint")
+			c3hint = Request.QueryString("c3hint")
+			use = Request.QueryString("use")
+			fjintal = Request.QueryString("fjintal")
+			If int(c1cmin) = "" Or Len(c1cmin) = 0 Then c1cmin = 0
+			If int(c1cmax) = "" Or Len(c1cmax) = 0 Then c1cmax = 0
+			If int(c1vmin) = "" Or Len(c1vmin) = 0 Then c1vmin = 0
+			If int(c1vmax) = "" Or Len(c1vmax) = 0 Then c1vmax = 0
+			If int(c2cmin) = "" Or Len(c2cmin) = 0 Then c2cmin = 0
+			If int(c2cmax) = "" Or Len(c2cmax) = 0 Then c2cmax = 0
+			If int(c2vmin) = "" Or Len(c2vmin) = 0 Then c2vmin = 0
+			If int(c2vmax) = "" Or Len(c2vmax) = 0 Then c2vmax = 0
+			If int(c3cmin) = "" Or Len(c3cmin) = 0 Then c3cmin = 0
+			If int(c3cmax) = "" Or Len(c3cmax) = 0 Then c3cmax = 0
+			If int(c3vmin) = "" Or Len(c3vmin) = 0 Then c3vmin = 0
+			If int(c3vmax) = "" Or Len(c3vmax) = 0 Then c3vmax = 0
+			If int(c1hint) = "" Or Len(c1hint) = 0 Then c1hint = 0
+			If int(c2hint) = "" Or Len(c2hint) = 0 Then c2hint = 0
+			If int(c3hint) = "" Or Len(c3hint) = 0 Then c3hint = 0
+			If int(use) = "" Or Len(use) = 0 Then use = 0
+			WriteIni "/FJ.ini",name,"c1cmin",c1cmin
+			WriteIni "/FJ.ini",name,"c1cmax",c1cmax
+			WriteIni "/FJ.ini",name,"c1vmin",c1vmin
+			WriteIni "/FJ.ini",name,"c1vmax",c1vmax
+			WriteIni "/FJ.ini",name,"c2cmin",c2cmin
+			WriteIni "/FJ.ini",name,"c2cmax",c2cmax
+			WriteIni "/FJ.ini",name,"c2vmin",c2vmin
+			WriteIni "/FJ.ini",name,"c2vmax",c2vmax
+			WriteIni "/FJ.ini",name,"c3cmin",c3cmin
+			WriteIni "/FJ.ini",name,"c3cmax",c3cmax
+			WriteIni "/FJ.ini",name,"c3vmin",c3vmin
+			WriteIni "/FJ.ini",name,"c3vmax",c3vmax
+			WriteIni "/FJ.ini",name,"c1hint",c1hint
+			WriteIni "/FJ.ini",name,"c2hint",c2hint
+			WriteIni "/FJ.ini",name,"c3hint",c3hint
+			WriteIni "/FJ.ini",name,"Use",use
+			If int(fjintal) <> "" And fjintal > 0 Then
+				WriteIni "/FJ.ini","Config","FJintal",fjintal
+			End if
+			'日志
+			sql = "insert into LogSys(logman,LogTime,Logdesc,LogMemo,logtype) values ('" & username & "',GETDATE(),'参数修改','修改通风控制方案判断阀值',3)"
+			Conn.Execute(sql)
+			result = 1
+			msg = "修改成功"
+		End If
+		If itype = 2 And name <> "" Then
+			invala1 = Request.QueryString("invala1")
+			invalb1 = Request.QueryString("invalb1")
+			invalc1 = Request.QueryString("invalc1")
+			invald1 = Request.QueryString("invald1")
+			invala2 = Request.QueryString("invala2")
+			invalb2 = Request.QueryString("invalb2")
+			invalc2 = Request.QueryString("invalc2")
+			invald2 = Request.QueryString("invald2")
+			outvala1 = Request.QueryString("outvala1")
+			outvalb1 = Request.QueryString("outvalb1")
+			outvalc1 = Request.QueryString("outvalc1")
+			outvald1 = Request.QueryString("outvald1")
+			outvala2 = Request.QueryString("outvala2")
+			outvalb2 = Request.QueryString("outvalb2")
+			outvalc2 = Request.QueryString("outvalc2")
+			outvald2 = Request.QueryString("outvald2")
+			zmintal = Request.QueryString("zmintal")
+			use1 = Request.QueryString("use1")
+			use2 = Request.QueryString("use2")
+			use3 = Request.QueryString("use3")
+			use4 = Request.QueryString("use4")
+			hint1 = Request.QueryString("hint1")
+			hint2 = Request.QueryString("hint2")
+			hint3 = Request.QueryString("hint3")
+			hint4 = Request.QueryString("hint4")
+			If int(invala1) = "" Or invala1 = "" Then invala1 = 0
+			If int(invalb1) = "" Or invalb1 = "" Then invalb1 = 0
+			If int(invalc1) = "" Or invalc1 = "" Then invalc1 = 0
+			If int(invald1) = "" Or invald1 = "" Then invald1 = 0
+			If int(invala2) = "" Or invala2 = "" Then invala2 = 0
+			If int(invalb2) = "" Or invalb2 = "" Then invalb2 = 0
+			If int(invalc2) = "" Or invalc2 = "" Then invalc2 = 0
+			If int(invald2) = "" Or invald2 = "" Then invald2 = 0
+			If int(outvala1) = "" Or outvala1 = "" Then outvala1 = 0
+			If int(outvalb1) = "" Or outvalb1 = "" Then outvalb1 = 0
+			If int(outvalc1) = "" Or outvalc1 = "" Then outvalc1 = 0
+			If int(outvald1) = "" Or outvald1 = "" Then outvald1 = 0
+			If int(outvala2) = "" Or outvala2 = "" Then outvala2 = 0
+			If int(outvalb2) = "" Or outvalb2 = "" Then outvalb2 = 0
+			If int(outvalc2) = "" Or outvalc2 = "" Then outvalc2 = 0
+			If int(outvald2) = "" Or outvald2 = "" Then outvald2 = 0
+			If int(use1) = "" Or use1 = "" Then use1 = 0
+			If int(use2) = "" Or use2 = "" Then use2 = 0
+			If int(use3) = "" Or use3 = "" Then use3 = 0
+			If int(use4) = "" Or use4 = "" Then use4 = 0
+			If int(hint1) = "" Or hint1 = "" Then hint1 = 0
+			If int(hint2) = "" Or hint2 = "" Then hint2 = 0
+			If int(hint3) = "" Or hint3 = "" Then hint3 = 0
+			If int(hint4) = "" Or hint4 = "" Then hint4 = 0
+			WriteIni "/ZM.ini",name,"inVala1",invala1
+			WriteIni "/ZM.ini",name,"inValb1",invalb1
+			WriteIni "/ZM.ini",name,"inValc1",invalc1
+			WriteIni "/ZM.ini",name,"inVald1",invald1
+			WriteIni "/ZM.ini",name,"inVala2",invala2
+			WriteIni "/ZM.ini",name,"inValb2",invalb2
+			WriteIni "/ZM.ini",name,"inValc2",invalc2
+			WriteIni "/ZM.ini",name,"inVald2",invald2
+			WriteIni "/ZM.ini",name,"outVala1",outvala1
+			WriteIni "/ZM.ini",name,"outValb1",outvalb1
+			WriteIni "/ZM.ini",name,"outValc1",outvalc1
+			WriteIni "/ZM.ini",name,"outVald1",outvald1
+			WriteIni "/ZM.ini",name,"outVala2",outvala2
+			WriteIni "/ZM.ini",name,"outValb2",outvalb2
+			WriteIni "/ZM.ini",name,"outValc2",outvalc2
+			WriteIni "/ZM.ini",name,"outVald2",outvald2
+			WriteIni "/ZM.ini",name & "晴天","Use",use1
+			WriteIni "/ZM.ini",name & "晴天","Hint",hint1
+			WriteIni "/ZM.ini",name & "阴天","Use",use2
+			WriteIni "/ZM.ini",name & "阴天","Hint",hint2
+			WriteIni "/ZM.ini",name & "晚上","Use",use3
+			WriteIni "/ZM.ini",name & "晚上","Hint",hint3
+			WriteIni "/ZM.ini",name & "夜间","Use",use4
+			WriteIni "/ZM.ini",name & "夜间","Hint",hint4
+			If int(zmintal) <> "" And zmintal > 0 Then
+				WriteIni "/ZM.ini","Config","ZMintal",zmintal
+			End if
+			'日志
+			sql = "insert into LogSys(logman,LogTime,Logdesc,LogMemo,logtype) values ('" & username & "',GETDATE(),'参数修改','修改照明控制方案判断阀值',3)"
+			Conn.Execute(sql)
+			result = 1
+			msg = "修改成功"
+		End If
+	Else
+		msg = "未登录不可进行操作"
+	End If
+	Response.write "{""result"":" & result & ",""msg"":""" & msg & """}"
+%>

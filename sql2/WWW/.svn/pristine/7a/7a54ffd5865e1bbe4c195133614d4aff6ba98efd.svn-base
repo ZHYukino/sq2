@@ -1,0 +1,14 @@
+﻿<!--#include file="../comm/mconn.asp"-->
+<%
+	Session.CodePage=65001
+	Response.Charset="UTF-8"
+	itype = Request.QueryString("itype")
+	if itype = 1 then
+		Dim mRs
+		ssql = "insert into syslog(useracc,dt,logtype,joinid,logmemo,userip) values ('"& Request("useracc") & "',GETDATE()," & Request("logtype") & "," & Request("joinid") &  ",'" & Request("logmemo") &  "','" & Request("userip") &"')"
+		Conn.Execute(ssql)
+		Set mRs=Conn.Execute("SELECT @@IDENTITY as newIDValue")
+		response.write "{'success':true,'id': '" & mRs("newIDValue") & "'}"
+		mRs.close
+	end if
+%>

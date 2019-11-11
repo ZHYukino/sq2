@@ -1,0 +1,436 @@
+﻿<!--#include file="../comm/mconn.asp"-->
+<%
+	Session.CodePage = 65001
+	Response.Charset = "UTF-8"
+	itype = Request.QueryString("itype")
+	name = Request.Querystring("DevTypeName")
+	tunnel = Request.QueryString("Tunnel")
+	if itype = 1 Then
+		Dim mRs
+		Set mRs = Server.CreateObject("Adodb.RecordSet")
+		mRs.open "Select a.DevID id,a.DevEName ename,a.DevCName cname,a.Shape shape,a.DevAddr addr,a.UpDown updown,a.PointX xvalue,a.PointY yvalue,a.ScreenWidth wvalue,a.ScreenHeight hvalue,b.State state,c.i1 i1,c.i2 i2,c.n1 n1,c.n2 n2 from devpara a left join devstate b on a.DevID=b.DevID left join devvalue c on a.DevID=c.DevID where a.Enabled=1 and a.DevTypeName='" & name & "' and a.Tunnel=" & tunnel, conn, 1, 2
+		if not mRs.eof then
+			response.write "{""results"": " & mRs.recordcount & ",""rows"": ["
+			do while not mRs.eof
+				flag = 0 '故障标识
+				id = mRs("id")
+				updown = mRs("updown")
+				state = mRs("state")
+				shape = mRs("shape") '车道指示标志根据shape值,分为1-5态
+				picurl = "../pic/error.gif"
+				i1 = mRs("i1")
+				i2 = mRs("i2") '风机状况标识 0正常1有问题
+				n1 = mRs("n1")
+				n2 = mRs("n2")
+				ename = mRs("ename")
+				cname = mRs("cname")
+				title = ename & "&#13;" & cname & "&#13;" '页面图片提示信息
+				xvalue = mRs("xvalue")
+				yvalue = mRs("yvalue")
+				hvalue = mRs("hvalue")
+				wvalue = mRs("wvalue")
+				addr = mRs("addr")
+				If addr <> "" Then
+					title = title & addr & "&#13;"
+				End If
+				Select Case updown
+					Case 0
+						title = title & "上行右线&#13;"
+					Case 1
+						title = title & "下行左线&#13;"
+					Case 2
+						title = title & "其它(变电所)&#13;"
+					Case Else
+						'属于无上下行区分设备,不处理
+				End Select
+				Select Case state
+					Case 1
+						title = title & "设备正常&#13;"
+					Case 2
+						title = title & "设备故障&#13;"
+						flag = 1 '标识为故障
+					Case 3
+						title = title & "采集程序异常&#13;"
+					Case Else
+						title = title & "数据库异常(devstate)&#13;"
+				End Select
+				'判断显示图片
+				response.write "{""id"":" & id & ",""pointx"":""" & xvalue & """,""pointy"":""" & yvalue & """,""width"":""" & wvalue & """,""height"":""" & hvalue & """"
+				Select Case name
+					'交通信号灯
+					Case "TS"
+						If flag = 0 then
+							Select Case i1
+								Case 0
+									picurl = "../pic/roadsig5.png"
+									title = title & "关闭"
+								Case 1
+									picurl = "../pic/roadsig2.png"
+									title = title & "红灯"
+								Case 2
+									picurl = "../pic/roadsig1.png"
+									title = title & "黄灯"
+								Case 4
+									picurl = "../pic/roadsig0.png"
+									title = title & "绿灯"
+								Case 8
+									If updown = 1 then
+										picurl = "../pic/roadsig4.png"
+									Else
+										picurl = "../pic/roadsig3.png"
+									End If
+									title = title & "左转"
+								Case Else
+									title = title & "数据库异常(devvalue)"
+							End Select
+						Else
+							picurl = "../pic/errorpic/error-roadsig.png"
+						End if
+					'车道指示标志
+					Case "LS"
+						response.write ",""shape"":" & shape
+						If flag = 0 Then
+							Select Case shape
+								Case 1
+									Select Case i1
+										Case 0
+											picurl = "../pic/sigF.png"
+											title = title & "禁止"
+										Case 1
+											picurl = "../pic/sigG.png"
+											title = title & "通行"
+										Case Else
+											title = title & "数据库异常(devvalue)"
+									End Select
+								Case 2
+									Select Case i1
+										Case 0
+											picurl = "../pic/sigC.png"
+											title = title & "双向禁止"
+										Case 1
+											If updown = 1 Then
+												picurl = "../pic/sigA.png"
+											Else
+												picurl = "../pic/sigB.png"
+											End if
+											title = title & "正向通行"
+										Case Else
+											title = title & "数据库异常(devvalue)"
+									End Select
+								Case 3
+									Select Case i1
+										Case 0
+											picurl = "../pic/sigC.png"
+											title = title & "双向禁止"
+										Case 1
+											If updown = 1 Then
+												picurl = "../pic/sigA.png"
+											Else
+												picurl = "../pic/sigB.png"
+											End if
+											title = title & "正向通行"
+										Case 3
+											If updown = 1 Then
+												picurl = "../pic/sigB.png"
+											Else
+												picurl = "../pic/sigA.png"
+											End If
+											title = title & "反向通行"
+										Case Else
+											title = title & "数据库异常(devvalue)"
+									End Select
+								Case 4
+									Select Case i1
+										Case 0
+											picurl = "../pic/sigC.png"
+											title = title & "双向禁止"
+										Case 1
+											If updown = 1 Then
+												picurl = "../pic/sigA.png"
+											Else
+												picurl = "../pic/sigB.png"
+											End if
+											title = title & "正向通行"
+										Case 3
+											If updown = 1 Then
+												picurl = "../pic/sigB.png"
+											Else
+												picurl = "../pic/sigA.png"
+											End If
+											title = title & "反向通行"
+										Case 5
+											If updown = 1 Then
+												picurl = "../pic/sigD.png"
+											Else
+												picurl = "../pic/sigE.png"
+											End If
+											title = title & "左转通行"
+										Case Else
+											title = title & "数据库异常(devvalue)"
+									End Select
+								Case 5
+									Select Case i1
+										Case 0
+											picurl = "../pic/sigC.png"
+											title = title & "双向禁止"
+										Case 1
+											If updown = 1 Then
+												picurl = "../pic/sigA.png"
+											Else
+												picurl = "../pic/sigB.png"
+											End if
+											title = title & "正向通行"
+										Case 3
+											If updown = 1 Then
+												picurl = "../pic/sigB.png"
+											Else
+												picurl = "../pic/sigA.png"
+											End If
+											title = title & "反向通行"
+										Case 5
+											If updown = 1 Then
+												picurl = "../pic/sigD.png"
+											Else
+												picurl = "../pic/sigE.png"
+											End If
+											title = title & "左转通行"
+										Case Else
+											title = title & "数据库异常(devvalue)"
+									End Select
+								Case Else
+									title = title & "数据库异常(devpara)"
+							End select
+						Else
+							If shape <> 1 then
+								picurl = "../pic/errorpic/error-sigC.png"
+							Else
+								picurl = "../pic/errorpic/error-sig.png"
+							End if
+						End if
+					'光强
+					Case "LIGHT"
+						If flag = 0 then
+							picurl = "../pic/ld.png"
+							title = title & "In: " & n1 & "&#13;Out: " & n2
+						Else
+							picurl = "../pic/errorpic/error-ld.png"
+						End if
+					'照明
+					Case "LED"
+						If flag = 0 then
+							Select Case i1
+								Case 0
+									If updown = 1 Then
+										picurl = "../pic/light_offB.png"
+									Else
+										picurl = "../pic/light_offA.png"
+									End If
+									title = title & "关"
+								Case 1
+									If updown = 1 Then
+										picurl = "../pic/light_onB.png"
+									Else
+										picurl = "../pic/light_onA.png"
+									End If
+									title = title & "开"
+								Case Else
+									title = title & "数据库异常(devvalue)"
+							End Select
+						Else
+							picurl = "../pic/errorpic/error-linght.png"
+						End if
+					'风机
+					Case "FAN"
+						If flag = 0 Then
+							Select Case i1
+								Case 0
+									If i2 = 0 Then
+										If updown = 1 Then
+											picurl = "../pic/fan5.gif"
+										Else
+											picurl = "../pic/fan2.gif"
+										End if
+										title = title & "停止"
+									Else
+										If updown = 1 Then
+											picurl = "../pic/falsepic/false-fan5.png"
+										Else
+											picurl = "../pic/falsepic/false-fan2.png"
+										End if
+										title = title & "停止(风机可能有问题)"
+									End If
+								Case 1
+									If i2 = 0 Then
+										If updown = 1 Then
+											picurl = "../pic/fan4.gif"
+										Else
+											picurl = "../pic/fan1.gif"
+										End if
+										title = title & "正转"
+									Else
+										If updown = 1 Then
+											picurl = "../pic/falsepic/false-fan4.png"
+										Else
+											picurl = "../pic/falsepic/false-fan1.png"
+										End if
+										title = title & "正转(风机可能有问题)"
+									End If
+								Case 2
+									If i2 = 0 Then
+										If updown = 1 Then
+											picurl = "../pic/fan3.gif"
+										Else
+											picurl = "../pic/fan0.gif"
+										End if
+										title = title & "反转"
+									Else
+										If updown = 1 Then
+											picurl = "../pic/falsepic/false-fan3.png"
+										Else
+											picurl = "../pic/falsepic/false-fan0.png"
+										End if
+										title = title & "反转(风机可能有问题)"
+									End If
+								Case Else
+									title = title & "数据库异常(devvalue)"
+							End Select
+						Else
+							If updown = 1 Then
+								picurl = "../pic/errorpic/error-fan2.png"
+							Else
+								picurl = "../pic/errorpic/error-fan.png"
+							End if
+						End if
+					'COVI
+					Case "COVI"
+						If flag = 0 then
+							picurl = "../pic/covi.png"
+							title = title & "CO: " & n1 & "&#13;VI: " & n2
+						Else
+							picurl = "../pic/errorpic/error-covi.png"
+						End if
+					'风速风向
+					Case "FSFX"
+						If flag = 0 then
+							picurl = "../pic/fsfx.png"
+							Select Case i1
+								Case 0
+									title = title & "风向: 逆车行方向"
+								Case 1
+									title = title & "风向: 顺车行方向"
+								Case Else
+									title = title & "风向: 数据库异常(devvalue)"
+							End Select
+							title = title & "&#13;风速: " & n1
+						Else
+							picurl = "../pic/errorpic/error-fsfx.png"
+						End if
+					Case "FB"
+						If flag = 0 then
+							Select Case i1
+								Case 0
+									picurl = "../pic/fire2.gif"
+									title = title & "正常"
+								Case 1
+									picurl = "../pic/fire1.gif"
+									title = title & "火警"
+								Case Else
+									title = title & "数据库异常(devvalue)"
+							End Select
+						Else
+							picurl = "../pic/errorpic/error-fire2.png"
+						End if
+					Case "FGS"
+						If flag = 0 then
+							Select Case i1
+								Case 0
+									picurl = "../pic/fire4.gif"
+									title = title & "正常"
+								Case 1
+									picurl = "../pic/fire3.gif"
+									title = title & "火警"
+								Case Else
+									title = title & "数据库异常(devvalue)"
+							End Select
+						Else
+							picurl = "../pic/errorpic/error-fire4.png"
+						End if
+					Case "FGW"
+						If flag = 0 then
+							Select Case i1
+								Case 0
+									picurl = "../pic/fire7.gif"
+									title = title & "正常"
+								Case 1
+									picurl = "../pic/fire8.gif"
+									title = title & "火警"
+								Case Else
+									title = title & "数据库异常(devvalue)"
+							End Select
+						Else
+							picurl = "../pic/errorpic/error-fire7.png"
+						End if
+					Case "FGR"
+						If flag = 0 then
+							Select Case i1
+								Case 0
+									picurl = "../pic/fire11.gif"
+									title = title & "正常"
+								Case 1
+									picurl = "../pic/fire10.gif"
+									title = title & "火警"
+								Case Else
+									title = title & "数据库异常(devvalue)"
+							End Select
+						Else
+							picurl = "../pic/errorpic/error-fire11.png"
+						End if
+					'摄像机
+					Case "CAM"
+						if updown = 0 Then
+							If flag = 0 then
+								picurl = "../pic/camer1.ico"
+							Else
+								picurl = "../pic/errorpic/error-camer1.png"
+							End if
+						Else
+							If flag = 0 then
+								picurl = "../pic/camer2.ico"
+							Else
+								picurl = "../pic/errorpic/error-camer2.png"
+							End if
+						End If
+					Case "DOOR"
+						If flag = 0 Then
+							Select Case i1
+								Case 1
+									picurl = "../pic/doorC.gif"
+									title = title & "上位"
+								Case 2
+									picurl = "../pic/doorB.gif"
+									title = title & "中位"
+								Case 3
+									picurl = "../pic/doorA.gif"
+									title = title & "下位"
+								Case Else
+									title = title & "数据库异常(devvalue)"
+							End Select
+						Else
+							picurl = "../pic/errorpic/error-doorA.png"
+						End if
+					Case Else
+						title = title & "该设备类别未处理"
+				End Select
+				response.write ",""state"":" & state & ",""picurl"":""" & picurl & """,""title"":""" & title & """}"
+				mRs.movenext
+				if not mRs.eof then
+					response.write ","
+				end if				
+			Loop
+			response.write "]}"
+		'else
+		'	Response.write "{'results':0,'rows':[]}"
+		end if
+	mRs.close
+	End if
+%>

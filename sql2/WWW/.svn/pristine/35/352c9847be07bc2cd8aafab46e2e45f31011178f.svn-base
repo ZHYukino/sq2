@@ -1,0 +1,93 @@
+<!--#include file="../comm/mconn.asp"-->
+<%
+	Session.CodePage = 65001
+	Response.Charset = "UTF-8"
+	itype = Request.Form("itype") '1 风机 2 光照 3 时间 不验证直接修改
+	username = session("user")
+	msg = ""
+	result = 0
+	If username <> "" Then
+		'Dim mRs
+		'Set mRs = Server.CreateObject("Adodb.RecordSet")
+		'mRs.open "select Account from Popedom where Have=0 and Account='" & username & "'", conn, 1, 2
+		'if not mRs.eof Then
+			'mRs.close
+			if itype = 1 Then
+				For i = 0 To 2
+					ssval = Request.Form("ssval" & i)
+					seval = Request.Form("seval" & i)
+					esval = Request.Form("esval" & i)
+					eeval = Request.Form("eeval" & i)
+					enabled = Request.Form("enabled" & i)
+					showhint = Request.Form("showhint" & i)
+					If int(ssval) = "" Or Len(ssval) = 0 Then ssval = 0
+					If int(seval) = "" Or Len(seval) = 0 Then seval = 0
+					If int(esval) = "" Or Len(esval) = 0 Then esval = 0
+					If int(eeval) = "" Or Len(eeval) = 0 Then eeval = 0
+					If enabled <> 1 Then enabled = 0
+					If showhint <> 1 Then showhint = 0
+					sql = "update AutoFJ set FSCoVal=" & ssval & ",FSViVal=" & seval & ",FECoVal=" & esval & ",FEViVal=" & eeval & ",FEnabled=" & enabled & ",FshowHint=" & showhint & " where FType=" & i + 1
+					Conn.Execute(sql)
+				next
+				'日志
+				sql = "insert into LogSys(logman,LogTime,Logdesc,LogMemo,logtype) values ('" & username & "',GETDATE(),'参数修改','修改通风控制方案判断阀值',3)"
+				Conn.Execute(sql)
+				result = 1
+				msg = "修改成功"
+			End If
+			If itype = 2 Then
+				For i = 0 To 3
+					ssval = Request.Form("ssval" & i)
+					seval = Request.Form("seval" & i)
+					esval = Request.Form("esval" & i)
+					eeval = Request.Form("eeval" & i)
+					enabled = Request.Form("enabled" & i)
+					showhint = Request.Form("showhint" & i)
+					timeval = Request.Form("timeval" & i)
+					If int(ssval) = "" Or Len(ssval) = 0 Then ssval = 0
+					If int(seval) = "" Or Len(seval) = 0 Then seval = 0
+					If int(esval) = "" Or Len(esval) = 0 Then esval = 0
+					If int(eeval) = "" Or Len(eeval) = 0 Then eeval = 0
+					If enabled <> 1 Then enabled = 0
+					If showhint <> 1 Then showhint = 0
+					If int(timeval) = "" Or Len(timeval) = 0 Then timeval = 60
+					sql = "update AutoZM set FSInVal=" & ssval & ",FSOutVal=" & seval & ",FEInVal=" & esval & ",FEOutVal=" & eeval & ",FEnabled=" & enable & ",FshowHint=" & showhint & ",FTimeInterval=" & timeval & " where FType=" & i + 1
+					Conn.Execute(sql)
+				next
+				'日志
+				sql = "insert into LogSys(logman,LogTime,Logdesc,LogMemo,logtype) values ('" & username & "',GETDATE(),'参数修改','修改照明控制方案判断阀值',3)"
+				Conn.Execute(sql)
+				result = 1
+				msg = "修改成功"
+			End If
+			If itype = 3 Then
+				enabled = Request.Form("enabled")
+				showhint = Request.Form("showhint")
+				timeval = Request.Form("timeval")
+				id = Request.Form("id")
+				If enabled <> 1 Then enabled = 0
+				If showhint <> 1 Then showhint = 0
+				If IsDate(timeval) Then
+					msg = FormatDateTime(CDate(timeval),4)
+					If id = 11 Or id = 12 Or id = 13 Or id = 14 Or id = 15 Or id = 16 Or id = 17 Or id = 18 then
+						sql = "update AutoZM set FEnabled=" & enabled & ",FshowHint=" &	showhint & ",FTime='" & timeval & "' where FType=" & id
+						Conn.Execute(sql)
+						'日志(无)
+						result = 1
+						msg = "修改成功"
+					Else
+						msg = "请求参数异常"
+					End If
+				Else
+					msg = "请求参数异常"
+				End if
+			End if
+		'Else
+		'	msg = "没有权限进行操作(0)"
+		'End If
+		'mRs.close
+	Else
+		msg = "未登录不可进行操作"
+	End If
+	Response.write "{""result"":" & result & ",""msg"":""" & msg & """}"
+%>

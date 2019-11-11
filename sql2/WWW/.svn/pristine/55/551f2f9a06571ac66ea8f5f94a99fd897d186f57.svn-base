@@ -1,0 +1,20 @@
+<!--#include file="../comm/mconn.asp"-->
+<%
+	Session.CodePage = 65001
+	Response.Charset = "UTF-8"
+	username = session("user")
+	id = int(Request.QueryString("id"))
+	state = int(Request.QueryString("state"))
+	msg = ""
+	result = 0
+	If username <> "" Then
+		if id <> "" And state <> "" Then
+			sql = "update Devsend set i1=" & state & ",State=-1,SendTime=GETDATE() where DevID=" & id
+			Conn.Execute(sql)
+		End If
+		result = 1
+	Else
+		msg = "未登录不可进行操作"
+	End If
+	Response.write "{""result"":" & result & ",""msg"":""" & msg & """}"
+%>

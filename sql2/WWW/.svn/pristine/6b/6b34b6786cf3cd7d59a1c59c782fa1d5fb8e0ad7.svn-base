@@ -1,0 +1,41 @@
+<!--#include file="../comm/mconn.asp"-->
+<%
+	Session.CodePage = 65001
+	Response.Charset = "UTF-8"
+	itype = Request.QueryString("itype")
+	if itype = 1 Then
+		cookie = Request.Cookies("CheckList")
+		If cookie = "" then
+			Response.Cookies("CheckList")("TS") = 1
+			Response.Cookies("CheckList")("LS") = 1
+			Response.Cookies("CheckList")("LIGHT") = 1
+			Response.Cookies("CheckList")("LED") = 1
+			Response.Cookies("CheckList")("FAN") = 1
+			Response.Cookies("CheckList")("COVI") = 1
+			Response.Cookies("CheckList")("FSFX") = 1
+			Response.Cookies("CheckList")("CAM") = 1
+			Response.Cookies("CheckList")("FB") = 1
+			Response.Cookies("CheckList")("FGS") = 1
+			Response.Cookies("CheckList")("FGW") = 1
+			Response.Cookies("CheckList")("FGR") = 1
+			Response.Cookies("CheckList")("DOOR") = 1
+			Response.Cookies("CheckList").Expires = (now() + 30)
+			Response.write "{""TS"": 1 ,""LS"": 1 ,""LIGHT"": 1 ,""LED"": 1 ,""FAN"": 1 ,""COVI"": 1 ,""FSFX"": 1 ,""CAM"": 1 ,""FB"": 1 ,""FGS"": 1 ,""FGW"": 1 ,""FGR"": 1 ,""DOOR"": 1 }"
+		else
+			Response.write "{""TS"": " & Request.Cookies("CheckList")("TS") & " ,""LS"": " & Request.Cookies("CheckList")("LS") & " ,""LIGHT"": " & Request.Cookies("CheckList")("LIGHT") & " ,""LED"": " & Request.Cookies("CheckList")("LED") & " ,""FAN"": " & Request.Cookies("CheckList")("FAN") & " ,""COVI"": " & Request.Cookies("CheckList")("COVI") & " ,""FSFX"": " & Request.Cookies("CheckList")("FSFX") & " ,""CAM"": " & Request.Cookies("CheckList")("CAM") & " ,""FB"": " & Request.Cookies("CheckList")("FB") & " ,""FGS"": " & Request.Cookies("CheckList")("FGS") & " ,""FGW"": " & Request.Cookies("CheckList")("FGW") & " ,""DOOR"": " & Request.Cookies("CheckList")("DOOR") & " ,""FGR"": " & Request.Cookies("CheckList")("FGR") & " }"
+		end if
+	Else 
+		If itype = 0 then
+			name = Request.QueryString("name")
+			If name <> "" then
+				value = Request.Cookies("CheckList")(name)
+				If value <> 0 Then
+					value = 0
+				Else
+					value = 1
+				End If
+				Response.Cookies("CheckList")(name) = value
+			End if
+		End if
+	end if
+%>

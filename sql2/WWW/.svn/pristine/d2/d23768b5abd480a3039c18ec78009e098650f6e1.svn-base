@@ -1,0 +1,60 @@
+﻿<!--#include file="../comm/mconn.asp"-->
+<%
+	Session.CodePage = 65001
+	Response.Charset = "UTF-8"
+	itype = Request.QueryString("itype")
+	name = Request.Querystring("DevTypeName")
+	tunnel = int(Request.QueryString("Tunnel"))
+	if itype = 1 And name <> "" And tunnel <> "" Then
+		Dim mRs
+		Set mRs = Server.CreateObject("Adodb.RecordSet")
+		mRs.open "Select a.DevID id,a.DevEName ename,a.DevCName cname,a.Shape shape,a.DevAddr addr,a.UpDown updown,a.PointX xvalue,a.PointY yvalue,a.ScreenWidth wvalue,a.ScreenHeight hvalue,a.IPAddr ipaddr,a.IPPort ipport,b.State state,c.i1 i1,c.i2 i2,c.n1 n1,c.n2 n2 from devpara a left join devstate b on a.DevID=b.DevID left join devvalue c on a.DevID=c.DevID where a.Enabled=1 and a.DevTypeName='" & name & "' and a.Tunnel=" & tunnel, conn, 1, 2
+		if not mRs.eof then
+			response.write "{""results"": " & mRs.recordcount & ",""rows"": ["
+			do while not mRs.eof
+				title = mRs("ename") & "&#13;" & mRs("cname") & "&#13;"
+				If mRs("addr") <> "" Then
+					title = title & mRs("addr") & "&#13;"
+				End If
+				Select Case mRs("updown")
+					Case 0
+						title = title & "上行右线&#13;"
+					Case 1
+						title = title & "下行左线&#13;"
+					Case 2
+						title = title & "其它(变电所)&#13;"
+					Case Else
+						'属于无上下行区分设备,不处理
+				End Select
+				response.write "{""id"":""" & mRs("id") & """,""pointx"":""" & mRs("xvalue") & """,""pointy"":""" & mRs("yvalue") & """,""width"":""" & mRs("wvalue") & """,""height"":""" & mRs("hvalue") & """,""state"":""" & mRs("state") & """,""shape"":""" & mRs("shape") & """,""updown"":""" & mRs("updown") & """,""i1"":""" & mRs("i1") & """,""i2"":""" & mRs("i2") & """,""n1"":""" & mRs("n1") & """,""n2"":""" & mRs("n2") & """,""title"":""" & title & """"
+				If name = "CAM" Then
+					Response.write ",""ipaddr"":""" & mRs("ipaddr") & """,""ipport"":""" & mRs("ipport") & """"
+				End If
+				Response.write "}"
+				mRs.movenext
+				if not mRs.eof then
+					response.write ","
+				end If
+			Loop
+			response.write "]}"
+		end if
+		mRs.close
+	End if
+	If itype = 2 And name <> "" And tunnel <> "" Then
+		Dim mRs2
+		Set mRs2 = Server.CreateObject("Adodb.RecordSet")
+		mRs2.open "Select a.DevID id,a.Shape shape,a.UpDown updown,b.State state,c.i1 i1,c.i2 i2,c.n1 n1,c.n2 n2 from devpara a left join devstate b on a.DevID=b.DevID left join devvalue c on a.DevID=c.DevID where a.Enabled=1 and a.DevTypeName='" & name & "' and a.Tunnel=" & tunnel, conn, 1, 2
+		if not mRs2.eof then
+			response.write "{""results"": " & mRs2.recordcount & ",""rows"": ["
+			do while not mRs2.eof
+				response.write "{""id"":""" & mRs2("id") & """,""state"":""" & mRs2("state") & """,""shape"":""" & mRs2("shape") & """,""updown"":""" & mRs2("updown") & """,""i1"":""" & mRs2("i1") & """,""i2"":""" & mRs2("i2") & """,""n1"":""" & mRs2("n1") & """,""n2"":""" & mRs2("n2") & """}"
+				mRs2.movenext
+				if not mRs2.eof then
+					response.write ","
+				end If
+			Loop
+			response.write "]}"
+		End If
+		mRs2.close
+	End if
+%>

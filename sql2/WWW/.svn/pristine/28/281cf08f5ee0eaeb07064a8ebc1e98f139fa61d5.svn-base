@@ -1,0 +1,643 @@
+﻿Ext.namespace('Ext.cy2');
+
+Ext.cy2.cb_type_store = new Ext.data.SimpleStore({
+	fields: ['disp', 'valu'],
+	data : [['直接显示',0],['从下往上',1],['从上往下',2],['从左往右',3],['从右往左',4]]
+});
+Ext.cy2.cb_fontname_store = new Ext.data.SimpleStore({
+	fields: ['disp', 'valu'],
+	data : [['宋体',0],['楷体',1],['黑体',2]]
+});
+Ext.cy2.cb_fontsize_store = new Ext.data.SimpleStore({
+	fields: ['disp', 'valu'],
+	data : [['48*48',0],['40*40',1],['32*32',2],['24*24',3],['20*20',4],['16*16',5]]
+});
+Ext.cy2.cb_fontcolor_store = new Ext.data.SimpleStore({
+	fields: ['disp', 'valu'],
+	data : [['红色',0],['绿色',1],['黄色',2]]
+});
+/*
+Ext.cy2.cb_memo_store = new Ext.data.SimpleStore({
+	fields: ['disp', 'valu'],
+	data : [['进入隧道请开大灯',0],['注意安全一路平安',1],['文明驾驶一路顺风',2]]
+});*/
+Ext.cy2.cb_memo_store = new Ext.data.Store({
+	proxy: new Ext.data.HttpProxy({
+    	url:'json/getpreinfocms.asp?itype=1&q=9'
+	}),
+	reader: new Ext.data.JsonReader({
+    	totalProperty: "results", 
+        successProperty: true,    
+        root: "rows",            
+        id: "preinfoid" 		
+		},[{name:'value',mapping:'preinfoname'},
+		   {name:'disp',mapping:'preinfocontent'}
+		]
+	)
+});
+Ext.cy2.cb_memo_store.load();
+
+Ext.cy2.devselectid = -1;
+Ext.cy2.setselectid=function(){
+	if (Ext.cy2.devselectid !=-1){
+		Ext.getCmp('gd_devtcms').getSelectionModel().selectRow(Ext.cy2.devselectid);
+		Ext.cy2.devselectid = -1;
+	}else{
+		Ext.getCmp('gd_devtcms').getSelectionModel().clearSelections()	
+	}
+}
+Ext.cy2.gd_dev_ds = new Ext.data.Store({
+        url: 'json/getpara.asp?itype=1&q=9',
+        reader: new Ext.data.JsonReader(
+                {
+                    totalProperty: "results", 
+                    successProperty: true,    
+                    root: "rows",            
+                    id: "id"                
+                }, [{name : 'devid',mapping:'id'},
+					{ name: 'devno'},
+                    { name: 'daddr'}            
+                ]
+            ),
+		listeners:{ 
+			load : function(){  
+				Ext.cy2.setselectid();
+			} 
+		}
+});
+//Ext.cy2.gd_dev_ds.load();
+
+Ext.cy2.checkColumn = new Ext.grid.CheckboxSelectionModel({
+    width:20,// Width
+    singleSelect:false// Is radio, true multi-select  . The default  false.
+});
+	
+Ext.cy2.gd_command_data = [];
+
+Ext.cy2.rt = Ext.data.Record.create([
+	{name: 'stay'},
+	{name: 'speed'},
+	{name: 'otype'},
+	{name: 'fname'},
+	{name: 'ileft'},
+	{name: 'itop'},
+	{name: 'fsize'},
+	{name: 'fcolor'},
+	{name: 'dtext'}
+]);
+
+Ext.cy2.gd_command_ds = new Ext.data.Store({
+     proxy: new Ext.data.MemoryProxy(Ext.cy2.gd_command_data),
+	 autoLoad: true,
+     reader: new Ext.data.ArrayReader({}, Ext.cy2.rt)
+});
+
+Ext.cy2.gd_command_ds.load();
+
+Ext.cy2.viewtip=function(value, meta, rec, rowIdx, colIdx, ds){  
+    return '<div ext:qtitle="" ext:qtip="' + value + '">'+ value +'</div>';  
+}
+
+Ext.cy2.AddGrid =function (){
+	var aa = new Ext.cy2.rt({
+		stay:Ext.getCmp('edStaytcms').getValue(),
+		speed:Ext.getCmp('edSpeedtcms').getValue(),
+		otype:Ext.getCmp('cbtypetcms').getRawValue(),
+		fname:Ext.getCmp('cbFNametcms').getRawValue(),
+		ileft:Ext.getCmp('edLefttcms').getValue(),
+		itop:Ext.getCmp('edToptcms').getValue(),
+		fsize:Ext.getCmp('cbFSizetcms').getRawValue(),
+		fcolor:Ext.getCmp('cbFColortcms').getRawValue(),
+		dtext:Ext.getCmp('addTexttcms').getValue()
+	});
+	Ext.cy2.gd_command_ds.add(aa);
+}
+
+Ext.cy2.EditGrid=function (){
+	var rows=Ext.getCmp('gd_commandtcms').getSelectionModel().getSelections();
+	if (rows.length > 0){
+		rows[0].set('stay', Ext.getCmp('edStaytcms').getValue());
+		rows[0].set('speed', Ext.getCmp('edSpeedtcms').getValue());
+		rows[0].set('otype', Ext.getCmp('cbtypetcms').getRawValue());
+		rows[0].set('fname', Ext.getCmp('cbFNametcms').getRawValue());
+		rows[0].set('ileft', Ext.getCmp('edLefttcms').getValue());
+		rows[0].set('itop', Ext.getCmp('edToptcms').getValue());
+		rows[0].set('fsize', Ext.getCmp('cbFSizetcms').getRawValue());
+		rows[0].set('fcolor', Ext.getCmp('cbFColortcms').getRawValue());
+		rows[0].set('dtext', Ext.getCmp('addTexttcms').getValue());		
+	}	
+}
+
+Ext.cy2.DeleteGrid=function (){
+	var rows=Ext.getCmp('gd_commandtcms').getSelectionModel().getSelections();
+	if (rows.length > 0){
+		var sm = Ext.getCmp('gd_commandtcms').getSelectionModel();
+		var store=Ext.getCmp('gd_commandtcms').getStore();
+		store.remove(rows);
+	}	
+}
+
+Ext.cy2.dbGrid=function (){
+	var rows=Ext.getCmp('gd_commandtcms').getSelectionModel().getSelections();
+	if (rows.length > 0){
+		Ext.getCmp('edStaytcms').setValue(rows[0].get('stay'));
+		Ext.getCmp('edSpeedtcms').setValue(rows[0].get('speed'));
+		Ext.getCmp('cbtypetcms').setRawValue(rows[0].get('otype'));
+		Ext.getCmp('cbFNametcms').setRawValue(rows[0].get('fname'));
+		Ext.getCmp('edLefttcms').setValue(rows[0].get('ileft'));
+		Ext.getCmp('edToptcms').setValue(rows[0].get('itop'));
+		Ext.getCmp('cbFSizetcms').setRawValue(rows[0].get('fsize'));
+		Ext.getCmp('cbFColortcms').setRawValue(rows[0].get('fcolor'));
+		Ext.getCmp('addTexttcms').setValue(rows[0].get('dtext'));		
+	}	
+}
+
+Ext.cy2.playstr = new Array();
+Ext.cy2.playi=0;
+Ext.cy2.playj=0;
+Ext.cy2.playtim;
+Ext.cy2.PreCommand=function (){
+	//alert("");	
+	//tcmsPreLed
+	//Ext.getCmp('tcmsPreLed').
+	Ext.cy2.playstr=[];
+	var store=Ext.getCmp('gd_commandtcms').getStore();
+	if (store.getCount() <= 0){
+		alert('请先编辑要下发的内容！');
+		return;
+	}
+	var win = Ext.getCmp('tcmsPreLedwin');
+    if(!win){
+    	win = Ext.CMSPreview.MyWindow('tcmsPreLed',96,96);
+    }
+    win.show(); 	
+	
+	var store=Ext.getCmp('gd_commandtcms').getStore();
+	for (var i = 0; i < store.getCount(); i++) {   
+		var record = store.getAt(i); 
+		Ext.cy2.playstr[i] = new Array();
+		Ext.cy2.playstr[i][0]=record.get('stay');//停留时间
+		Ext.cy2.playstr[i][1]="<div id='tcmsPreLed2' style='overflow:hidden;background-color:#000;white-space:nowrap;";//white-space:nowrap;强制换行
+		Ext.cy2.playstr[i][1]=Ext.cy2.playstr[i][1]+"font-family:"+({'楷体':'KaiTi_GB2312,KaiTi;','黑体':'SimHei;'}[record.get("fname")]||'SimSun;');//字体
+		Ext.cy2.playstr[i][1]=Ext.cy2.playstr[i][1]+"color:"+({'绿色':'Green;','黄色':'Yellow;'}[record.get("fcolor")]||'Red;');//颜色
+		Ext.cy2.playstr[i][1]=Ext.cy2.playstr[i][1]+"margin-left:"+record.get('ileft')+";";//左距
+		Ext.cy2.playstr[i][1]=Ext.cy2.playstr[i][1]+"margin-top:"+record.get('itop')+";";//上距
+		Ext.cy2.playstr[i][1]=Ext.cy2.playstr[i][1]+"line-height:"+({'48*48':'48px;','40*40':'40px;','32*32':'32px;','24*24':'24px;','20*20':'20px;'}[record.get("fsize")]||'16px;');//字距line-height:normal;
+		Ext.cy2.playstr[i][1]=Ext.cy2.playstr[i][1]+"font-size:"+({'48*48':'48px\'>','40*40':'40px\'>','32*32':'32px\'>','24*24':'24px\'>','20*20':'20px\'>'}[record.get("fsize")]||'16px\'>');//字号
+		Ext.cy2.playstr[i][1]=Ext.cy2.playstr[i][1]+record.get('dtext').replace(/\r\n/g,"<br>").replace(/\n/g, '<br>').replace(/\s/g,"&nbsp;")+"</div>";//内容
+		 //回车 IE9以上、FF、chrome在换行处匹配/\n/    IE7-8在换行处先匹配/\r/，再匹配/\n/    空格 \s正则表达式
+  	//字间距letter-spacing 行间距line-height:normal \r\n 
+	//楷体:KaiTi_GB2312,KaiTi 宋体SimSun 黑体SimHei
+	//var str="<div id='tcmsPreLed2' style='line-height:normal;background-color:#000;font-family:KaiTi_GB2312;color:#F00;font-size:16px'>祝您一路bod<br个字</div>"
+	//Ext.getCmp('tcmsPreLed').body.update(str);  
+	//document.getElementById('tcmsPreLed2').outerHTML=str;		
+	}
+	clearTimeout(Ext.cy2.playtim);
+	Ext.cy2.playi=0;
+	Ext.cy2.playj=0;
+	Ext.cy2.playtim=setTimeout(Ext.cy2.PlayStrRow,0);
+}
+
+Ext.cy2.PlayStrRow=function (){
+	clearTimeout(Ext.cy2.playtim)
+	//for (var i=0; i<Ext.cy2.playstr.length; i++){
+	if (!Ext.getCmp('tcmsPreLed')) return;
+	Ext.getCmp('tcmsPreLed').body.update(Ext.cy2.playstr[Ext.cy2.playi][1]);
+	Ext.cy2.playj=Ext.cy2.playi;
+	Ext.cy2.playi++;
+	if (Ext.cy2.playi==Ext.cy2.playstr.length){Ext.cy2.playi=0} 
+	Ext.cy2.playtim=setTimeout(Ext.cy2.PlayStrRow,Ext.cy2.playstr[Ext.cy2.playj][0]*1000) 
+}
+
+Ext.cy2.SendCommand=function (){
+	var rows=Ext.getCmp('gd_devtcms').getSelectionModel().getSelections();
+	if (rows.length <= 0){
+		alert('请先选择要下发的情报板！');
+		return;
+	}
+	var aa = new Array();
+	aa[0] = rows.length;
+	for(var i=0;i < rows.length;i++){
+		aa[i*2+1] = rows[i].get('devno');
+		aa[i*2+2] = rows[i].get('devid');
+	}
+	var store=Ext.getCmp('gd_commandtcms').getStore();
+	if (store.getCount() <= 0){
+		alert('请先编辑要下发的内容！');
+		return;
+	}
+	Ext.getCmp('btn_sendtcms').disable();
+	Ext.getCmp('btn_send2tcms').disable();
+	
+	var i = rows.length*2 + 1;
+	aa[i] = store.getCount();
+	i += 1;
+	for (var j = 0; j < store.getCount(); j++) {   
+    	var record = store.getAt(j); 
+    	aa[i] = record.get('stay');
+    	aa[i+1] = record.get('speed');
+    	aa[i+2] = record.get('otype');
+    	aa[i+3] = record.get('fname');
+    	aa[i+4] = record.get('ileft');
+    	aa[i+5] = record.get('itop');
+    	aa[i+6] = record.get('fsize');
+    	aa[i+7] = record.get('fcolor');
+    	aa[i+8] = record.get('dtext');
+    	i += 9;
+	} 	
+	//alert(Ext.encode(aa));//ext.encode编码 ext.decode解码
+	Ext.cy2.sendAjaxRequest('json/cms_send.asp?itype=1',Ext.encode(aa));
+}
+Ext.cy2.SendCommand2=function (){
+	var rows=Ext.getCmp('gd_devtcms').getSelectionModel().getSelections();
+	if (rows.length <= 0){
+		alert('请先选择要下发的情报板！');
+		return;
+	}
+	var aa = new Array();
+	aa[0] = rows.length;
+	for(var i=0;i < rows.length;i++){
+		aa[i*2+1] = rows[i].get('devno');
+		aa[i*2+2] = rows[i].get('devid');
+	}
+	Ext.getCmp('btn_sendtcms').disable();
+	Ext.getCmp('btn_send2tcms').disable();
+	
+	var i = rows.length*2 + 1;
+	if (Ext.getCmp('tcmsld_select1').getValue()){
+		aa[i] = 1;
+		aa[i+1] = 0;
+		aa[i+2]= 0;
+	}
+	else if (Ext.getCmp('tcmsld_select2').getValue()){
+		aa[i] = 2;
+		aa[i+1] = 1;
+		aa[i+2]= -1;	
+	}
+	else if (Ext.getCmp('tcmsld_select3').getValue()){
+		aa[i] = 2;
+		aa[i+1] = 2;
+		aa[i+2]= Ext.getCmp('num_tcmsld').getValue();	
+	}
+	
+	//alert(Ext.encode(aa));//ext.encode编码 ext.decode解码
+	Ext.cy2.sendAjaxRequest('json/cms_send.asp?itype=3',Ext.encode(aa));	
+}
+Ext.cy2.storeToJson=function (jsondata){  
+    var listRecord;  
+    if(jsondata instanceof Ext.data.Store){  
+          
+        listRecord = new Array();  
+    jsondata.each(function(record){  
+        listRecord.push(record.data);  
+    });  
+    }else if(jsondata instanceof Array){  
+          
+        listRecord = new Array();  
+        Ext.each(jsondata,function(record){  
+            listRecord.push(record.data);  
+        });  
+    }  
+    return Ext.encode(listRecord);  
+}
+
+Ext.cy2.XMLHttpReq,Ext.cy2.XMLHttpReq2;  
+Ext.cy2.sendAjaxRequest=function (url, data) {  
+    Ext.cy2.XMLHttpReq=ajaxcreateXMLHttpRequest();                                //创建XMLHttpRequest对象  
+    Ext.cy2.XMLHttpReq.open("post", url, true);  
+	Ext.cy2.XMLHttpReq.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+    Ext.cy2.XMLHttpReq.onreadystatechange = Ext.cy2.processResponse; //指定响应函数  
+    Ext.cy2.XMLHttpReq.send(data);  
+}  
+
+Ext.cy2.appendTextareaStr=function (cid, str){
+    var textarea = document.getElementById(cid);
+    var textNode = document.createTextNode(str+"\r");
+//	textarea.value=textarea.value+"\r\n"
+    textarea.appendChild(textNode);
+	//var textarea1 = Ext.getCmp(cid);
+//alert(textarea);
+//alert(textarea1);
+	//
+	textarea.scrollTop = textarea.scrollHeight;
+}
+
+Ext.cy2.command_list = [];
+Ext.cy2.tim_get;
+Ext.cy2.trynum =0;
+
+Ext.cy2.getExecResult=function (){
+	//alert(Ext.encode(Ext.cy2.command_list));
+	if (Ext.cy2.command_list.length > 0){
+    Ext.cy2.XMLHttpReq2=ajaxcreateXMLHttpRequest();                        
+    Ext.cy2.XMLHttpReq2.open("post", "json/cms_send.asp?itype=2", true);  
+	Ext.cy2.XMLHttpReq2.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+    Ext.cy2.XMLHttpReq2.onreadystatechange = Ext.cy2.processResponse2;
+    Ext.cy2.XMLHttpReq2.send(Ext.encode(Ext.cy2.command_list)); 		
+	}	
+}
+
+Ext.cy2.processResponse=function () {  //回调函数  
+    if (Ext.cy2.XMLHttpReq.readyState == 4) {  
+        if (Ext.cy2.XMLHttpReq.status == 200) {  
+          var text = Ext.cy2.XMLHttpReq.responseText;  
+		  //alert(text);
+					var jsonObj = eval("("+text+")");
+					var aa = jsonObj.name.split(',');
+					for (i=0;i<aa.length;i++){
+						Ext.cy2.appendTextareaStr("com_resulttcms","["+aa[i]+"]命令提交成功");
+					}
+					var bb = jsonObj.cid.split(',');
+					for (i=0;i<bb.length;i++){
+						Ext.cy2.command_list.push(bb[i]);
+					}
+					Ext.cy2.tim_get = window.setInterval(Ext.cy2.getExecResult,5000); //5000ms 5秒
+        }  
+    }
+}
+
+Ext.cy2.processResponse2=function () {  //回调函数  
+	if (Ext.cy2.XMLHttpReq2.readyState == 4) {  
+		if (Ext.cy2.XMLHttpReq2.status == 200) {
+			Ext.cy2.trynum++;
+			var text = Ext.cy2.XMLHttpReq2.responseText;  
+		  	//alert(text)
+			var jsonObj = eval("("+text+")");
+			var bb = new Array();
+			for (i=0;i<jsonObj.length;i++){
+				if (jsonObj[i].state==1){
+					Ext.cy2.appendTextareaStr("com_resulttcms","["+jsonObj[i].devno+"]命令下发成功");
+					if (!!jsonObj[i].TextFormat){
+						var cc=jsonObj[i].TextFormat.split(",");//cc[0] 1自动，2手动
+						Ext.cy2.appendTextareaStr("com_resulttcms","状态:"+{1:'自动调节',2:'手动调节'}[cc[0]] +"  亮度值:"+cc[1]); 
+					}
+				} else if (jsonObj[i].state==0){
+					Ext.cy2.appendTextareaStr("com_resulttcms","["+jsonObj[i].devno+"]命令下发失败");
+				} else {
+					bb.push(i)
+				}
+			}
+			Ext.cy2.command_list=[];
+			var command_name = [];
+			for (i=0;i<bb.length;i++){
+				Ext.cy2.command_list.push(jsonObj[bb[i]].cid);
+				command_name.push(jsonObj[bb[i]].devno);
+			}	
+		  	if (Ext.cy2.command_list.length <= 0 || Ext.cy2.trynum>2){
+				for (i=0;i<command_name.length;i++){
+					Ext.cy2.appendTextareaStr("com_resulttcms","["+command_name[i]+"]命令下发失败");	
+				}
+				Ext.cy2.initvar();
+			}
+        }  
+    }
+}
+Ext.cy2.initvar=function (){
+	Ext.cy2.trynum=0;
+	Ext.cy2.command_list=[];				
+	clearInterval(Ext.cy2.tim_get);
+	Ext.cy2.tim_get=null;
+	Ext.getCmp('btn_sendtcms').enable();
+	Ext.getCmp('btn_send2tcms').enable();
+}
+
+Ext.cy2.XMLHttpReq3 
+Ext.cy2.LoadPlayCommand=function (){
+		
+	var rows=Ext.getCmp('gd_devtcms').getSelectionModel().getSelections();
+	if (rows.length <= 0){
+		alert('请先选择要加载的情报板！');
+		return;
+	}	
+
+	Ext.cy2.XMLHttpReq3=ajaxcreateXMLHttpRequest();                               
+	Ext.cy2.XMLHttpReq3.open("post", "json/getcmsplay.asp?sid=" + Math.random()+ "&itype=1&q="+rows[0].get('devid'), true);  
+	Ext.cy2.XMLHttpReq3.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+    Ext.cy2.XMLHttpReq3.onreadystatechange = Ext.cy2.processResponse3; 
+    Ext.cy2.XMLHttpReq3.send(null); 	
+}
+Ext.cy2.processResponse3=function () { 
+    if (Ext.cy2.XMLHttpReq3.readyState == 4) {  
+        if (Ext.cy2.XMLHttpReq3.status == 200) {  
+        	var jsonresponse;
+			var jsonObject;	
+			jsonresponse=Ext.cy2.XMLHttpReq3.responseText;
+			jsonObject=eval("("+jsonresponse+")");
+			
+			var store=Ext.getCmp('gd_commandtcms').getStore();
+			if (store.getCount() > 0){
+				store.removeAll();
+			}	
+			for (var i=0;i<jsonObject.results;i++){
+				var strArr = jsonObject.rows[i].textformat.split(",");
+				var aa = new Ext.cy2.rt({
+					stay:parseInt(strArr[2]),//停留时间
+					speed:parseInt(strArr[1]),//速度
+					otype:({'1':'从上往下','2':'从下往上','3':'从左往右','4':'从右往左'}[strArr[0]]||'直接显示'),
+					fname:({'1':'楷体','2':'黑体'}[strArr[4]]||'宋体'),//字体
+					ileft:parseInt(strArr[7]),//左距
+					itop:parseInt(strArr[8]),//上距
+					fsize:({'0':'48*48','1':'32*32','2':'24*24'}[strArr[3]]||'6*16'),//字号
+					fcolor:({'1':'绿色','2':'黄色'}[strArr[5]]||'红色'),//颜色
+					dtext:jsonObject.rows[i].playtext//内容
+				});
+				Ext.cy2.gd_command_ds.add(aa);
+			}
+        }  
+    }
+}
+
+Ext.cy2.rightMenu = new Ext.menu.Menu({
+		id:'rightClickCont', 
+        items:[{
+				text: '导出',
+				iconCls:'icon_add',
+            	handler: function() {Ext.cy2.export1();}
+        	},
+			'-',
+			{  
+              	text:'导入',
+				iconCls:'icon_del',
+				handler:function() {Ext.cy2.Import1();}
+            }
+        ]
+});
+Ext.cy2.export1=function (){
+alert("导出");
+
+}
+Ext.cy2.Import1=function (){
+alert("导入");
+}
+
+
+Ext.cy2.MyWindowtcms=Ext.extend(Ext.Window ,{
+	id:'tcmswin',
+	xtype:"window",
+	title:"T型情报板内容编辑",
+	width:750,
+	height:500,
+	//minimizable:true,
+	closable:true,
+	resizable:false,
+	footer:false,
+	collapsible:false,
+	border:false,
+	layout:"absolute",
+	initComponent: function(){
+		this.items=[
+			{xtype:"label",text:"设备清单:",x:20,y:5},
+			{id : "gd_devtcms",xtype:"grid",title:"我的表格",x:10,y:20,width:205,
+				height:150,header:false,enableColumnHide:false,enableColumnMove:false,
+				enableColumnResize:false,enableHdMenu:false,
+				ds : Ext.cy2.gd_dev_ds,
+				sm : Ext.cy2.checkColumn,
+				columnLines: true,
+				loadMask : true,// Show tips
+				columns:[
+					Ext.cy2.checkColumn,
+					{header:"名称",sortable:false,resizable:true,dataIndex:"devno",width:60},
+					{header:"桩号",sortable:false,resizable:true,dataIndex:"daddr",width:100,renderer: Ext.cy2.viewtip},
+					{header:"id",sortable:false,resizable:true,dataIndex:"devid",width:0,hidden:true}
+				]
+			},
+			{xtype:"label",text:"命令执行状态:",x:20,y:180},
+			{xtype:"textarea",id:"com_resulttcms",fieldLabel:"标签",anchor:"29%",x:10,y:200,height:200,width:200,readOnly:true},
+			{xtype:"label",text:"停留时间:",x:230,y:20},
+			{xtype:"numberfield",id:'edStaytcms',fieldLabel:"标签",anchor:"45%",x:290,y:20,width:"",maxLengthText:"", value:"1",allowDecimals:false,allowNegative:false,maxValue:100,minValue:1},
+			{xtype:"label",text:"秒",x:340,y:20},
+			{xtype:"label",text:"出字方式:",x:230,y:50},
+			{xtype:"combo",id:'cbtypetcms',triggerAction:"all",fieldLabel:"标签",anchor:"50%",x:290,y:50,store:Ext.cy2.cb_type_store, displayField:'disp',mode:'local',valueField:'valu',value:0},
+			{xtype:"label",text:"速度:",x:230,y:80},
+			{xtype:"numberfield",id:'edSpeedtcms',fieldLabel:"标签",anchor:"45%",x:290,y:80,value:"7",allowDecimals:false,allowNegative:false,maxValue:8,minValue:1},
+			{xtype:"label",text:"秒(1－8)",x:340,y:80},
+			{xtype:"label",text:"字体:",x:230,y:110},
+			{xtype:"combo",id:'cbFNametcms',triggerAction:"all",fieldLabel:"标签",anchor:"50%",x:290,y:110,store:Ext.cy2.cb_fontname_store, displayField:'disp',mode:'local',valueField:'valu',value:0},
+			{xtype:"label",text:"左边距:",x:230,y:140},
+			{xtype:"numberfield",id:'edLefttcms',fieldLabel:"标签",anchor:"45%",x:290,y:140,value:"0",allowDecimals:false,allowNegative:false,maxValue:100,minValue:0},
+			{xtype:"label",text:"上边距:",x:230,y:170},
+			{xtype:"numberfield",id:'edToptcms',fieldLabel:"标签",anchor:"45%",x:290,y:170,value:"0",allowDecimals:false,allowNegative:false,maxValue:100,minValue:0},
+			{xtype:"label",text:"字号:",x:410,y:20},
+			{xtype:"combo",id:'cbFSizetcms',triggerAction:"all",fieldLabel:"标签",anchor:"75%",x:470,y:20,store:Ext.cy2.cb_fontsize_store, displayField:'disp',mode:'local',valueField:'valu',value:0},
+			{xtype:"label",text:"字体颜色:",x:410,y:50},
+			{xtype:"combo",id:'cbFColortcms',triggerAction:"all",fieldLabel:"标签",anchor:"75%",x:470,y:50,store:Ext.cy2.cb_fontcolor_store, displayField:'disp',mode:'local',valueField:'valu',value:0},
+			{xtype:"label",text:"内容:",x:410,y:110},
+			{xtype:"textarea",id:"addTexttcms",fieldLabel:"标签",anchor:"85%",x:440,y:110},
+			{xtype:"combo",triggerAction:"all",fieldLabel:"标签",width:165,x:440,y:80,store:Ext.cy2.cb_memo_store, displayField:'disp',mode:'local',valueField:'disp',listeners:{
+					select:{fn:function(combo,record,index) {
+							Ext.getCmp('addTexttcms').setValue(combo.getValue());
+							//valueField和displayField，则getValue()返回的是valueFiled的值，getRawValue()返回的则是displayField的值。
+					}}}},
+			{id : "gd_commandtcms",xtype:"grid",title:"我的表格",x:220,y:200,anchor:"99%",
+				height:200,header:false,enableColumnHide:false,enableColumnMove:false,
+				enableColumnResize:false,enableHdMenu:false,
+				ds : Ext.cy2.gd_command_ds,
+				columnLines: true,
+				stripeRows: true,  //添加斑马纹效果
+				viewConfig: {markDirty: false},
+				columns:[
+					{header:"停留时间",sortable:false,resizable:true,dataIndex:"stay",width:60},
+					{header:"速度",sortable:false,resizable:true,dataIndex:"speed",width:40},
+					{header:"出字方式",sortable:false,resizable:true,dataIndex:"otype",width:60},
+					{header:"字体",sortable:false,resizable:true,dataIndex:"fname",width:40},
+					{header:"左边距",sortable:false,resizable:true,dataIndex:"ileft",width:45},
+					{header:"上边距",sortable:false,resizable:true,dataIndex:"itop",width:45},
+					{header:"字号",sortable:false,resizable:true,dataIndex:"fsize",width:45},
+					{header:"颜色",sortable:false,resizable:true,dataIndex:"fcolor",width:40},
+					{header:"内容",sortable:false,resizable:true,dataIndex:"dtext",width:120,renderer: Ext.cy2.viewtip}
+				],
+				listeners:{  
+					rowdblclick : function(grid,row){  
+						Ext.cy2.dbGrid();  
+					},
+					contextmenu : function(e){
+        				e.preventDefault();
+       					Ext.cy2.rightMenu.showAt(e.getXY());
+					},
+					render: {//屏蔽网页的系统右键菜单
+						fn: function() {
+							Ext.getBody().on("contextmenu", Ext.emptyFn,null, {preventDefault: true});
+						}					
+					}	
+				}
+			},
+			{xtype:"button",text:"",x:605,y:80,iconCls:'additional',handler: function () {
+				var win = Ext.getCmp('preinfowin');
+				if(!win){
+					win = new Ext.CXCMSPreInfo.MyWindow();					
+				}
+				Ext.CXCMSPreInfo.Type=9;
+				win.show(); 	
+			}},
+			{xtype:"button",text:"添加",x:650,y:20,minWidth:80,handler: function () {
+					Ext.cy2.AddGrid();
+				}},
+			{xtype:"button",text:"替换",x:650,y:50,minWidth:80,handler: function () {
+					Ext.cy2.EditGrid();
+				}},
+			{xtype:"button",text:"删除",x:650,y:80,minWidth:80,handler: function () {
+					Ext.cy2.DeleteGrid();
+				}},
+			{xtype:"button",text:"预览命令",x:580,y:420,minWidth:70,handler: function () {
+					Ext.cy2.PreCommand();
+				}},
+			{xtype:"button",id:"btn_sendtcms",text:"发送命令",x:660,y:420,minWidth:70,handler: function () {
+					Ext.cy2.SendCommand();
+				}},
+			//{xtype:"panel",id:"tcmsPreLed",title:"我的面板",x:20,y:405,width:96,height:96,header:false,bodyStyle:"border-width:0;background:#000",html:"<div id='tcmsPreLed2' style='overflow:hidden;line-height:normal;background-color:#000'></div>"},
+			{xtype:"button",text:"加载当前内容",x:130,y:170,handler: function () {
+					Ext.cy2.LoadPlayCommand();
+				}},
+			{xtype:"label",text:"①",x:400,y:0,cls:'label-',overCls:'label-hover',listeners:{
+				render:function(){
+					Ext.fly(this.el).on('click',function(){
+						Ext.getCmp('paneltcms').hide();
+					})
+			}}},
+			{xtype:"label",text:"②",x:420,y:0,cls:'label-',overCls:'label-hover',listeners:{
+				render:function(){
+					Ext.fly(this.el).on('click',function(){
+						Ext.getCmp('paneltcms').show();
+					})
+			}}},
+			{xtype:"panel",id:"paneltcms",title:"我的面板",layout:"absolute",x:220,y:20,anchor:"99%",height:175,bodyStyle:"background:#dfe8f6;",header:false,hidden:true,	
+				items:[{xtype:"radio",id:'tcmsld_select1',name:"tcms_selectld",fieldLabel:"标签",boxLabel:"获取亮度",anchor:"100%",x:10,y:5,checked:true},
+					{xtype:"radio",id:'tcmsld_select2',name:"tcms_selectld",fieldLabel:"标签",boxLabel:"设置自动调节",anchor:"100%",x:10,y:35},
+					{xtype:"radio",id:'tcmsld_select3',name:"tcms_selectld",fieldLabel:"标签",boxLabel:"设置手动调节(1-255)",anchor:"100%",x:10,y:65},
+					{xtype:"numberfield",id:"num_tcmsld",fieldLabel:"标签",anchor:"",x:140,y:65,maxValue:255,minValue:1,width:50,value:100},
+					{xtype:"button",id:"btn_send2tcms",text:"发送命令",x:10,y:105,handler: function () {
+						Ext.cy2.SendCommand2();
+					}}
+				]
+			}
+		]
+		Ext.cy2.MyWindowtcms.superclass.initComponent.call(this);
+	},
+	listeners:{  
+				show : function(){
+					Ext.cy2.gd_dev_ds.load();
+				},
+				beforeclose : function(){  
+						//提示是否关闭窗口
+				},
+				close : function(){  
+						if (!!Ext.cy2.tim_get) {Ext.cy2.initvar()};
+						var win = Ext.getCmp('tcmsPreLedwin');
+						if(!!win){win.close()}
+				}
+	}
+})
+
+
+Ext.cy2.init=function (){
+	var win = Ext.getCmp('tcmswin');
+	if(!win){
+		win = new Ext.cy2.MyWindowtcms();					
+	}
+	if (win.isVisible()){
+		Ext.cy2.setselectid();	
+	}
+	//Ext.cy2.gd_dev_ds.load()
+	win.show(); 		
+	
+}

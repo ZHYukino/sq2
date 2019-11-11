@@ -1,0 +1,167 @@
+﻿<!--#include file="../comm/mconn.asp"-->
+<%
+	Session.CodePage=65001
+	Response.Charset="UTF-8"
+	itype = Request.QueryString("itype")
+	start = Request("start")
+	limit = Request("limit")
+	searchtype=Request("searchtype")
+	searchstr=Request("searchstr")
+	index=CInt(start)
+	pageSize=CInt(limit)	
+	
+	tablename=Request.QueryString("tablename")
+
+	if searchtype="1" then
+		searchstr=searchstr&" CONVERT(char(10),b1.colltime,101)+' '+ltrim(str(datepart(hh,b1.colltime)))+':'+ltrim(str(datepart(mi,b1.colltime)))+':00'"
+	elseif searchtype="2" then
+		searchstr=searchstr&" rtrim(CONVERT(char(10),b1.colltime,101))+' '+ltrim(str(datepart(hh,b1.colltime)))+':00:00'"
+	elseif searchtype="3" then
+		searchstr=searchstr&" rtrim(CONVERT(char(10),b1.colltime,101))"
+	elseif searchtype="4" then
+		searchstr=searchstr&" ltrim(str(datepart(yy,b1.colltime))) + '/' + ltrim(str(datepart(MM,b1.colltime)))"
+	else
+		searchstr=searchstr&" b1.colltime"
+	end if
+	
+	if itype = 1 then
+		Dim mRs
+		Set mRs=Server.CreateObject("Adodb.RecordSet")
+		'mRs.pagesize=20
+		'
+		ssql ="select a.devid,a.devno,a.devname,a.colltime2 as colltime,sum(a.count1) count1,sum(a.count2) count2,sum(a.count3) count3,sum(a.count4) count4,avg(case a.occ1 when 0 then null else a.occ1 end) occ1,avg(case a.occ2 when 0 then null else a.occ2 end) occ2,avg(case a.occ3 when 0 then null else a.occ3 end) occ3,avg(case a.occ4 when 0 then null else a.occ4 end) occ4,avg(case a.speed1 when 0 then null else a.speed1 end) speed1,avg(case a.speed2 when 0 then null else a.speed2 end) speed2,avg(case a.speed3 when 0 then null else a.speed3 end) speed3,avg(case a.speed4 when 0 then null else a.speed4 end) speed4 from (select" &  searchstr & " as colltime2,b2.devno,b2.devname,b1.* from collvd b1 left join devpara b2 on b1.DevID=b2.DevID where 1=1" & Request("searchwhere") &") a group by a.colltime2,a.devid,a.devno,a.devname" & Request("searchorder")
+
+		mRs.open ssql, conn, 1,1
+ 
+		if mRs.recordcount=0 then
+			response.write "{""success"":true,""results"": " & mRs.recordcount & ",""rows"": []}"
+			response.End()
+		end if
+		if not mRs.eof then
+			if index+1>mRs.recordcount then
+				response.End()
+			end if
+			mRs.absoluteposition=index+1
+			dim yy
+			if mRs.recordcount>index+pageSize-1 then
+				yy=index+pageSize-1
+			else 
+			 	yy=mRs.recordcount-1
+			end if
+			
+			response.write "{""success"":true,""results"": " & mRs.recordcount & ",""cols"":[{""设备ID"":0},{""设备编号"":1},{""设备名称"":2},{""检测时间"":3},{""1道流量"":4},{""2道流量"":5},{""1道占有率"":6},{""2道占有率"":7},{""1道均速"":8},{""2道均速"":9}],""rows"": ["
+			for i=index to yy step 1
+				response.write "{""devid"":" & mRs("devid") & ", ""devno"": """ & mRs("devno") & """, ""devname"": """ & mRs("devname") & """, ""colltime"": """ & formatdatetime(mRs("colltime"),0) & """, ""count1"": """ & mRs("count1") & """, ""count2"": """ & mRs("count2") & """, ""occ1"": """ & mRs("occ1") & """, ""occ2"": """ & mRs("occ2") & """, ""speed1"": """ & mRs("speed1") & """, ""speed2"": """ & mRs("speed2") &"""}"
+				
+				if i<yy then
+					response.write ","	
+				end if	
+				mRs.movenext	
+			next
+			response.write "]}"
+		end if
+		mRs.close
+	end if	
+
+	 	
+%>
+<%
+	if itype = 2 then
+		Dim mRs2
+		Set mRs2=Server.CreateObject("Adodb.RecordSet")
+		ssql2 ="select a.devid,a.devno,a.devname,a.colltime2 as colltime,sum(a.count1) count1,sum(a.count2) count2,sum(a.count3) count3,sum(a.count4) count4,avg(case a.occ1 when 0 then null else a.occ1 end) occ1,avg(case a.occ2 when 0 then null else a.occ2 end) occ2,avg(case a.occ3 when 0 then null else a.occ3 end) occ3,avg(case a.occ4 when 0 then null else a.occ4 end) occ4,avg(case a.speed1 when 0 then null else a.speed1 end) speed1,avg(case a.speed2 when 0 then null else a.speed2 end) speed2,avg(case a.speed3 when 0 then null else a.speed3 end) speed3,avg(case a.speed4 when 0 then null else a.speed4 end) speed4 from (select" &  searchstr & " as colltime2,b2.devno,b2.devname,b1.* from collvd b1 left join devpara b2 on b1.DevID=b2.DevID where 1=1" & Request("searchwhere") &") a group by a.colltime2,a.devid,a.devno,a.devname" & Request("searchorder")
+	
+		mRs2.open ssql2, conn, 1,1
+		response.write "{""success"":true,""results"": " & mRs.recordcount & ",""cols"":[{""设备ID"":0},{""设备编号"":1},{""设备名称"":2},{""检测时间"":3},{""1道流量"":4},{""2道流量"":5},{""1道占有率"":6},{""2道占有率"":7},{""1道均速"":8},{""2道均速"":9}],""rows"": ["
+		if not mRs2.eof then			
+			do while not mRs2.eof
+				response.write "{""devid"":" & mRs2("devid") & ", ""devno"": """ & mRs2("devno") & """, ""devname"": """ & mRs2("devname") & """, ""colltime"": """ & formatdatetime(mRs2("colltime"),0) & """, ""count1"": """ & mRs2("count1") & """, ""count2"": """ & mRs2("count2") & """, ""occ1"": """ & mRs2("occ1") & """, ""occ2"": """ & mRs2("occ2") & """, ""speed1"": """ & mRs2("speed1") & """, ""speed2"": """ & mRs2("speed2") &"""}"
+				mRs2.movenext
+				if not mRs2.eof then
+					response.write ","
+				end if				
+			loop	
+		end if
+		response.write "]}"
+		mRs2.close
+	
+	'导出exel
+		dim s,sql,filename,fs,myfile,x  
+		Set fs = server.CreateObject("scripting.filesystemobject")  
+		'--假设你想让生成的EXCEL文件做如下的存放  
+		filename = Server.MapPath("../uploadfile/"+ tablename +".xls") 
+		'文件名称
+		'filename= "order.xls";
+		'--如果原来的EXCEL文件存在的话删除它  
+		if fs.FileExists(filename) then  
+			fs.DeleteFile(filename)  
+		end  if  
+		'--创建EXCEL文件  
+		set myfile = fs.CreateTextFile(filename,true)  
+			
+		'--从数据库中把你想放到EXCEL中的数据查出来  
+		strSql=ssql2
+		
+		Set rstData =conn.execute(strSql)
+		if not rstData.EOF and not rstData.BOF then  
+		 
+			dim  trLine,responsestr  
+			strLine=""  
+			'For each x in rstData.fields  
+				'strLine = strLine & x.name & chr(9)  
+		   'Next  
+		   		   
+		   strLine=strLine & "设备ID" & chr(9)  
+		   strLine=strLine & "设备编号" & chr(9)
+		   strLine=strLine & "设备名称" & chr(9)  
+		   strLine=strLine & "检测时间" & chr(9)  
+		   strLine=strLine & "1道流量" & chr(9)  
+		   strLine=strLine & "2道流量" & chr(9)  
+		   strLine=strLine & "1道占有率" & chr(9)   
+		   strLine=strLine & "2道占有率" & chr(9)
+		   strLine=strLine & "1道均速" & chr(9) 
+		   strLine=strLine & "2道均速" & chr(9)    
+		 
+		'--将表的列名先写入EXCEL  
+			myfile.writeline strLine  
+		 
+			Do while Not rstData.EOF  
+				strLine=""  
+		 
+				'for each x in rstData.Fields  
+					'strLine = strLine & x.value &  chr(9)  
+				'next  
+								
+				strLine = strLine & rstData("devid") &  chr(9)  
+				strLine = strLine & rstData("devno") &  chr(9)  
+				strLine = strLine & rstData("devname") &  chr(9)  
+				strLine = strLine & rstData("colltime") &  chr(9)  
+				strLine = strLine & rstData("count1") &  chr(9)  
+				strLine = strLine & rstData("count2") &  chr(9)  
+				strLine = strLine & rstData("occ1") &  chr(9)  
+				strLine = strLine & rstData("occ2") &  chr(9)  
+				strLine = strLine & rstData("speed1") &  chr(9)  
+				strLine = strLine & rstData("speed2") &  chr(9)  
+				
+				myfile.writeline  strLine  
+		 
+				rstData.MoveNext  
+			loop  
+		 
+		end if  
+
+		'Response.Write  "生成EXCEL文件成功，点击<a href="""" target=""_blank""><font color=blue>下载</a></a>！"
+		
+%>
+		<script>window.open("../uploadfile/<%=tablename%>.xls")</script>
+<%
+		
+		set rstData = nothing
+		Conn.Close
+		Set Conn = nothing		
+		
+		
+	end if
+			//response.write ssql
+	//response.End()
+%>

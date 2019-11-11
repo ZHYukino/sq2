@@ -1,0 +1,56 @@
+<!--#include file="../comm/mconn.asp"-->
+<%
+	Session.CodePage = 65001
+	Response.Charset = "UTF-8"
+	itype = Request.QueryString("itype") '1 按日期段 2 按月份 3 按年份
+	'offset = Request.QueryString("offset") '页码
+	'limit = Request.QueryString("limit") '每页显示条数
+	begindate = Request.QueryString("date1") '开始时间
+	enddate = Request.QueryString("date2") '结束时间
+	flag = 1
+	Select Case itype
+		Case 1
+			If Len(begindate) = 10 And Len(enddate) = 10 And IsDate(begindate) And IsDate(enddate) Then
+				enddate = DateAdd("d",1,enddate)
+			Else
+				flag = 0
+			End if
+		Case 2
+			If Len(begindate) = 7 And IsDate(begindate) Then
+				begindate = begindate & "-01"
+				enddate = DateAdd("m",1,begindate)
+			Else
+				flag = 0
+			End if
+		Case 3
+			If Len(begindate) = 4 And IsDate(begindate & "-01") Then
+				begindate = begindate & "-01-01"
+				enddate = DateAdd("yyyy",1,begindate)
+			Else
+				flag = 0
+			End if
+		Case Else
+			flag = 0
+	End Select
+	If flag =1 Then
+		Dim mRs
+		Set mRs = Server.CreateObject("Adodb.RecordSet")
+		mRs.open "select logman,LogTime,Logdesc,LogMemo from LogSys where LogTime>='" & begindate & "' and LogTime<'" & enddate & "'", conn, 1, 2
+		If Not mRs.eof Then
+			response.write "{""total"": " & mRs.recordcount & ",""rows"": ["
+			do while not mRs.eof
+				response.write "{""logAccounts"":""" & mRs("logman") & """,""logTime"":""" & mRs("LogTime") & """,""logContent"":""" & mRs("Logdesc") & """,""logRemarks"":""" & mRs("LogMemo") & """,""formatSpace"":""""}"
+				mRs.movenext
+				if not mRs.eof then
+					response.write ","
+				end if
+			Loop
+			response.write "]}"
+		else
+			Response.write "{""results"":0,""rows"":[]}"
+		End If
+		mRs.close
+	Else
+		Response.write "参数错误"
+	End If
+%>

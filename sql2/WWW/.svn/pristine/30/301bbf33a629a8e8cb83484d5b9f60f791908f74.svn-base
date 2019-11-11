@@ -1,0 +1,146 @@
+﻿<%@ language=VBScript%>
+<%
+If datediff("d","2018-1-1",now()) >= 0 Then
+	response.End()
+End if
+if session("user") <> ""  then
+	response.redirect "default.asp"
+	response.End()
+else
+	username = request.form("username")
+	password = request.form("password")
+	userip = Request.ServerVariables("HTTP_X_FORWARDED_FOR") 
+	If userip = empty Then userip = Request.ServerVariables("REMOTE_ADDR") end if
+	if (username <> "") and (password <> "") then
+%>
+<!--#include file="comm/mconn.asp"-->
+<%	
+		if session("Server_Name") = ""	then
+			errString = "无法连接服务器！"
+		Else
+			Dim mRs
+			Set mRs = Server.CreateObject("Adodb.RecordSet")
+			mRs.open "Select PassWord from userinfo where Account='" & username & "'", conn, 1, 2
+			if not mRs.eof then
+				if mRs("PassWord") = password Then
+					mRs.close
+					mRs.open "select 1 from Popedom where Have=0 and Account='" & username & "'", conn, 1, 2
+					If not mRs.eof then
+						ssql = "insert into LogSys(logman,LogTime,Logdesc,LogMemo,logtype) values ('" & username & "',GETDATE(),'登录隧道控制','',1)"
+						Conn.Execute(ssql)
+						session("user") = username
+						session("userip") = userip
+						'session("userhost") = Request.ServerVariables("REMOTE_HOST")
+						Session.Timeout = 5
+						response.redirect "default.asp"
+						response.End()
+					else
+						errString = "没有相应操作权限！"
+						errusername = ""
+					end if
+				else
+					errString = "错误的账号或密码！"
+					errusername = username
+				end if
+			else
+				errString = "错误的账号或密码！！"
+				errusername = ""
+			end if 
+			mRs.close
+		end if
+	else
+		errString = ""	
+		errusername = ""
+	end if
+end if
+%>
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+    <head>
+	<meta name="renderer" content="ie-comp"> 
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+	<title><%=ReadIni("/opt.ini","config","SoftName")%></title>
+	<meta name="renderer" content="ie-comp"> 
+ 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	
+	<!---------- CSS ----------> 
+    <link href="jspackage/backthemes/css/bootstrap.min14ed.css" rel="stylesheet">
+    <link href="jspackage/backthemes/css/font-awesome.min93e3.css" rel="stylesheet">
+	<link href="jspackage/backthemes/css/animate.min.css" rel="stylesheet">
+	
+	<!-- 自定义 -->
+	<link rel="stylesheet" type="text/css" href="css/loginstyle.css?vs=112"/>
+	
+	<!---------- JS ---------->
+    <!-- 默认加载 -->
+	<script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
+	<script type="text/javascript" src="js/md5.js"></script>
+	<script src="jspackage/backthemes/js/bootstrap.min.js"></script><!-- ?v=3.3.6 -->
+	
+	
+	
+<!--[if lt IE 9]>
+    <script src="js/json2.js"></script>
+<![endif]-->		
+</head>
+<body class="ht-bg">
+    <!--[if lte IE 6]>
+    <div id="ie8-warning">您正在使用 Internet Explorer 6，在本页面的显示效果可能有差异。建议您升级到Internet Explorer 9或使用360、Firefox、Chrome、Opera浏览器。
+    </div>
+    <![endif]-->
+    <!--[if lte IE 7]>
+    <div id="ie8-warning">您正在使用 Internet Explorer 7，在本页面的显示效果可能有差异。建议您升级到Internet Explorer 9或使用360、Firefox、Chrome、Opera浏览器。
+    </div>
+    <![endif]-->
+    <!--[if lte IE 8]>
+    <div id="ie8-warning">您正在使用 Internet Explorer 8，在本页面的显示效果可能有差异。建议您升级到Internet Explorer 9或使用360、Firefox、Chrome、Opera浏览器。
+    </div>
+    <![endif]-->
+	<form action="" method="post" class="m-t">
+	<div class="box text-center loginscreen  animated fadeInDown">
+        <div class="login-box">
+            <div class="login-title text-center">
+                <h1><small><%=ReadIni("/opt.ini","config","SoftAuthor")%></small></h1>
+            </div>
+            <div class="login-content">
+                <div class="form">
+					 <div style="color:#FF0000"><span><%= errString%></span></div>
+                    <div class="form-group">
+                        <div class="col-xs-12">
+                            <div class="input-group input-group-lg">
+                                <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
+                               <input type="text" id="username" name="username" class="form-control" placeholder="用户名" onMouseOver="this.focus()" onFocus="this.select()" value="<%= errusername%>">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-xs-12">
+                            <div class="input-group input-group-lg">
+                                <span class="input-group-addon"><span class="glyphicon glyphicon-lock"></span></span>
+                               <input type="password" name="password" class="form-control" placeholder="密码" onMouseOver="this.focus()" onFocus="this.select()">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group form-actions">
+                        <div class="col-xs-4 col-xs-offset-4 ">
+							 <input type="submit" value="登录" class="btn btn-info btn-info-login block full-width m-b" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-xs-12">
+                            <div class="fr">
+                                <%=ReadIni("/opt.ini","config","SoftCopyright")%>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<script type="text/javascript">
+	document.getElementById("username").focus();
+</script>
+</body>
+</html>

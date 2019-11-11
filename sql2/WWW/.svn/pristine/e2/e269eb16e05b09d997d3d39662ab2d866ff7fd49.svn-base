@@ -1,0 +1,6 @@
+[DatabaseConn]
+;Server_Name=.
+Server_Name=192.168.1.4
+Server_User=sa
+Server_Psw=112233
+Data_Name=LL_SD

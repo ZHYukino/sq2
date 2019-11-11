@@ -1,0 +1,28 @@
+<!--#include file="../comm/mconn.asp"-->
+<%
+	Session.CodePage=65001
+	Response.Charset="UTF-8"
+	itype = Request.QueryString("itype")
+	sql = Request("r")
+	
+	if itype = 1 then
+		Dim mRs
+		Set mRs=Server.CreateObject("Adodb.RecordSet")
+		mRs.open "Select * from devpara where enabled=1 and devtype=" & request.querystring("q") & sql, conn, 1,2
+		response.write "{'results': " & mRs.recordcount
+		if not mRs.eof then
+			response.write  ",'rows': ["
+			do while not mRs.eof
+				response.write "{'id':" & mRs("devid") & ", 'tunnel': '" & mRs("tunnel") & "', 'devcode': '" & mRs("devcode") & "', 'devename': '" & mRs("devename") & "', 'devaddr': '" & mRs("devaddr") & "', 'updown': '" & mRs("updown") & "', 'ipaddr': '" & mRs("ipaddr") & "', 'ipport': '" & mRs("ipport") & "', 'shape': '" & mRs("shape") & "', 'pointx': '" & mRs("pointx") & "', 'pointy': '" & mRs("pointy") & "', 'plcid': '" & mRs("plcid") & "', 'groupid': '" & mRs("groupid") & "', 'devcname': '" & mRs("devcname") & "', 'channel': '" & mRs("channel") & "', 'outword': '" & mRs("outword") & "'}"
+				mRs.movenext
+				if not mRs.eof then
+					response.write ","
+				end if				
+			loop
+			response.write "]"
+		end if
+		response.write "}"
+		mRs.close
+	end if
+	
+%>

@@ -1,0 +1,70 @@
+﻿//[0]数组序号，[1]ID,[2]隧道序号tunnel，[3]devcode，[4]devename，[5]devaddr，[6]updown，[7]ipaddr，[8]ipport，[9]shape，[10]pointx，[11]pointy，[12]组groupid，[13]devcname,[14]状态变化是否，[15]变化时间，[16]是否值有变化,[17]变化时间,[18]状态，[19]值i1，[20]值12，[21]值n1，[22]值n2，[23]值v1，[24]值v2,[25]plcid
+var arr_TS = new Array();
+var arr_LS = new Array();
+var arr_LIGHT = new Array();
+var arr_LED = new Array();
+var arr_FAN = new Array();
+var arr_COVI = new Array();
+var arr_FSFX = new Array();
+var arr_FB = new Array();
+var arr_FGS = new Array();
+var arr_FGW = new Array();
+var arr_FGR = new Array();
+var arr_DOOR = new Array();
+var arr_CMS = new Array();
+var arr_CAM = new Array();
+var arr_DEC = new Array();
+var arr_ET = new Array();
+var arr_VD = new Array();
+var arr_PUMP = new Array();
+var arr_WD = new Array();
+//[0]数组序号，[1]ID,[2]隧道序号tunnel，[3]name,[4]状态变化是否，[5]变化时间，[6]state,[7]runmode
+var arr_PLC = new Array();
+//[0]数组序号，[1]隧道序号，[2]隧道名
+var arr_TUNNEL = new Array();
+//[0]数组序号，[1]ID,[2]隧道序号tunnel，[3]name,[4] [[设备的ename，下拉框选项]...]
+var arr_PLAN = new Array();
+//设备加载完成标志
+var TSinit={'0':'false'};
+var LSinit={'0':'false'};
+var LIGHTinit={'0':'false'};
+var LEDinit={'0':'false'};
+var FANinit={'0':'false'};
+var COVIinit={'0':'false'};
+var FSFXinit={'0':'false'};
+var FBinit={'0':'false'};
+var FGSinit={'0':'false'};
+var FGWinit={'0':'false'};
+var FGRinit={'0':'false'};
+var DOORinit={'0':'false'};
+var CMSinit={'0':'false'};
+var CAMinit={'0':'false'};
+var DECinit={'0':'false'};
+var ETinit={'0':'false'};
+var VDinit={'0':'false'};
+var PUMPinit={'0':'false'};
+var WDinit={'0':'false'};
+var PLCinit={'0':'false'};
+var TUNNELinit={'0':'false'};
+var PLANinit={'0':'false'};
+var Fireinit={'0':'false'};
+
+//火灾手动控制方案 
+//[0]数组序号,方案id,隧道号，上下行，方案名，照明操作(0关1开)，风机操作(0关1开)，防火门操作(1上升2停止3下降)，手报操作(0正常1火警)，交通信号灯操作(1红灯4绿灯)，车道指示标志操作(0禁止1正向通行)
+var arr_Fire = new Array();
+
+//风机环境控制 COVI的ID,COVI的devname，是否启用，[[正常，正常控制是否提，正常CO值，正常CO值，正常VI值，正常VI值]，[报警，报警控制是否提醒，报警CO值，报警CO值，报警VI值，报警Vi值]，[关闭，关闭控制是否是醒，关闭CO值，关闭CO值，关闭VI值，关闭Vi值]]，FSFX的devname，FSFX的ID，[[FAN的ID，关联]...]，curFJTimIn
+var arr_FJ = new Array();
+var FJIntel =1;
+//照明环境控制 LIGHT的ID，LIGHT的devname，[[晴天，是否启用，控制时是否提示，晴天洞外光强，晴天洞外光强，晴天洞内光强，晴天洞内光强]，[阴天，是否启用，控制时是否提示，阴天洞外光强，阴天洞外光强，阴天洞内光强，阴天洞内光强]，[晚上，是否启用，控制时是否提示，晚上洞外光强，晚上洞外光强，晚上洞内光强，晚上洞内光强]，[夜间，是否启用，控制时是否提示，夜间洞外光强，夜间洞外光强，夜间洞内光强，夜间洞内光强]]，[[晴天[LED的ID，关联，动作]...]，[阴天[LED的ID，关联，动作]...]，[晚上[LED的ID，关联，动作]...]，[夜间]]，curZMTimIn
+var arr_ZM1 = new Array();
+var ZMIntel1 =1;
+//照明时间控制 时间，是否启用，控制时是否提示，[[LED的ID，动作]...]
+var arr_ZM2 = new Array();
+var ZMIntel2 =1;
+var curZMTimIn=-1;
+//照明风机控制模式
+ZMMode=0;
+FJMode=0;
+zmtimeresult=-1;
+fjtimeresult=-1;

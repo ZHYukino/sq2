@@ -1,0 +1,35 @@
+<!--#include file="../comm/mconn.asp"-->
+<%
+	Session.CodePage = 65001
+	Response.Charset = "UTF-8"
+	username = session("user")
+	itype = Request.QueryString("itype")
+	name = Request.QueryString("name") '方案名
+	name = Replace(name," ","")
+	msg = ""
+	result = 0
+	If username <> "" Then
+		'Dim mRs
+		'Set mRs = Server.CreateObject("Adodb.RecordSet")
+		'mRs.open "select Account from Popedom where Have=0 and Account='" & username & "'", conn, 1, 2
+		'if not mRs.eof Then
+			'mRs.close
+			If itype = 1 And name <> "" Then
+				Dim mRs
+				Set mRs = Server.CreateObject("Adodb.RecordSet")
+				sql = "update SigPlan set Enabled=0 where Name='" & name & "'"
+				Conn.Execute(sql)
+				'日志
+
+				msg = "删除成功"
+				result = 1
+			End If
+		'Else
+			'msg = "没有权限进行操作(0)"
+		'End If
+		'mRs.close
+	Else
+		msg = "未登录不可进行操作"
+	End If
+	Response.write "{""result"":" & result & ",""msg"":""" & msg & """}"
+%>

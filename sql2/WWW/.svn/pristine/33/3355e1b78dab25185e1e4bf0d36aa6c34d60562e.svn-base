@@ -1,0 +1,1118 @@
+﻿// 编写自定义函数,创建标注
+function addTcmsMarker(arr_i,point, s){//添加t情报板标注
+	var myIcon = new BMap.Icon( "img/tcms.png",new BMap.Size(30, 44));  
+  	var marker = new BMap.Marker(point, {icon: myIcon});
+  	marker.setTitle(s);
+  
+  	map.addOverlay(marker);
+  	//marker.setAnimation(BMAP_ANIMATION_BOUNCE); //跳动的动画
+  	marker.addEventListener("click", function(){   
+		clickTCmsobj(arr_i,this.getTitle());   
+	});	 
+	return marker;
+}
+
+function addScmsMarker(arr_i,point, s){//添加led情报板标注
+	var myIcon = new BMap.Icon( "img/scms.png",new BMap.Size(32, 32));  
+  	var marker = new BMap.Marker(point, {icon: myIcon});
+  	marker.setTitle(s);
+  
+  	map.addOverlay(marker);
+  	//marker.setAnimation(BMAP_ANIMATION_BOUNCE); //跳动的动画
+  	marker.addEventListener("click", function(){   
+		clickSCmsobj(arr_i,this.getTitle());   
+	});	 
+	return marker;
+}
+
+function addFcmsMarker(arr_i,point, s){//添加f情报板标注
+	var myIcon = new BMap.Icon( "img/fcms.png",new BMap.Size(30, 40));  
+  	var marker = new BMap.Marker(point, {icon: myIcon});
+  	marker.setTitle(s);
+  
+  	map.addOverlay(marker);
+  	//marker.setAnimation(BMAP_ANIMATION_BOUNCE); //跳动的动画
+  	marker.addEventListener("click", function(){   
+		clickFCmsobj(arr_i,this.getTitle());   
+	});	 
+	return marker;
+}
+
+function addCCTVMarker(arr_i,point, s){//添加摄像机
+	var myIcon = new BMap.Icon( "img/cctv.png",new BMap.Size(32, 32));  
+  	var marker = new BMap.Marker(point, {icon: myIcon});
+  	marker.setTitle(s);
+  
+  	map.addOverlay(marker);
+	//marker.setAnimation(BMAP_ANIMATION_DROP);//显示出来是动画
+  	marker.addEventListener("click", function(){  
+		if (ietype==0){
+			clickCameraobjActiveX(arr_i,this.getTitle());  
+		}else{
+			clickCameraobjNpapi(arr_i,this.getTitle()); 
+		}
+	});	 
+	return marker;
+}
+
+function addDLEventMarker(arr_i,point, s){//添加事故标注
+	var myIcon = new BMap.Icon( "img/accident2.png",new BMap.Size(20, 20));  
+  	var marker = new BMap.Marker(point, {icon: myIcon});
+  	marker.setTitle(s);
+  
+  	map.addOverlay(marker);
+	marker.setAnimation(BMAP_ANIMATION_DROP)
+  	marker.addEventListener("click", function(){   
+		clickdlEvent(arr_i,this.getTitle());   
+	});	 
+	return marker;
+}
+
+function addYHEventMarker(arr_i,point, s){//添加养护标注
+  	var myIcon = new BMap.Icon( "img/construction2.png",new BMap.Size(20, 20));  
+  	var marker = new BMap.Marker(point, {icon: myIcon});
+  	marker.setTitle(s);
+  
+  	map.addOverlay(marker);
+	marker.setAnimation(BMAP_ANIMATION_DROP)
+  	marker.addEventListener("click", function(){   
+		clickyhEvent(arr_i,this.getTitle());   
+	});
+	return marker;	 
+}
+
+function addcmsMarker(arr_i,point, s){//添加情报板标注
+	var myIcon = new BMap.Icon( "img/cms.png",new BMap.Size(32, 32));  
+  	var marker = new BMap.Marker(point, {icon: myIcon});
+  	marker.setTitle(s);
+  
+  	map.addOverlay(marker);
+  	marker.addEventListener("click", function(){   
+		clickCmsobj(arr_i,this.getTitle());   
+	});	
+	return marker; 
+}
+
+function addWDMarker(arr_i,point, s){//添加能见度
+	var myIcon = new BMap.Icon( "img/wd.png",new BMap.Size(20, 20));  
+  	var marker = new BMap.Marker(point, {icon: myIcon});
+  	marker.setTitle(s);
+  
+  	map.addOverlay(marker);
+  	marker.addEventListener("click", function(){   
+		clickWDobj(arr_i,this.getTitle());   
+	});	 
+	return marker;
+}
+
+function addVdMarker(arr_i,point, s){//添加微波车检
+	var myIcon = new BMap.Icon( "img/vd.png",new BMap.Size(20, 20));  
+	var marker = new BMap.Marker(point, {icon: myIcon});
+  	marker.setTitle(s);
+  
+  	map.addOverlay(marker);
+  	marker.addEventListener("click", function(){   
+		clickVDobj(arr_i,this.getTitle());   
+	});	 
+	return marker;
+}
+
+function addEtMarker(arr_i,point, s){//添加紧急电话
+  	var myIcon = new BMap.Icon( "img/et.png",new BMap.Size(20, 20));  
+  	var marker = new BMap.Marker(point, {icon: myIcon});
+  	marker.setTitle(s);
+  
+  	map.addOverlay(marker);
+  	marker.addEventListener("click", function(){   
+		clickETobj(arr_i,this.getTitle());   
+	});	 
+	return marker;
+}
+
+/*------------------------  摄像机相关 -------------------------------*/
+function CalcMd5(a,b,u,p){		
+  //var a = $("#random").val();
+	//var b = $("#realm").val();
+	var f = hex_md5(u + ":" + b + ":" + p);
+	var g = hex_md5(u + ":" + a + ":" + f);
+	return g;
+}
+
+function Login1click(sip){	//登录第一步
+	$.ajax( {  
+	    url: '/json/rpc.asp?ip=' + sip,// 跳转到 action  
+	    data: JSON.stringify({"method":"global.login","params":{"userName":"admin","password":"","clientType":"Web3.0"},"id":10000}),  
+	    type:'post',  
+	    contentType: "application/x-www-form-urlencoded",
+	    cache:false,
+	    //async : false, //默认为true 异步    
+	    dataType:'json',  //json
+	    success:function(data, textStatus) {  
+	    	if (data) {
+	    		//alert(data.error.code + "\n" + textStatus); 
+	  			var a = data.error.code;
+	  			if (a == 401) {
+	  				//$("#sessionID").val(data.session);
+	  				//$("#random").val(data.params.random);
+	  				//$("#realm").val(data.params.realm);	
+	  				//$("#md5").val(CalcMd5("admin","admin"));
+	  				//Login2click();
+	  				var md5 = CalcMd5(data.params.random,data.params.realm,"admin","admin");
+	  				var ptz_id = 0;
+	  				var i = ar_Camera.push(new Array(sip,data.session,md5,ptz_id));
+	  				//alert(ar_Camera[i-1][0]);
+	  				Login2click(sip,data.session,md5);
+	  			}	        
+	     	}
+	    },  
+		error : function(XMLHttpRequest, textStatus, errorThrown) {
+	          alert("异常！\n" + textStatus);  
+	    }
+	});
+}
+
+function Login2click(sip,b,md5){  //登录第二步
+	var a = {"method":"global.login","session":parseInt(b),"params":{"userName":"admin","password":md5,"clientType":"Web3.0"},"id":10000};
+	$.ajax( {  
+	    url: '/json/rpc.asp?ip=' + sip + '&id=' + b,// 跳转到 action    
+	    data:JSON.stringify(a),
+	    type:'post',  
+	    contentType: "application/x-www-form-urlencoded",
+	    cache:false,
+	    //async : false, //默认为true 异步    
+	    dataType:'json',  //json
+		success:function(data, textStatus) {  
+	    	if (data) {
+        		if (data.result == true){
+        			//devVideoDetect();
+        			intervalProcess = setInterval("KeepAlive()", 30000);
+        			//alert('Reg Ok!');
+        		}else{
+        			//alert('Reg failt');
+        		}
+	     	}
+	 	},  
+	    error : function(XMLHttpRequest, textStatus, errorThrown) {
+	          alert("异常！\n" + textStatus);  
+	    }
+	});
+}
+
+function Logoutclick(sip){		//注销
+	var b = '';
+	for (var i=0;i<ar_Camera.length;i++){
+		if (ar_Camera[i][0] == sip){
+			b = ar_Camera[i][1];
+		}
+	}
+	
+	var a = {"method" : "global.logout","params" : null,"session":parseInt(b),"id" : 10001};	
+	$.ajax( {  
+	    url: '/json/rpc2.asp?ip=' + sip + '&id=' + b,// 跳转到 action  
+	    data:JSON.stringify(a),
+	    type:'post',  
+	    contentType: "application/x-www-form-urlencoded",
+	    cache:false,
+	    //async : false, //默认为true 异步    
+	    dataType:'json',  //json
+	    success:function(data, textStatus) {
+	    	if (data){
+	    		if (data.result == true){
+	    			//alert('Unreg ok');
+	    		}
+	    	}
+	     },  
+	    error : function(XMLHttpRequest, textStatus, errorThrown) {
+	     }
+	});
+}
+
+function KeepAlive(){ 		///------------------会话保持
+	var a = '';
+	for (var i=0;i<ar_Camera.length;i++){	
+		a = {"method":"global.keepAlive","params":{"timeout": 300},"session":parseInt(ar_Camera[i][1]),"id":ar_Camera[i][3]};	
+		$.ajax( {  
+		    url: '/json/rpc2.asp?ip=' + ar_Camera[i][0] + '&id=' + ar_Camera[i][1],// 跳转到 action  
+		    data:JSON.stringify(a),
+		    type:'post',  
+		    contentType: "application/x-www-form-urlencoded",
+		    cache:false,
+		    //async : false, //默认为true 异步    
+		    dataType:'json',  //json
+		    success:function(data, textStatus) {  
+		     },  
+		    error : function(XMLHttpRequest, textStatus, errorThrown) {
+		     }
+		});	
+		ar_Camera[i][3]++;
+	}
+}
+
+function PTZ_Start(x,sip){		//PTZ启动
+	var c = 4;
+	//var b = parseInt($("#sessionID").val());	
+	var cid = -1;
+	for (var i=0;i<ar_Camera.length;i++){
+		if (ar_Camera[i][0] == sip){
+			var cid = i;
+		}
+	}	
+	if (cid == -1){
+		return;
+	}
+		
+	var a = {"method" : "ptz.start", "session":ar_Camera[cid][1],"params" : {"channel" : 0, "code" : x,"arg1" : c,"arg2" : c,"arg3" : 0},"id" : ar_Camera[cid][3]};	
+	$.ajax( {  
+	    url: '/json/rpc2.asp?ip=' + sip + '&id=' + ar_Camera[cid][1],// 跳转到 action  
+	    data:JSON.stringify(a),
+	    type:'post',  
+	    contentType: "application/x-www-form-urlencoded",
+	    cache:false,
+	    //async : false, //默认为true 异步    
+	    dataType:'json',  //json
+	    success:function(data, textStatus) {  
+	     },  
+	    error : function(XMLHttpRequest, textStatus, errorThrown) {
+	     }
+	});
+	ar_Camera[cid][3]++;
+}
+
+function PTZ_Stop(x,sip){		//PTZ停止
+	var c = 4;
+	//var b = parseInt($("#sessionID").val());	
+	var cid = -1;
+	for (var i=0;i<ar_Camera.length;i++){
+		if (ar_Camera[i][0] == sip){
+			var cid = i;
+		}
+	}	
+	if (cid == -1){
+		return;
+	}		
+	var a = {"method" : "ptz.stop", "session":ar_Camera[cid][1],"params" : {"channel" : 0, "code" : x,"arg1" : c,"arg2" : c,"arg3" : 0},"id" : ar_Camera[cid][3]};	
+	$.ajax( {  
+	    url: '/json/rpc2.asp?ip=' + sip + '&id=' + ar_Camera[cid][1],// 跳转到 action  
+	    data:JSON.stringify(a),
+	    type:'post',  
+	    contentType: "application/x-www-form-urlencoded",
+	    cache:false,
+	    //async : false, //默认为true 异步    
+	    dataType:'json',  //json
+	    success:function(data, textStatus) {  
+	     },  
+	    error : function(XMLHttpRequest, textStatus, errorThrown) {
+	     }
+	});
+	ar_Camera[cid][3]++;
+}
+
+//cms情报板显示内容获取
+var cmsplaystr = new Array();
+var cmsplayi=0;
+var cmsplayj=0;
+var cmsplaytim;
+var xmlhttptgetcmsplay;
+function getCMSPlay(cmsid){
+    xmlhttptgetcmsplay=ajaxcreateXMLHttpRequest();                        
+    xmlhttptgetcmsplay.open("post", "json/getcmsplay.asp?sid=" + Math.random()+ "&itype=1&q="+cmsid, true);  
+	xmlhttptgetcmsplay.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+    xmlhttptgetcmsplay.onreadystatechange = function(){ajaxChangedGetCMSPlay(cmsid)};
+    xmlhttptgetcmsplay.send(null); 		
+}
+
+function ajaxChangedGetCMSPlay(cmsid){  //回调函数  
+    if (xmlhttptgetcmsplay.readyState==4 && xmlhttptgetcmsplay.status==200){
+		var jsonresponse;
+		var jsonObject;	
+		jsonresponse=xmlhttptgetcmsplay.responseText;
+		jsonObject=eval("("+jsonresponse+")");
+		cmsplaystr=[];
+	 	for (var i=0;i<jsonObject.results;i++)
+		{
+			cmsplaystr[i] = new Array();
+			var strArr = jsonObject.rows[i].textformat.split(",");
+			cmsplaystr[i][0]=strArr[2];//停留时间
+			cmsplaystr[i][1]="<div id='showcmsled"+cmsid+"' style='background-color:#000;white-space:nowrap;";
+			cmsplaystr[i][1]=cmsplaystr[i][1]+"font-family:"+({'1':'KaiTi_GB2312,KaiTi;','2':'SimHei;'}[strArr[4]]||'SimSun;');//字体
+			cmsplaystr[i][1]=cmsplaystr[i][1]+"color:"+({'1':'Green;','2':'Yellow;'}[strArr[5]]||'Red;');//颜色
+			cmsplaystr[i][1]=cmsplaystr[i][1]+"margin-left:"+strArr[7]+";";//左距
+			cmsplaystr[i][1]=cmsplaystr[i][1]+"margin-top:"+strArr[8]+";";//上距
+			cmsplaystr[i][1]=cmsplaystr[i][1]+"line-height:"+({'0':'48px;','1':'32px;','2':'24px;'}[strArr[3]]||'16px;');//字距line-height:normal;
+			cmsplaystr[i][1]=cmsplaystr[i][1]+"font-size:"+({'0':'48px\'>','1':'32px\'>','2':'24px\'>'}[strArr[3]]||'16px\'>');//字号
+			cmsplaystr[i][1]=cmsplaystr[i][1]+jsonObject.rows[i].playtext.replace(/\r\n/g,"<br>").replace(/\s/g,"&nbsp;")+"</div>";//内容
+			//alert(cmsplaystr[i][0]);
+		}
+		
+		clearTimeout(cmsplaytim);
+		cmsplayi=0;
+		cmsplayj=0;
+		cmsplaytim=window.setTimeout(function(){CMSPlayStrRow(cmsid)},0);	
+	}
+}
+
+function CMSPlayStrRow(cmsid){
+	//alert(cmsid);
+	//alert(document.getElementById('showcmsled'+cmsid).outerHTML);
+	clearTimeout(cmsplaytim);
+	if (!document.getElementById('showcmsled'+cmsid)) return;
+	document.getElementById('showcmsled'+cmsid).outerHTML=cmsplaystr[cmsplayi][1];		
+	cmsplayj=cmsplayi;
+	cmsplayi++;
+	if (cmsplayi==cmsplaystr.length){cmsplayi=0} 
+	cmsplaytim=setTimeout(function(){CMSPlayStrRow(cmsid)},cmsplaystr[cmsplayj][0]*1000); 
+}
+
+function getWDInfo(wdid){	
+    xmlhttptgetwdinfo=ajaxcreateXMLHttpRequest();                        
+    xmlhttptgetwdinfo.open("post", "json/getwdinfo.asp?sid=" + Math.random()+ "&itype=1&q="+wdid, true);  
+	xmlhttptgetwdinfo.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+    xmlhttptgetwdinfo.onreadystatechange = function(){ajaxChangedGetWDInfo(wdid)};
+    xmlhttptgetwdinfo.send(null); 	
+}
+
+function ajaxChangedGetWDInfo(wdid){  //回调函数  
+    if (xmlhttptgetwdinfo.readyState==4 && xmlhttptgetwdinfo.status==200){
+		var jsonresponse;
+		var jsonObject;	
+		jsonresponse=xmlhttptgetwdinfo.responseText;
+		jsonObject=eval("("+jsonresponse+")");
+	 	if (!!jsonObject.results) {
+			if (!document.getElementById('tablewd'+wdid)) return;
+			document.getElementById('tablewd'+wdid).caption.innerHTML=jsonObject.rows[i].colltime;
+			document.getElementById('tablewd'+wdid).getElementsByTagName('tr')[1].getElementsByTagName('td')[0].innerHTML = jsonObject.rows[0].fengsu;
+			document.getElementById('tablewd'+wdid).getElementsByTagName('tr')[1].getElementsByTagName('td')[1].innerHTML = jsonObject.rows[0].fengxiang;
+			document.getElementById('tablewd'+wdid).getElementsByTagName('tr')[1].getElementsByTagName('td')[2].innerHTML = jsonObject.rows[0].nengjiandu;
+		}
+	}
+}
+
+function getVDInfo(vdid){	
+    xmlhttptgetvdinfo=ajaxcreateXMLHttpRequest();                        
+    xmlhttptgetvdinfo.open("post", "json/getvdinfo.asp?sid=" + Math.random()+ "&itype=1&q="+vdid, true);  
+	xmlhttptgetvdinfo.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+    xmlhttptgetvdinfo.onreadystatechange = function(){ajaxChangedGetVDInfo(vdid)};
+    xmlhttptgetvdinfo.send(null); 	
+}
+
+function ajaxChangedGetVDInfo(vdid){  //回调函数  
+    if (xmlhttptgetvdinfo.readyState==4 && xmlhttptgetvdinfo.status==200){
+		var jsonresponse;
+		var jsonObject;	
+		jsonresponse=xmlhttptgetvdinfo.responseText;
+		jsonObject=eval("("+jsonresponse+")");
+	 	if (!!jsonObject.results) {
+			if (!document.getElementById('tablevd'+vdid)) return;
+			document.getElementById('tablevd'+vdid).caption.innerHTML=jsonObject.rows[i].colltime;
+			document.getElementById('tablevd'+vdid).getElementsByTagName('tr')[1].getElementsByTagName('td')[0].innerHTML = jsonObject.rows[0].count1;
+			document.getElementById('tablevd'+vdid).getElementsByTagName('tr')[1].getElementsByTagName('td')[1].innerHTML = jsonObject.rows[0].occ1;
+			document.getElementById('tablevd'+vdid).getElementsByTagName('tr')[1].getElementsByTagName('td')[2].innerHTML = jsonObject.rows[0].speed1;
+			document.getElementById('tablevd'+vdid).getElementsByTagName('tr')[2].getElementsByTagName('td')[0].innerHTML = jsonObject.rows[0].count2;
+			document.getElementById('tablevd'+vdid).getElementsByTagName('tr')[2].getElementsByTagName('td')[1].innerHTML = jsonObject.rows[0].occ2;
+			document.getElementById('tablevd'+vdid).getElementsByTagName('tr')[2].getElementsByTagName('td')[2].innerHTML = jsonObject.rows[0].speed2;			
+		}
+	}
+}
+
+function clickobj2(s){
+	var s1 = '图层显示控制面板';
+	var s2 = '<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><th width="90%" align="left" scope="col"><label><input type="checkbox" id="checkbox" checked="checked" onclick="sw_liuliang();"/>流量模拟</label></th><th scope="col"><img src="images/流量模拟.png"/></th></tr>';
+	s2 += '<tr><th width="90%" align="left" scope="row"><label><input type="checkbox" id="checkbox2" checked="checked" onclick="sw_cms();"/>情报板</label></th><th scope="row"><img src="images/cms.png"/></th></tr>';
+	s2 += '<tr><th width="90%" align="left" scope="row"><label><input type="checkbox" id="checkbox2" checked="checked" onclick="sw_vd();"/>车辆检测</label></th><th scope="row"><img src="images/车辆检测.png"/></th></tr>';
+	s2 += '<tr><th width="90%" align="left" scope="row"><label><input type="checkbox" id="checkbox3" checked="checked"  onclick="sw_cctv();"/>高清摄像</label></th><th scope="row"><img src="images/高清摄像.png"/></th></tr>';
+	s2 += '<tr><th width="90%" align="left" scope="row"><label><input type="checkbox" id="checkbox4" checked="checked" onclick="sw_et();"/>路侧广播</label></th><th scope="row"><img src="images/紧急电话.png"/></th></tr>';
+	s2 += '<tr><th width="90%" align="left" scope="row"><label><input type="checkbox" id="checkbox5" checked="checked" onclick="sw_wd();"/>气象检测</label></th><th scope="row"><img src="images/气象检测.png"/></th></tr>';
+	s2 += '<tr><th width="90%" align="left" scope="row"><label><input type="checkbox" id="checkbox6" checked="checked"  onclick="sw_yanghu();"/>养护信息</label></th><th scope="row"><img src="images/养护信息.png"/></th></tr>';
+	s2 += '<tr><th width="90%" align="left" scope="row"><label><input type="checkbox" id="checkbox7" checked="checked"  onclick="sw_daolu();"/>道路事故</label></th><th scope="row"><img src="images/道路事故.png"/></th></tr></table>';
+
+	winTu = new Ext.Window({title:s1, 
+          width:160, 
+          height:290, 
+          x:30,
+          y:70, 
+          closeAction : 'hide',
+          html : s2       
+          });   
+} 
+
+function clickCameraobjActiveX(arr_i,s){//点击摄像机事件for ActiveX
+	var strs = new Array();
+	strs = s.split('\n');
+	var s1 = strs[0];
+	var sIP = strs[2];
+
+	var s2 = '';
+	var s3 = "ocx" + ocx_id++;
+	s2 +="<div id=ocxaa"+arr_i+" style=\"position:absolute; MARGIN-LEFT:0px;top:0px; border:solid 1px;width: 480px; height: 270px;display: none;\"><a href='download\\webplugin.exe' download='download\\webplugin.exe'>点击下载控件</a></div>"
+	s2 += "<object classid='CLSID:ED1EDBF5-CCC7-4171-A559-6578BD6D3002' data='data:application/x-oleobject;' name='ocxdh'";
+	s2 += " width='480px' height='270px' hspace='0' vspace='0' align='middle' id='" + s3 + "' style='position:absolute; MARGIN-LEFT:0px;top: 0px;display: \"\";'/></object>";
+	s2 += "<div id='mbc' style='position:absolute; MARGIN-LEFT:480px;top:0px;height:270px; width: 130px;background: url(img/mb_bg.jpg) repeat-x;'>";
+	
+	s2 += "<div id='yt' style='height: 135px; width: 125px; position: relative;'>";  
+  	s2 += "<div style='float:left; padding: 0px 0px 0 0px'>";
+  	s2 += "<a style='background: url(img/yt1.jpg) ;display:block;width: 40px; height: 35px;' href='javascript:;'";
+  	s2 += "onMouseOut=\"$(this).css('background','url(img/yt1.jpg)');\" onMouseOver=\"$(this).css('background','url(img/yt11.jpg)');\"  data-direction='LeftUp'";
+  	s2 += " onMouseDown=\"PTZ_Start($(this).attr('data-direction'),'"+sIP+"')\" onMouseUp=\"PTZ_Stop($(this).attr('data-direction'),'"+sIP+"')\"></a></div><div style='float:left; padding: 0px 0px 0 0px'>";
+	s2 += "<a style='background: url(img/yt2.jpg) ;display:block;width: 45px; height: 35px;' href='javascript:;'";
+  	s2 += " onMouseOut=\"$(this).css('background','url(img/yt2.jpg)');\" onMouseOver=\"$(this).css('background','url(img/yt21.jpg)');\" data-direction='Up'";
+  	s2 += " onMouseDown=\"PTZ_Start($(this).attr('data-direction'),'"+sIP+"')\" onMouseUp=\"PTZ_Stop($(this).attr('data-direction'),'"+sIP+"')\"></a></div>";
+  	s2 += "<div style='float:left; padding: 0px 0px 0 0px'>";
+  	s2 += "<a style='background: url(img/yt3.jpg);display:block;width: 39px; height: 35px;' href='javascript:;'";
+  	s2 += " onMouseOut=\"$(this).css('background','url(img/yt3.jpg)');\" onMouseOver=\"$(this).css('background','url(img/yt31.jpg)');\" data-direction='RightUp'";
+  	s2 += " onMouseDown=\"PTZ_Start($(this).attr('data-direction'),'"+sIP+"')\" onMouseUp=\"PTZ_Stop($(this).attr('data-direction'),'"+sIP+"')\"></a></div>";
+
+  	s2 += "<div style='float:left; padding: 0px 0px 0 0px'>";
+	s2 += "<a style='background: url(img/yt4.jpg) ;display:block;width: 40px; height: 50px;' href='javascript:;'";
+  	s2 += " onMouseOut=\"$(this).css('background','url(img/yt4.jpg)');\" onMouseOver=\"$(this).css('background','url(img/yt41.jpg)');\" data-direction='Left'";
+  	s2 += " onMouseDown=\"PTZ_Start($(this).attr('data-direction'),'"+sIP+"')\" onMouseUp=\"PTZ_Stop($(this).attr('data-direction'),'"+sIP+"')\"></a></div>";
+  	s2 += "<div style='float:left; padding: 0px 0px 0 0px'>";
+  	s2 += "<a style='background: url(img/yt5.jpg) ;display:block;width: 45px; height: 50px;' href='javascript:;'";
+  	s2 += " onMouseOut=\"$(this).css('background','url(img/yt5.jpg)');\" onMouseOver=\"$(this).css('background','url(img/yt51.jpg)');\" ></a></div>";
+  	s2 += "<div style='float:left; padding: 0px 0px 0 0px'>";
+  	s2 += "<a style='background: url(img/yt6.jpg);display:block;width: 39px; height: 50px;' href='javascript:;'";
+  	s2 += " onMouseOut=\"$(this).css('background','url(img/yt6.jpg)');\" onMouseOver=\"$(this).css('background','url(img/yt61.jpg)');\" data-direction='Right'";
+  	s2 += " onMouseDown=\"PTZ_Start($(this).attr('data-direction'),'"+sIP+"')\" onMouseUp=\"PTZ_Stop($(this).attr('data-direction'),'"+sIP+"')\"></a></div>";
+  
+  	s2 += "<div style='float:left; padding: 0px 0px 0 0px'>";
+  	s2 += "<a style='background: url(img/yt7.jpg) ;display:block;width: 40px; height: 35px;' href='javascript:;'";
+  	s2 += " onMouseOut=\"$(this).css('background','url(img/yt7.jpg)');\" onMouseOver=\"$(this).css('background','url(img/yt71.jpg)');\" data-direction='LeftDown'";
+  	s2 += " onMouseDown=\"PTZ_Start($(this).attr('data-direction'),'"+sIP+"')\" onMouseUp=\"PTZ_Stop($(this).attr('data-direction'),'"+sIP+"')\"></a></div>";
+  	s2 += "<div style='float:left; padding: 0px 0px 0 0px'>";
+  	s2 += "<a style='background: url(img/yt8.jpg) ;display:block;width: 45px; height: 35px;' href='javascript:;'";
+  	s2 += " onMouseOut=\"$(this).css('background','url(img/yt8.jpg)');\" onMouseOver=\"$(this).css('background','url(img/yt81.jpg)');\" data-direction='Down'";
+  	s2 += " onMouseDown=\"PTZ_Start($(this).attr('data-direction'),'"+sIP+"')\" onMouseUp=\"PTZ_Stop($(this).attr('data-direction'),'"+sIP+"')\"></a></div>";
+  	s2 += "<div style='float:left; padding: 0px 0px 0 0px'>";
+  	s2 += "<a style='background: url(img/yt9.jpg);display:block;width: 39px; height: 35px;' href='javascript:;'";
+  	s2 += " onMouseOut=\"$(this).css('background','url(img/yt9.jpg)');\" onMouseOver=\"$(this).css('background','url(img/yt91.jpg)');\" data-direction='RightDown'";
+  	s2 += " onMouseDown=\"PTZ_Start($(this).attr('data-direction'),'"+sIP+"')\" onMouseUp=\"PTZ_Stop($(this).attr('data-direction'),'"+sIP+"')\"></a></div>";	
+	s2 += "</div>";
+
+	s2 += "<div id='yt1' style='width: 132px; height: 135px; position: relative; margin: 0 0px 0 0px;'>";
+	s2 += "<div style='float:left;padding: 0 0 5px 14px;'>";
+	s2 += "<a style='background: url(img/yt11.gif) ;display:block;width: 26px; height: 26px;' href='javascript:;'";
+  	s2 += "  onMouseOut=\"$(this).css('background','url(img/yt11.gif)');\" onMouseOver=\"$(this).css('background','url(img/yt21.gif)');\" data-direction='ZoomWide'";
+  	s2 += " onMouseDown=\"PTZ_Start($(this).attr('data-direction'),'"+sIP+"')\" onMouseUp=\"PTZ_Stop($(this).attr('data-direction'),'"+sIP+"')\"></a></div>";
+	s2 += "<div id='xbb' style='float:left;color: #FFFFFF; height: 18px; width: 50px; padding: 8px 0 0 0;text-align: center;'>变倍</div>";
+	s2 += "<div style='float:left;padding: 0 0 5px 0;'>";
+	s2 += "<a style='background: url(img/yt12.gif) ;display:block;width: 26px; height: 26px;' href='javascript:;'";
+  	s2 += "  onMouseOut=\"$(this).css('background','url(img/yt12.gif)');\" onMouseOver=\"$(this).css('background','url(img/yt22.gif)');\" data-direction='ZoomTele'";
+  	s2 += " onMouseDown=\"PTZ_Start($(this).attr('data-direction'),'"+sIP+"')\" onMouseUp=\"PTZ_Stop($(this).attr('data-direction'),'"+sIP+"')\"></a></div>";
+	
+	s2 += "<div style='float:left;padding: 0 0 5px 14px;'>";
+	s2 += "<a style='background: url(img/yt11.gif) ;display:block;width: 26px; height: 26px;' href='javascript:;'";
+  	s2 += "  onMouseOut=\"$(this).css('background','url(img/yt11.gif)');\" onMouseOver=\"$(this).css('background','url(img/yt21.gif)');\" data-direction='FocusFar'";
+  	s2 += " onMouseDown=\"PTZ_Start($(this).attr('data-direction'),'"+sIP+"')\" onMouseUp=\"PTZ_Stop($(this).attr('data-direction'),'"+sIP+"')\"></a></div>";
+	s2 += "<div id='xbj' style='float:left;color: #FFFFFF; height: 18px; width: 50px; padding: 8px 0 0 0;text-align: center;'>聚焦</div>";
+	s2 += "<div style='float:left;padding: 0 0 5px 0;'>";
+	s2 += "<a style='background: url(img/yt12.gif) ;display:block;width: 26px; height: 26px;' href='javascript:;'";
+  	s2 += "  onMouseOut=\"$(this).css('background','url(img/yt12.gif)');\" onMouseOver=\"$(this).css('background','url(img/yt22.gif)');\" data-direction='FocusNear'";
+  	s2 += " onMouseDown=\"PTZ_Start($(this).attr('data-direction'),'"+sIP+"')\" onMouseUp=\"PTZ_Stop($(this).attr('data-direction'),'"+sIP+"')\"></a></div>";
+	
+	s2 += "<div style='float:left;padding: 0 0 5px 14px;'>";
+	s2 += "<a style='background: url(img/yt11.gif) ;display:block;width: 26px; height: 26px;' href='javascript:;'";
+  	s2 += "  onMouseOut=\"$(this).css('background','url(img/yt11.gif)');\" onMouseOver=\"$(this).css('background','url(img/yt21.gif)');\" data-direction='IrisSmall'";
+  	s2 += " onMouseDown=\"PTZ_Start($(this).attr('data-direction'),'"+sIP+"')\" onMouseUp=\"PTZ_Stop($(this).attr('data-direction'),'"+sIP+"')\"></a></div>";
+	s2 += "<div id='xgq' style='float:left;color: #FFFFFF; height: 18px; width: 50px; padding: 8px 0 0 0;text-align: center;'>光圈</div>";
+	s2 += "<div style='float:left;padding: 0 0 5px 0;'>";
+	s2 += "<a style='background: url(img/yt12.gif) ;display:block;width: 26px; height: 26px;' href='javascript:;'";
+  	s2 += "  onMouseOut=\"$(this).css('background','url(img/yt12.gif)');\" onMouseOver=\"$(this).css('background','url(img/yt22.gif)');\" data-direction='IrisLarge'";
+  	s2 += " onMouseDown=\"PTZ_Start($(this).attr('data-direction'),'"+sIP+"')\" onMouseUp=\"PTZ_Stop($(this).attr('data-direction'),'"+sIP+"')\"></a></div>";
+	s2 += "</div>";
+	
+	s2 += "</div>";
+	var win = Ext.getCmp('showcam'+arr_i);
+ 
+	if(!win){
+		win = new Ext.Window({
+		  id:'showcam'+arr_i,
+		  title:s1, 
+          width:625, 
+          height:302,
+          html : s2,
+          iconCls: 'bogus',
+          maximizable:false,     //显示最大化按钮
+          listeners :{
+			"beforeshow": function(){  
+				try{
+					var obj=new ActiveXObject("WebActiveX.Plugin.3.0.0.2");
+				}
+				catch(e){
+					
+					//document.getElementById("ocxaa"+arr_i).outerHTML="<div id="+"ocxaa"+arr_i+" style=\"border:solid 1px;width: 480px; height: 270px;\"></div>";
+					//alert(document.getElementById("ocxaa"+arr_i).outerHTML)
+					document.getElementById(s3).style.display="none";//隐藏
+					document.getElementById("ocxaa"+arr_i).style.display="";//显示
+				}
+			},			  
+          	"close":function(){
+          		//Ext.Msg.alert("提示","窗口关闭！");
+          		var ocx = document.getElementById(s3).object;
+          		ocx.DisConnectRealVideo(0);
+          		ocx.LogoutDevice();
+          		Logoutclick(sIP);          		
+          	}}         
+	})}; 
+  	win.show();
+  	var ocx = document.getElementById(s3).object ; 
+  	ocx.LoginDeviceEx(sIP, 80, "admin", "admin", 4);
+  	ocx.SetModuleMode(3);
+  	ocx.ConnectRealVideo(0,2);  
+  	Login1click(sIP);
+}
+
+function clickCameraobjNpapi(arr_i,s){//点击摄像机事件fo npapi
+	var strs = new Array();
+	strs = s.split('\n');
+	var s1 = strs[0];
+	var sIP = strs[2];
+
+	var s2 = '';
+	var s3 = "ocx" + ocx_id++;
+	s2 +="<div id=ocxaa"+arr_i+" style=\"position:absolute; MARGIN-LEFT:0px;top:0px; border:solid 1px;width: 480px; height: 270px;display: none;\"><a href='download\\webplugin.exe' download='download\\webplugin.exe'>点击下载控件!</a></div>"
+	s2 += "<object type='application/media-plugin-version-3.0.0.2' VideoWindTextColor='9c9c9c' VideoWindBarColor='414141' name='ocxdh'";
+	s2 += " width='480px' height='270px' hspace='0' vspace='0' align='middle' id='" + s3 + "' style='position:absolute; MARGIN-LEFT:0px;top: 0px;display: \"\";'/></object>";
+	s2 += "<div id='mbc' style='position:absolute; MARGIN-LEFT:480px;top:0px;height:270px; width: 130px;background: url(img/mb_bg.jpg) repeat-x;'>";
+	
+	s2 += "<div id='yt' style='height: 135px; width: 125px; position: relative;'>";  
+  	s2 += "<div style='float:left; padding: 0px 0px 0 0px'>";
+  	s2 += "<a style='background: url(img/yt1.jpg) ;display:block;width: 40px; height: 35px;' href='javascript:;'";
+  	s2 += "onMouseOut=\"$(this).css('background','url(img/yt1.jpg)');\" onMouseOver=\"$(this).css('background','url(img/yt11.jpg)');\"  data-direction='LeftUp'";
+  	s2 += " onMouseDown=\"PTZ_Start($(this).attr('data-direction'),'"+sIP+"')\" onMouseUp=\"PTZ_Stop($(this).attr('data-direction'),'"+sIP+"')\"></a></div><div style='float:left; padding: 0px 0px 0 0px'>";
+	s2 += "<a style='background: url(img/yt2.jpg) ;display:block;width: 45px; height: 35px;' href='javascript:;'";
+  	s2 += " onMouseOut=\"$(this).css('background','url(img/yt2.jpg)');\" onMouseOver=\"$(this).css('background','url(img/yt21.jpg)');\" data-direction='Up'";
+  	s2 += " onMouseDown=\"PTZ_Start($(this).attr('data-direction'),'"+sIP+"')\" onMouseUp=\"PTZ_Stop($(this).attr('data-direction'),'"+sIP+"')\"></a></div>";
+  	s2 += "<div style='float:left; padding: 0px 0px 0 0px'>";
+  	s2 += "<a style='background: url(img/yt3.jpg);display:block;width: 39px; height: 35px;' href='javascript:;'";
+  	s2 += " onMouseOut=\"$(this).css('background','url(img/yt3.jpg)');\" onMouseOver=\"$(this).css('background','url(img/yt31.jpg)');\" data-direction='RightUp'";
+  	s2 += " onMouseDown=\"PTZ_Start($(this).attr('data-direction'),'"+sIP+"')\" onMouseUp=\"PTZ_Stop($(this).attr('data-direction'),'"+sIP+"')\"></a></div>";
+
+  	s2 += "<div style='float:left; padding: 0px 0px 0 0px'>";
+	s2 += "<a style='background: url(img/yt4.jpg) ;display:block;width: 40px; height: 50px;' href='javascript:;'";
+  	s2 += " onMouseOut=\"$(this).css('background','url(img/yt4.jpg)');\" onMouseOver=\"$(this).css('background','url(img/yt41.jpg)');\" data-direction='Left'";
+  	s2 += " onMouseDown=\"PTZ_Start($(this).attr('data-direction'),'"+sIP+"')\" onMouseUp=\"PTZ_Stop($(this).attr('data-direction'),'"+sIP+"')\"></a></div>";
+  	s2 += "<div style='float:left; padding: 0px 0px 0 0px'>";
+  	s2 += "<a style='background: url(img/yt5.jpg) ;display:block;width: 45px; height: 50px;' href='javascript:;'";
+  	s2 += " onMouseOut=\"$(this).css('background','url(img/yt5.jpg)');\" onMouseOver=\"$(this).css('background','url(img/yt51.jpg)');\" ></a></div>";
+  	s2 += "<div style='float:left; padding: 0px 0px 0 0px'>";
+  	s2 += "<a style='background: url(img/yt6.jpg);display:block;width: 39px; height: 50px;' href='javascript:;'";
+  	s2 += " onMouseOut=\"$(this).css('background','url(img/yt6.jpg)');\" onMouseOver=\"$(this).css('background','url(img/yt61.jpg)');\" data-direction='Right'";
+  	s2 += " onMouseDown=\"PTZ_Start($(this).attr('data-direction'),'"+sIP+"')\" onMouseUp=\"PTZ_Stop($(this).attr('data-direction'),'"+sIP+"')\"></a></div>";
+  
+  	s2 += "<div style='float:left; padding: 0px 0px 0 0px'>";
+  	s2 += "<a style='background: url(img/yt7.jpg) ;display:block;width: 40px; height: 35px;' href='javascript:;'";
+  	s2 += " onMouseOut=\"$(this).css('background','url(img/yt7.jpg)');\" onMouseOver=\"$(this).css('background','url(img/yt71.jpg)');\" data-direction='LeftDown'";
+  	s2 += " onMouseDown=\"PTZ_Start($(this).attr('data-direction'),'"+sIP+"')\" onMouseUp=\"PTZ_Stop($(this).attr('data-direction'),'"+sIP+"')\"></a></div>";
+  	s2 += "<div style='float:left; padding: 0px 0px 0 0px'>";
+  	s2 += "<a style='background: url(img/yt8.jpg) ;display:block;width: 45px; height: 35px;' href='javascript:;'";
+  	s2 += " onMouseOut=\"$(this).css('background','url(img/yt8.jpg)');\" onMouseOver=\"$(this).css('background','url(img/yt81.jpg)');\" data-direction='Down'";
+  	s2 += " onMouseDown=\"PTZ_Start($(this).attr('data-direction'),'"+sIP+"')\" onMouseUp=\"PTZ_Stop($(this).attr('data-direction'),'"+sIP+"')\"></a></div>";
+  	s2 += "<div style='float:left; padding: 0px 0px 0 0px'>";
+  	s2 += "<a style='background: url(img/yt9.jpg);display:block;width: 39px; height: 35px;' href='javascript:;'";
+  	s2 += " onMouseOut=\"$(this).css('background','url(img/yt9.jpg)');\" onMouseOver=\"$(this).css('background','url(img/yt91.jpg)');\" data-direction='RightDown'";
+  	s2 += " onMouseDown=\"PTZ_Start($(this).attr('data-direction'),'"+sIP+"')\" onMouseUp=\"PTZ_Stop($(this).attr('data-direction'),'"+sIP+"')\"></a></div>";	
+	s2 += "</div>";
+
+	s2 += "<div id='yt1' style='width: 132px; height: 135px; position: relative; margin: 0 0px 0 0px;'>";
+	s2 += "<div style='float:left;padding: 0 0 5px 14px;'>";
+	s2 += "<a style='background: url(img/yt11.gif) ;display:block;width: 26px; height: 26px;' href='javascript:;'";
+  	s2 += "  onMouseOut=\"$(this).css('background','url(img/yt11.gif)');\" onMouseOver=\"$(this).css('background','url(img/yt21.gif)');\" data-direction='ZoomWide'";
+  	s2 += " onMouseDown=\"PTZ_Start($(this).attr('data-direction'),'"+sIP+"')\" onMouseUp=\"PTZ_Stop($(this).attr('data-direction'),'"+sIP+"')\"></a></div>";
+	s2 += "<div id='xbb' style='float:left;color: #FFFFFF; height: 18px; width: 50px; padding: 8px 0 0 0;text-align: center;'>变倍</div>";
+	s2 += "<div style='float:left;padding: 0 0 5px 0;'>";
+	s2 += "<a style='background: url(img/yt12.gif) ;display:block;width: 26px; height: 26px;' href='javascript:;'";
+  	s2 += "  onMouseOut=\"$(this).css('background','url(img/yt12.gif)');\" onMouseOver=\"$(this).css('background','url(img/yt22.gif)');\" data-direction='ZoomTele'";
+  	s2 += " onMouseDown=\"PTZ_Start($(this).attr('data-direction'),'"+sIP+"')\" onMouseUp=\"PTZ_Stop($(this).attr('data-direction'),'"+sIP+"')\"></a></div>";
+	
+	s2 += "<div style='float:left;padding: 0 0 5px 14px;'>";
+	s2 += "<a style='background: url(img/yt11.gif) ;display:block;width: 26px; height: 26px;' href='javascript:;'";
+  	s2 += "  onMouseOut=\"$(this).css('background','url(img/yt11.gif)');\" onMouseOver=\"$(this).css('background','url(img/yt21.gif)');\" data-direction='FocusFar'";
+  	s2 += " onMouseDown=\"PTZ_Start($(this).attr('data-direction'),'"+sIP+"')\" onMouseUp=\"PTZ_Stop($(this).attr('data-direction'),'"+sIP+"')\"></a></div>";
+	s2 += "<div id='xbj' style='float:left;color: #FFFFFF; height: 18px; width: 50px; padding: 8px 0 0 0;text-align: center;'>聚焦</div>";
+	s2 += "<div style='float:left;padding: 0 0 5px 0;'>";
+	s2 += "<a style='background: url(img/yt12.gif) ;display:block;width: 26px; height: 26px;' href='javascript:;'";
+  	s2 += "  onMouseOut=\"$(this).css('background','url(img/yt12.gif)');\" onMouseOver=\"$(this).css('background','url(img/yt22.gif)');\" data-direction='FocusNear'";
+  	s2 += " onMouseDown=\"PTZ_Start($(this).attr('data-direction'),'"+sIP+"')\" onMouseUp=\"PTZ_Stop($(this).attr('data-direction'),'"+sIP+"')\"></a></div>";
+	
+	s2 += "<div style='float:left;padding: 0 0 5px 14px;'>";
+	s2 += "<a style='background: url(img/yt11.gif) ;display:block;width: 26px; height: 26px;' href='javascript:;'";
+  	s2 += "  onMouseOut=\"$(this).css('background','url(img/yt11.gif)');\" onMouseOver=\"$(this).css('background','url(img/yt21.gif)');\" data-direction='IrisSmall'";
+  	s2 += " onMouseDown=\"PTZ_Start($(this).attr('data-direction'),'"+sIP+"')\" onMouseUp=\"PTZ_Stop($(this).attr('data-direction'),'"+sIP+"')\"></a></div>";
+	s2 += "<div id='xgq' style='float:left;color: #FFFFFF; height: 18px; width: 50px; padding: 8px 0 0 0;text-align: center;'>光圈</div>";
+	s2 += "<div style='float:left;padding: 0 0 5px 0;'>";
+	s2 += "<a style='background: url(img/yt12.gif) ;display:block;width: 26px; height: 26px;' href='javascript:;'";
+  	s2 += "  onMouseOut=\"$(this).css('background','url(img/yt12.gif)');\" onMouseOver=\"$(this).css('background','url(img/yt22.gif)');\" data-direction='IrisLarge'";
+  	s2 += " onMouseDown=\"PTZ_Start($(this).attr('data-direction'),'"+sIP+"')\" onMouseUp=\"PTZ_Stop($(this).attr('data-direction'),'"+sIP+"')\"></a></div>";
+	s2 += "</div>";
+	
+	s2 += "</div>";
+	var win = Ext.getCmp('showcam'+arr_i);
+ 
+	if(!win){
+		win = new Ext.Window({
+		  id:'showcam'+arr_i,
+		  title:s1, 
+          width:625, 
+          height:302,
+          html : s2,
+          iconCls: 'bogus',
+          maximizable:false,     //显示最大化按钮
+          listeners :{
+			"beforeshow": function(){  
+				try{
+					navigator.plugins.refresh(false);
+					obj = navigator.mimeTypes["application/media-plugin-version-3.0.0.2"];
+					if (!(obj && obj.enabledPlugin))
+					{
+						document.getElementById(s3).style.display="none";//隐藏
+						document.getElementById("ocxaa"+arr_i).style.display="";//显示	
+					}
+				}
+				catch(e){
+
+				}
+			},			  
+          	"close":function(){
+          		//Ext.Msg.alert("提示","窗口关闭！");
+          		var ocx = document.getElementById(s3);//.object;   
+				ocx.DisConnectRealVideo(0);
+				ocx.LogoutDevice();
+				Logoutclick(sIP);  
+          	}}         
+	})}; 
+  	win.show();
+  	var ocx = document.getElementById(s3);//.object ; 
+	ocx.LoginDeviceEx(sIP,80,"admin","admin", 4);
+	ocx.SetModuleMode(3);
+	ocx.ConnectRealVideo(0 ,2);
+	Login1click(sIP);
+}
+
+function clickdlEvent(arr_i,s){//点击事故标注事件
+	var j = s.indexOf('\n');
+	var s1 = s.substring(0,j);
+	var s2 = '<p><strong>'+arr_dlEvent[arr_i][6]+'</strong></p><p>预计恢复时间:'+arr_dlEvent[arr_i][5]+'</p>';
+	s2 += '<p>简介:'+arr_dlEvent[arr_i][7]+'</p>';
+	var win = Ext.getCmp('showdl'+arr_dlEvent[arr_i][0]);
+	if(!win){
+		win = new Ext.Window({
+			id:'showdl'+arr_dlEvent[arr_i][0],
+			title:s1, 
+			width:400, 
+			height:250,
+			html : s2,
+			iconCls: 'bogus',
+			maximizable:false     //显示最大化按钮         
+        }); 
+	}
+  	win.show(); 
+}
+
+function clickyhEvent(arr_i,s){//点击养护事件
+	var j = s.indexOf('\n');
+	var s1 = s.substring(0,j);
+	var s2 = '<p><strong>'+arr_yhEvent[arr_i][6]+'</strong></p><p>预计恢复时间:'+arr_yhEvent[arr_i][5]+'</p>';
+	s2 += '<p>简介:'+arr_yhEvent[arr_i][7]+'</p>';
+	var win = Ext.getCmp('showyh'+arr_yhEvent[arr_i][0]);
+	if(!win){
+		win = new Ext.Window({
+			id:'showyh'+arr_yhEvent[arr_i][0],
+			title:s1, 
+        	width:400, 
+			height:250,
+			html : s2,
+			iconCls: 'bogus',
+			maximizable:false     //显示最大化按钮         
+     	}); 
+	}
+	win.show(); 
+}
+
+function clickTCmsobj(arr_i,s){//点击T情报板事件
+	var j = s.indexOf('\n');
+	var s1 = s.substring(0,j);//devdname
+	var s2 = s.substring(j+1,s.length);//devaddr
+	//var s2 = '<p><strong>二义性标识站 K35+189</strong></p><p>标识率：100%</p><p>主机</p><p>电源状态: <span style="color:#006600;">正常</span>  通信状态:  <span style="color:#006600;">正常</span></p><br>';
+	//s2 += '<p>备机</p><p>电源状态: <span style="color:#006600;">正常</span>  通信状态:  <span style="color:#006600;">正常</span></p><br>';
+
+	var s3 = '<p><strong>设备状态信息：</strong></p><p>设备桩号： '+s2+'</p>';
+	s3 += '<p>设备状态：'+arr_tcms[arr_i][4]+'</p><br>';
+    s3 += '<p style=\'float:left\'>屏显示内容：<div style=\'overflow:hidden;margin:0;float: left;width:96px;height:96px;border:0px;line-height:normal;background-color:#000\'><div id=showcmsled'+arr_tcms[arr_i][0]+'></div></div></p><br><p style=\'clear: both;\'></p>'
+	var win = Ext.getCmp('showcms'+arr_tcms[arr_i][0]);
+	if(!win){
+		win = new Ext.Window({
+		 	id:'showcms'+arr_tcms[arr_i][0],					 
+			title:s1, 
+          	width:280, 
+          	height:280,
+          	html : s3,
+          	iconCls: 'bogus',
+          	maximizable:false,     //显示最大化按钮
+			layout:"absolute",
+			items:[
+				{
+					xtype:"button",
+					text:"下发信息",
+					x:180,
+					y:8,
+					width:80,
+					handler: function() {
+						Ext.cy2.devselectid = arr_i;
+						Ext.cy2.init();
+					}
+				}   
+			],
+		  	listeners :{
+          		"beforeshow":function(){
+					//alert(arr_i);
+          			//Ext.Msg.alert("提示","窗口关闭！");
+					getCMSPlay(arr_tcms[arr_i][0]);
+				},
+				"close":function(){
+					//if (!!cmsplaytim) {};
+				}
+          	}		  
+    	}); 
+	}
+  	win.show(); 
+}
+
+function clickSCmsobj(arr_i,s){//点击LED情报板事件
+	var j = s.indexOf('\n');
+	var s1 = s.substring(0,j);//devdname
+	var s2 = s.substring(j+1,s.length);//devaddr
+	//var s2 = '<p><strong>二义性标识站 K35+189</strong></p><p>标识率：100%</p><p>主机</p><p>电源状态: <span style="color:#006600;">正常</span>  通信状态:  <span style="color:#006600;">正常</span></p><br>';
+	//s2 += '<p>备机</p><p>电源状态: <span style="color:#006600;">正常</span>  通信状态:  <span style="color:#006600;">正常</span></p><br>';
+
+	var s3 = '<p><strong>设备状态信息：</strong></p><p>设备桩号： '+s2+'</p>';
+	s3 += '<p>设备状态：'+arr_scms[arr_i][4]+'</p><br>';
+    s3 += '<p style=\'float:left\'>屏显示内容：<div style=\'overflow:hidden;margin:0;float: left;width:96px;height:96px;border:0px;line-height:normal;background-color:#000\'><div id=showcmsled'+arr_scms[arr_i][0]+'></div></div></p><br><p style=\'clear: both;\'></p>'
+	var win = Ext.getCmp('showcms'+arr_scms[arr_i][0]);
+	if(!win){
+		win = new Ext.Window({
+		 	id:'showcms'+arr_scms[arr_i][0],					 
+			title:s1, 
+          	width:280, 
+          	height:280,
+          	html : s3,
+          	iconCls: 'bogus',
+          	maximizable:false,     //显示最大化按钮
+			layout:"absolute",
+			items:[
+				{
+					xtype:"button",
+					text:"下发信息",
+					x:180,
+					y:8,
+					width:80,
+					handler: function() {
+						Ext.cy4.devselectid = arr_i;
+						Ext.cy4.init();
+					}
+				}   
+			],
+		  	listeners :{
+          		"beforeshow":function(){
+					//alert(arr_i);
+					//alert(arr_scms[arr_i][4]);
+          			//Ext.Msg.alert("提示","窗口关闭！");
+					getCMSPlay(arr_scms[arr_i][0]);
+				},
+				"close":function(){
+					//if (!!cmsplaytim) {};
+				}
+          	}		  
+    	}); 
+	}
+  	win.show(); 
+}
+
+function clickFCmsobj(arr_i,s){//点击F情报板事件
+	var j = s.indexOf('\n');
+	var s1 = s.substring(0,j);//devdname
+	var s2 = s.substring(j+1,s.length);//devaddr
+	//var s2 = '<p><strong>二义性标识站 K35+189</strong></p><p>标识率：100%</p><p>主机</p><p>电源状态: <span style="color:#006600;">正常</span>  通信状态:  <span style="color:#006600;">正常</span></p><br>';
+	//s2 += '<p>备机</p><p>电源状态: <span style="color:#006600;">正常</span>  通信状态:  <span style="color:#006600;">正常</span></p><br>';
+
+	var s3 = '<p><strong>设备状态信息：</strong></p><p>设备桩号： '+s2+'</p>';
+	s3 += '<p>设备状态：'+arr_fcms[arr_i][4]+'</p><br>';
+    s3 += '<p style=\'float:left\'>屏显示内容：<div style=\'overflow:hidden;margin:0;float: left;width:128px;height:64px;border:0px;line-height:normal;background-color:#000\'><div id=showcmsled'+arr_fcms[arr_i][0]+'></div></div></p><br><p style=\'clear: both;\'></p>'
+	var win = Ext.getCmp('showcms'+arr_fcms[arr_i][0]);
+	if(!win){
+		win = new Ext.Window({
+		 	id:'showcms'+arr_fcms[arr_i][0],					 
+			title:s1, 
+          	width:280, 
+          	height:240,
+          	html : s3,
+          	iconCls: 'bogus',
+          	maximizable:false,     //显示最大化按钮
+			layout:"absolute",
+			items:[
+				{
+					xtype:"button",
+					text:"下发信息",
+					x:180,
+					y:8,
+					width:80,
+					handler: function() {
+						Ext.cy3.devselectid = arr_i;
+						Ext.cy3.init();
+					}
+				}   
+			],
+		  	listeners :{
+          		"beforeshow":function(){
+					//alert(arr_i);
+					//alert(arr_fcms[arr_i][4]);
+          			//Ext.Msg.alert("提示","窗口关闭！");
+					getCMSPlay(arr_fcms[arr_i][0]);
+				},
+				"close":function(){
+					//if (!!cmsplaytim) {};
+				}
+          	}		  
+    	}); 
+	}
+  	win.show(); 
+}
+
+function clickCmsobj(arr_i,s){//点击cms事件
+	var j = s.indexOf('\n');
+	var s1 = s.substring(0,j);//devdname
+	var s2 = s.substring(j+1,s.length);//devaddr
+	//var s2 = '<p><strong>二义性标识站 K35+189</strong></p><p>标识率：100%</p><p>主机</p><p>电源状态: <span style="color:#006600;">正常</span>  通信状态:  <span style="color:#006600;">正常</span></p><br>';
+	//s2 += '<p>备机</p><p>电源状态: <span style="color:#006600;">正常</span>  通信状态:  <span style="color:#006600;">正常</span></p><br>';
+
+	var s3 = '<p><strong>设备状态信息：</strong></p><p>设备桩号： '+s2+'</p>';
+	s3 += '<p>设备状态：'+arr_cms[arr_i][4]+'</p><br>';
+    s3 += '<p style=\'float:left\'>屏显示内容：<div style=\'overflow:hidden;margin:0;float: left;width:400px;height:40px;border:0px;line-height:normal;background-color:#000\'><div id=showcmsled'+arr_cms[arr_i][0]+'></div></div></p><br><p style=\'clear: both;\'></p>'
+	var win = Ext.getCmp('showcms'+arr_cms[arr_i][0]);
+	if(!win){
+		win = new Ext.Window({
+			id:'showcms'+arr_cms[arr_i][0],					 
+		  	title:s1, 
+          	width:450, 
+          	height:230,
+          	html : s3,
+          	iconCls: 'bogus',
+          	maximizable:false,     //显示最大化按钮
+			layout:"absolute",
+			items:[
+				{
+					xtype:"button",
+					text:"下发信息",
+					x:350,
+					y:8,
+					width:80,
+					handler: function() {
+						Ext.cy.devselectid = arr_i;
+						Ext.cy.init();
+					}
+				}   
+			],			
+		  	listeners :{
+          		"beforeshow":function(){
+					//alert(arr_i);
+          			//Ext.Msg.alert("提示","窗口关闭！");
+					getCMSPlay(arr_cms[arr_i][0]);
+				},
+				"close":function(){
+					//if (!!cmsplaytim) {};
+				}
+          	}		  
+		}); 
+	}
+  	win.show(); 
+}
+
+function clickVDobj(arr_i,s){//点击微波车检事件
+	var j = s.indexOf('\n');
+	var s1 = s.substring(0,j);
+	var s2 = s.substring(j+1,s.length);//devaddr:
+	var s3 = '<p><strong>设备状态信息</strong></p><p>设备桩号：'+s2+'   设备状态：<span style="color:'+(arr_vd[arr_i][2]==1?'#00ff00':'#ff0000')+';">'+(arr_vd[arr_i][2]==1?'正常':'故障')+'</span></p>';
+	s3 += '<p class=\'table-a\'><table id=\'tablevd'+arr_vd[arr_i][0]+'\' width=\'380\'><caption>&nbsp;</caption>';
+	s3 += '<tr><th></th><th scope="col">车流量</th><th scope="col">占有率</th><th scope="col">平均速度</th></tr>';
+	s3 += '<tr><th scope="row">行车道</th><td></td><td></td><td></td></tr>';
+	s3 += '<tr><th scope="row">超车道</th><td></td><td></td><td></td></tr>';
+	s3 += '</table></p>';
+	var win = Ext.getCmp('showvd'+arr_vd[arr_i][0]);
+	if(!win){		
+		var win = new Ext.Window({
+			id:'showvd'+arr_vd[arr_i][0],				 
+			title:s1, 
+          	width:420, 
+          	height:230,
+          	html : s3,
+          	iconCls: 'bogus',
+          	maximizable:false,     //显示最大化按钮
+			listeners :{
+        		"beforeshow":function(){;
+					getVDInfo(arr_vd[arr_i][0]);
+				}
+         	}			
+       	}); 
+	}
+  	win.show(); 
+}
+
+function clickWDobj(arr_i,s){//点击气象检测事件
+	var j = s.indexOf('\n');
+	var s1 = s.substring(0,j);
+	var s2 = s.substring(j+1,s.length);//devaddr:
+	var s3 = '<p><strong>设备状态信息</strong></p><p>设备桩号：'+s2+'   设备状态：<span style="color:'+(arr_wd[arr_i][2]==1?'#00ff00':'#ff0000')+';">'+(arr_wd[arr_i][2]==1?'正常':'故障')+'</span></p>';
+	s3 += '<p class=\'table-a\'><table id=\'tablewd'+arr_wd[arr_i][0]+'\' width=\'400\'><caption>&nbsp;</caption>';
+	s3 += '<tr><th></th><th scope="col">风速(m/s)</th><th scope="col">风向</th><th scope="col">能见度(m)</th></tr>';
+	s3 += '<tr><th scope="row">值</th><td></td><td></td><td></td></tr>';
+	s3 += '</table></p>';
+	
+	
+	var win = Ext.getCmp('showwd'+arr_wd[arr_i][0]);
+	if(!win){		
+		var win = new Ext.Window({
+			id:'showwd'+arr_wd[arr_i][0],				 
+			title:s1, 
+			width:440, 
+        	height:200,
+        	html : s3,
+        	iconCls: 'bogus',
+        	maximizable:false,     //显示最大化按钮
+			listeners :{
+        		"beforeshow":function(){;
+					getWDInfo(arr_wd[arr_i][0]);
+				},
+				"close":function(){
+					
+				}
+         	}		
+     	});
+	}
+	win.show(); 
+}
+
+function clickETobj(arr_i,s){//点击紧急电话事件
+	var j = s.indexOf('\n');
+	var s1 = s.substring(0,j);
+	var s2 = s.substring(j+1,s.length);//devaddr:  
+	var s3 = '<p><strong>设备状态信息：</strong></p><p>设备桩号：'+s2+'</p><p>设备状态：<span style="color:'+(arr_et[arr_i][2]==1?'#00ff00':'#ff0000')+';">'+(arr_et[arr_i][2]==1?'正常':'故障')+'</span></p>';
+	s3 += '<p></p>';
+	var win = Ext.getCmp('showet'+arr_et[arr_i][0]);
+	if(!win){	
+		var win = new Ext.Window({
+		id:'showet'+arr_et[arr_i][0],							 
+		  title:s1, 
+          width:220, 
+          height:150,
+          html : s3,
+          iconCls: 'bogus',
+          maximizable:false     //显示最大化按钮         
+          }); 
+	}
+  win.show(); 
+}
+
+function sw_liuliang(){
+	for (var i=0;i<arr_flow.length;i++)
+	{
+		if (arr_flow[i].isVisible()){arr_flow[i].hide()} else {arr_flow[i].show()}
+	}
+}
+
+function sw_cctv(){
+	for (var i=0;i<arr_CCTV.length;i++)
+	{
+		if (arr_CCTV[i][3].isVisible()){arr_CCTV[i][3].hide()} else {arr_CCTV[i][3].show()}
+	}
+}
+
+function sw_yanghu(){
+	for (var i=0;i<arr_yhEvent.length;i++)
+	{
+		if (arr_yhEvent[i][3].isVisible()){arr_yhEvent[i][3].hide()} else {arr_yhEvent[i][3].show()}
+	}
+}
+
+function sw_daolu(){
+	for (var i=0;i<arr_dlEvent.length;i++)
+	{
+		if (arr_dlEvent[i][3].isVisible()){arr_dlEvent[i][3].hide()} else {arr_dlEvent[i][3].show()}
+	}
+}
+
+function sw_vd(){
+	for (var i=0;i<arr_vd.length;i++)
+	{
+		if (arr_vd[i][3].isVisible()){arr_vd[i][3].hide()} else {arr_vd[i][3].show()}
+	}
+}
+
+function sw_et(){
+	for (var i=0;i<arr_et.length;i++)
+	{
+		if (arr_et[i][3].isVisible()){arr_et[i][3].hide()} else {arr_et[i][3].show()}
+	}
+}
+
+function sw_wd(){
+	for (var i=0;i<arr_wd.length;i++)
+	{
+		if (arr_wd[i][3].isVisible()){arr_wd[i][3].hide()} else {arr_wd[i][3].show()}
+	}
+}
+function sw_cms(){
+	/*if (cms1.isVisible()){
+		cms1.hide();
+		cms2.hide();
+		cms3.hide();
+	}else{
+		cms1.show();
+		cms2.show();
+		cms3.show();
+	}*/
+	for (var i=0;i<arr_tcms.length;i++)
+	{
+		if (arr_tcms[i][3].isVisible()){arr_tcms[i][3].hide()} else {arr_tcms[i][3].show()}
+	}
+	for (var i=0;i<arr_cms.length;i++)
+	{
+		if (arr_cms[i][3].isVisible()){arr_cms[i][3].hide()} else {arr_cms[i][3].show()}
+	}	
+}
+
+function toprmenu5(){//返回中心点与默认级别
+	map.centerAndZoom(point,defaultLevel); 
+}
+function toprmenu3(){//缩小级别
+	map.zoomIn(); 
+}
+function toprmenu4(){//放大级别
+	map.zoomOut(); 
+}
+function toprmenu2(){//地图左移
+	map.panBy(-100,0); 
+}
+function toprmenu1(){//放大右移
+	map.panBy(100,0); 
+}
+
+function toplmenu5(){
+	var desktop = MyDesktop.getDesktop();
+	var win = desktop.getWindow('syssetwin');
+	if(!win){
+		win = Ext.SysSet.MyWindow();	
+	};
+	win.show();
+}
+
+function toplmenu4(){//打开图层面板
+	if (!winTu){clickobj2('');}
+	winTu.show(); 
+}
+function toplmenu3(){//卫星路网图
+	map.setMapType(BMAP_HYBRID_MAP); 
+}
+function toplmenu2(){//卫星图
+	map.setMapType(BMAP_SATELLITE_MAP); 
+}
+function toplmenu1(){//普通地图
+	map.setMapType(BMAP_NORMAL_MAP);  
+}

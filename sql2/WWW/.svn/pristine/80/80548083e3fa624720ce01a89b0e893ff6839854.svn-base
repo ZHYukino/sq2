@@ -1,0 +1,84 @@
+<!--#include file="../comm/mconn.asp"-->
+<%
+	Session.CodePage = 65001
+	Response.Charset = "UTF-8"
+	itype = Request.QueryString("itype") '1 按日期段 2 按月份 3 按年份
+	'offset = Request.QueryString("offset") '页码
+	'limit = Request.QueryString("limit") '每页显示条数
+	begindate = Request.QueryString("date1") '开始时间
+	enddate = Request.QueryString("date2") '结束时间
+	devid = int(Request.QueryString("devid")) '设备id
+	tablename = Request.QueryString("tablename")
+	flag = 1
+	Select Case itype
+		Case 1
+			If IsDate(begindate) And IsDate(enddate) Then
+				begindate = FormatDateTime(CDate(begindate),2)
+				enddate = FormatDateTime(DateAdd("d",1,CDate(enddate)),2)
+			Else
+				flag = 0
+			End if
+		Case 2
+			If IsDate(begindate) Then
+				begindate = FormatDateTime(CDate(begindate),2)
+				enddate = FormatDateTime(DateAdd("m",1,begindate),2)
+			Else
+				flag = 0
+			End if
+		Case 3
+			If IsDate(begindate & "-01") Then
+				begindate = FormatDateTime(CDate(begindate & "-01"),2)
+				enddate = FormatDateTime(DateAdd("yyyy",1,begindate),2)
+			Else
+				flag = 0
+			End If
+		Case Else
+			flag = 0
+	End Select
+	If flag = 1 Then
+		Dim fs,filename,myfile,rstData
+		Set fs = server.CreateObject("scripting.filesystemobject")
+		If tablename = "" Then tablename = "Book1"
+		filename = Server.MapPath("../uploadfile/" + tablename + ".xls")
+		If fs.FileExists(filename) Then
+			fs.DeleteFile(filename)
+		End If
+		Set myfile = fs.CreateTextFile(filename,true)
+		sql = "select top 1000 a.CollTime colltime,a.FxVal fxval,a.FsVal fsval,b.DevEName ename,b.DevCName cname from CollFSFX a left join Devpara b on a.DevID=b.DevID where a.CollTime>='" & begindate & "' and a.CollTime<'" & enddate & "'"
+		If devid <> "" And devid <> 0 Then
+			sql = sql & " and a.DevID=" & devid
+		End If
+		sql = sql & " order by CollTime desc"
+		Set rstData = Conn.Execute(sql)
+		If Not rstData.EOF And Not rstData.BOF Then
+			strLine = ""
+			strLine = strLine & "设备编号" & chr(9)
+			strLine = strLine & "设备名称" & chr(9)
+			strLine = strLine & "检测时间" & chr(9)
+			strLine = strLine & "风速" & chr(9)
+			strLine = strLine & "风向" & chr(9) 
+			myfile.writeline strLine
+			Do While Not rstData.EOF
+				strLine = ""
+				strLine = strLine & rstData("ename") & chr(9)
+				strLine = strLine & rstData("cname") & chr(9)
+				strLine = strLine & FormatDateTime(rstData("colltime"),0) & chr(9)
+				strLine = strLine & rstData("fsval") & chr(9)
+				If rstData("fxval") = 0 Then
+					strLine = strLine & "顺车行方向" & chr(9)
+				else
+					strLine = strLine & "逆车行方向" & chr(9)
+				End if
+				myfile.writeline strLine
+				rstData.MoveNext
+			Loop
+			rstData.close
+			Set rstData = nothing
+		End If
+%>
+		<script>window.open("../uploadfile/<%=tablename%>.xls")</script>
+<%
+	Else
+		Response.write "参数错误"
+	End If
+%>

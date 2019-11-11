@@ -1,0 +1,97 @@
+<!--#include file="../comm/RWIniFile.inc"-->
+<%
+	Session.CodePage = 65001
+	Response.Charset = "UTF-8"
+	itype = Request.QueryString("itype")
+	name = Request.QueryString("name") '设备名
+	If itype = 1 And name <> "" Then
+		c1cmin = ReadIni("\FJ.ini",name,"c1cmin")
+		c1cmax = ReadIni("\FJ.ini",name,"c1cmax")
+		c1vmin = ReadIni("\FJ.ini",name,"c1vmin")
+		c1vmax = ReadIni("\FJ.ini",name,"c1vmax")
+		c2cmin = ReadIni("\FJ.ini",name,"c2cmin")
+		c2cmax = ReadIni("\FJ.ini",name,"c2cmax")
+		c2vmin = ReadIni("\FJ.ini",name,"c2vmin")
+		c2vmax = ReadIni("\FJ.ini",name,"c2vmax")
+		c3cmin = ReadIni("\FJ.ini",name,"c3cmin")
+		c3cmax = ReadIni("\FJ.ini",name,"c3cmax")
+		c3vmin = ReadIni("\FJ.ini",name,"c3vmin")
+		c3vmax = ReadIni("\FJ.ini",name,"c3vmax")
+		c1hint = ReadIni("\FJ.ini",name,"c1hint")
+		c2hint = ReadIni("\FJ.ini",name,"c2hint")
+		c3hint = ReadIni("\FJ.ini",name,"c3hint")
+		use = ReadIni("\FJ.ini",name,"Use")
+		fjintal = ReadIni("\FJ.ini","Config","FJintal")
+		If c1cmin = "" Then c1cmin = 0
+		If c1cmax = "" Then c1cmax = 0
+		If c1vmin = "" Then c1vmin = 0
+		If c1vmax = "" Then c1vmax = 0
+		If c2cmin = "" Then c2cmin = 0
+		If c2cmax = "" Then c2cmax = 0
+		If c2vmin = "" Then c2vmin = 0
+		If c2vmax = "" Then c2vmax = 0
+		If c3cmin = "" Then c3cmin = 0
+		If c3cmax = "" Then c3cmax = 0
+		If c3vmin = "" Then c3vmin = 0
+		If c3vmax = "" Then c3vmax = 0
+		If c1hint = "" Then c1hint = 1
+		If c2hint = "" Then c2hint = 1
+		If c3hint = "" Then c3hint = 1
+		If use = "" Then use = 0
+		If fjintal = "" Then fjintal = 1
+		Response.write "{""c1cmin"":""" & c1cmin & """,""c1cmax"":""" & c1cmax & """,""c1vmin"":""" & c1vmin & """,""c1vmax"":""" & c1vmax & """,""c2cmin"":""" & c2cmin & """,""c2cmax"":""" & c2cmax & """,""c2vmin"":""" & c2vmin & """,""c2vmax"":""" & c2vmax & """,""c3cmin"":""" & c3cmin & """,""c3cmax"":""" & c3cmax & """,""c3vmin"":""" & c3vmin & """,""c3vmax"":""" & c3vmax & """,""c1hint"":""" & c1hint & """,""c2hint"":""" & c2hint & """,""c3hint"":""" & c3hint & """,""use"":""" & use & """,""fjintal"":""" & fjintal & """}"
+	End If
+	If itype = 2 And name <> "" Then
+		invala1 = ReadIni("\ZM.ini",name,"inVala1")
+		invalb1 = ReadIni("\ZM.ini",name,"inValb1")
+		invalc1 = ReadIni("\ZM.ini",name,"inValc1")
+		invald1 = ReadIni("\ZM.ini",name,"inVald1")
+		invala2 = ReadIni("\ZM.ini",name,"inVala2")
+		invalb2 = ReadIni("\ZM.ini",name,"inValb2")
+		invalc2 = ReadIni("\ZM.ini",name,"inValc2")
+		invald2 = ReadIni("\ZM.ini",name,"inVald2")
+		outvala1 = ReadIni("\ZM.ini",name,"outVala1")
+		outvalb1 = ReadIni("\ZM.ini",name,"outValb1")
+		outvalc1 = ReadIni("\ZM.ini",name,"outValc1")
+		outvald1 = ReadIni("\ZM.ini",name,"outVald1")
+		outvala2 = ReadIni("\ZM.ini",name,"outVala2")
+		outvalb2 = ReadIni("\ZM.ini",name,"outValb2")
+		outvalc2 = ReadIni("\ZM.ini",name,"outValc2")
+		outvald2 = ReadIni("\ZM.ini",name,"outVald2")
+		zmintal = ReadIni("\ZM.ini","Config","ZMintal")
+		use1 = ReadIni("\ZM.ini",name & "晴天","Use")
+		hint1 = ReadIni("\ZM.ini",name & "晴天","Hint")
+		use2 = ReadIni("\ZM.ini",name & "阴天","Use")
+		hint2 = ReadIni("\ZM.ini",name & "阴天","Hint")
+		use3 = ReadIni("\ZM.ini",name & "晚上","Use")
+		hint3 = ReadIni("\ZM.ini",name & "晚上","Hint")
+		use4 = ReadIni("\ZM.ini",name & "夜间","Use")
+		hint4 = ReadIni("\ZM.ini",name & "夜间","Hint")
+		If invala1 = "" Then invala1 = 0
+		If invalb1 = "" Then invalb1 = 0
+		If invalc1 = "" Then invalc1 = 0
+		If invald1 = "" Then invald1 = 0
+		If invala2 = "" Then invala2 = 0
+		If invalb2 = "" Then invalb2 = 0
+		If invalc2 = "" Then invalc2 = 0
+		If invald2 = "" Then invald2 = 0
+		If outvala1 = "" Then outvala1 = 0
+		If outvalb1 = "" Then outvalb1 = 0
+		If outvalc1 = "" Then outvalc1 = 0
+		If outvald1 = "" Then outvald1 = 0
+		If outvala2 = "" Then outvala2 = 0
+		If outvalb2 = "" Then outvalb2 = 0
+		If outvalc2 = "" Then outvalc2 = 0
+		If outvald2 = "" Then outvald2 = 0
+		If zmintal = "" Then zmintal = 1
+		If use1 = "" Then use1 = 0
+		If use2 = "" Then use2 = 0
+		If use3 = "" Then use3 = 0
+		If use4 = "" Then use4 = 0
+		If hint1 = "" Then hint1 = 0
+		If hint2 = "" Then hint2 = 0
+		If hint3 = "" Then hint3 = 0
+		If hint4 = "" Then hint4 = 0
+		Response.write "{""invala1"":""" & invala1 & """,""invalb1"":""" & invalb1 & """,""invalc1"":""" & invalc1 & """,""invald1"":""" & invald1 & """,""invala2"":""" & invala2 & """,""invalb2"":""" & invalb2 & """,""invalc2"":""" & invalc2 & """,""invald2"":""" & invald2 & """,""outvala1"":""" & outvala1 & """,""outvalb1"":""" & outvalb1 & """,""outvalc1"":""" & outvalc1 & """,""outvald1"":""" & outvald1 & """,""outvala2"":""" & outvala2 & """,""outvalb2"":""" & outvalb2 & """,""outvalc2"":""" & outvalc2 & """,""outvald2"":""" & outvald2 & """,""use1"":""" & use1 & """,""hint1"":""" & hint1 & """,""use2"":""" & use2 & """,""hint2"":""" & hint2 & """,""use3"":""" & use3 & """,""hint3"":""" & hint3 & """,""use4"":""" & use4 & """,""hint4"":""" & hint4 & """,""zmintal"":""" & zmintal & """}"
+	End If
+%>

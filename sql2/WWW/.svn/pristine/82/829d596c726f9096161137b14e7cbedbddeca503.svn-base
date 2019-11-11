@@ -1,0 +1,13 @@
+[config]
+TuCount=3
+RoadName1=拉萨端
+RoadName2=林芝端
+;照明模式
+ZMMode=0
+;风机模式
+FJMode=1
+
+[TuName]
+Tu0=1号隧道
+Tu1=2号隧道
+Tu2=3号隧道

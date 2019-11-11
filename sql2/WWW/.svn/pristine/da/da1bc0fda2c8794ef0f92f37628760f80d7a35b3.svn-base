@@ -1,0 +1,86 @@
+<!--#include file="../comm/mconn.asp"-->
+<%
+	Session.CodePage = 65001
+	Response.Charset = "UTF-8"
+	itype = Request.QueryString("itype")
+	username = session("user")
+	msg = ""
+	result = 0
+	If username <> "" Then
+		If itype = 1 Then
+			total = int(Request.QueryString("tstotal"))
+			If total <> "" And total > 0 Then
+				state = int(Request.QueryString("tsstate"))
+				If state <> "" then
+					For i = 0 To total - 1
+						devid = int(Request.QueryString("tsid" & i))
+						If devid <> "" Then
+							sql = "update Devsend set i1=" & state & ",State=-1,SendTime=GETDATE() where DevID=" & devid
+							Conn.Execute(sql)
+						End If
+					Next
+				End If
+			End If
+			total = int(Request.QueryString("lstotal"))
+			If total <> "" And total > 0 Then
+				state = int(Request.QueryString("lsstate"))
+				If state <> "" then
+					For i = 0 To total - 1
+						devid = int(Request.QueryString("lsid" & i))
+						If devid <> "" Then
+							sql = "update Devsend set i1=" & state & ",State=-1,SendTime=GETDATE() where DevID=" & devid
+							Conn.Execute(sql)
+						End If
+					Next
+				End If
+			End If
+			total = int(Request.QueryString("fbtotal"))
+			If total <> "" And total > 0 Then
+				state = int(Request.QueryString("fbstate"))
+				If state <> "" then
+					For i = 0 To total - 1
+						devid = int(Request.QueryString("fbid" & i))
+						If devid <> "" Then
+							sql = "update Devsend set i1=" & state & ",State=-1,SendTime=GETDATE() where DevID=" & devid
+							Conn.Execute(sql)
+						End If
+					Next
+				End If
+			End If
+			total = int(Request.QueryString("ledtotal"))
+			If total <> "" And total > 0 Then
+				state = int(Request.QueryString("ledstate"))
+				If state <> "" then
+					For i = 0 To total - 1
+						devid = int(Request.QueryString("ledid" & i))
+						If devid <> "" Then
+							sql = "update Devsend set i1=" & state & ",State=-1,SendTime=GETDATE() where DevID=" & devid
+							Conn.Execute(sql)
+						End If
+					Next
+				End If
+			End If
+			total = int(Request.QueryString("doortotal"))
+			If total <> "" And total > 0 Then
+				state = int(Request.QueryString("doorstate"))
+				If state <> "" then
+					For i = 0 To total - 1
+						devid = int(Request.QueryString("doorid" & i))
+						If devid <> "" Then
+							sql = "update Devsend set i1=" & state & ",State=-1,SendTime=GETDATE() where DevID=" & devid
+							Conn.Execute(sql)
+						End If
+					Next
+				End If
+			End If
+			result = 1
+			msg = "应用成功"
+			'日志
+			sql = "insert into LogSys(logman,LogTime,Logdesc,LogMemo,logtype) values ('" & username & "',GETDATE(),'火灾手动控制','更改联动设备状态',3)"
+			Conn.Execute(sql)
+		End If
+	Else
+		msg = "未登录不可进行操作"
+	End if
+	Response.write "{""result"":" & result & ",""msg"":""" & msg & """}"
+%>

@@ -1,0 +1,20 @@
+<!--#include file="../comm/RWIniFile.inc"-->
+<%
+	Session.CodePage = 65001
+	Response.Charset = "UTF-8"
+	username = session("user")
+	count = int(Request.QueryString("count"))
+	msg = ""
+	result = 0
+	If username <> "" Then
+		If count <> 1 Then
+			count=4
+		End If
+		WriteIni "/opt.ini","ScreenConfig","ScreenCount",count
+		msg = "保存成功"
+		result = 1
+	Else
+		msg = "未登录不可进行操作"
+	End If
+	Response.write "{""result"":" & result & ",""msg"":""" & msg & """}"
+%>

@@ -1,0 +1,21 @@
+<!--#include file="RWIniFile.inc"-->
+<%
+	Session.CodePage = 65001
+	Response.Charset = "UTF-8"
+	if session("Server_Name2") = ""  then
+		session("Server_Name2") = ReadIni("\RSETUP.ini","DatabaseConn","Server_Name2") 
+		session("Server_User2") = ReadIni("\RSETUP.ini","DatabaseConn","Server_User2") 
+		session("Server_Psw2") = ReadIni("\RSETUP.ini","DatabaseConn","Server_Psw2") 
+		session("Data_Name2") = ReadIni("\RSETUP.ini","DatabaseConn","Data_Name2") 
+	end if
+	Dim Conn,ConnStr
+	ConnStr = "Provider=SQLOLEDB.1;Password=" & session("Server_Psw2") & ";Persist Security Info=True;User ID=" & session("Server_User2") & ";Initial Catalog=" & session("Data_Name2") & ";Data Source=" & session("Server_Name2") & ";Application Name=web_prog"
+	set Conn = Server.CreateObject("ADODB.Connection")
+	err.clear
+	On Error Resume Next 
+	Conn.open Connstr
+	if err.number <> 0 then
+		session("Server_Name2") = ""
+		err.clear	
+	end if	
+%>

@@ -1,0 +1,44 @@
+<!--#include file="../comm/mconn.asp"-->
+<!--#include file="../comm/RWIniFile.inc"-->
+<%
+	Session.CodePage = 65001
+	Response.Charset = "UTF-8"
+	username = session("user")
+	itype = Request.QueryString("itype")
+	total = int(Request.QueryString("total"))
+	tunnel = int(Request.QueryString("Tunnel"))
+	name = Request.QueryString("name") '填写的新方案名
+	name = Replace(name," ","")
+	msg = ""
+	result = 0
+	If username <> "" Then
+		If itype = 1 And total <> "" And name <> "" And total > 0 And tunnel <> "" Then
+			'将方案名加入数据库中(格式化名字)
+			Dim mRs
+			Set mRs = Server.CreateObject("Adodb.RecordSet")
+			mRs.open "select 1 from SigPlan where Enabled=1 and Name='" & name & "'", conn, 1, 2
+			If Not mRs.eof Then
+				msg = "该方案名已存在"
+				result = 0
+			Else
+				mRs.close
+				sql = "insert into SigPlan(Name,Tunnel,Enabled) values('" & name & "'," & tunnel & ",1)"
+				Conn.Execute(sql)
+				'配置详情丢ini
+				For i = 0 To total - 1
+					ename = Request.QueryString("ename" & i)
+					If ename <> "" then
+						tip = Request.QueryString("tip" & i)
+						WriteIni "/cache.ini",name,ename,tip
+					End if
+				Next
+				msg = "保存成功"
+				result = 1
+			End If
+			mRs.close
+		End If
+	Else
+		msg = "未登录不可进行操作"
+	End If
+	Response.write "{""result"":" & result & ",""msg"":""" & msg & """}"
+%>

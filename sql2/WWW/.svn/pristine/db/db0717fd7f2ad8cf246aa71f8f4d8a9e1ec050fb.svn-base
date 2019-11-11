@@ -1,0 +1,148 @@
+﻿<!--#include file="../comm/mconn.asp"-->
+<%
+	Session.CodePage=65001
+	Response.Charset="UTF-8"
+	itype = Request.QueryString("itype")
+	start = Request("start")
+	limit = Request("limit")
+	
+	index=CInt(start)
+	pageSize=CInt(limit)
+	
+	tablename=Request.QueryString("tablename")
+  
+	if itype = 1 then
+		Dim mRs
+		Set mRs=Server.CreateObject("Adodb.RecordSet")
+		'mRs.pagesize=20
+		'
+		mRs.open "select * from sysLog where 1=1" &  Request("q") , conn, 1,2
+		'mRs.absolutepage=
+		'mRs.recordcount=
+		if mRs.recordcount=0 then
+			response.write "{""success"":true,""results"": " & mRs.recordcount & ",""rows"": []}"
+			response.End()
+		end if
+		if not mRs.eof then
+			if index+1>mRs.recordcount then
+				response.End()
+			end if
+			mRs.absoluteposition=index+1
+			dim yy
+			if mRs.recordcount>index+pageSize-1 then
+				yy=index+pageSize-1
+			else 
+			 	yy=mRs.recordcount-1
+			end if
+			
+			'response.write mRs.recordcount&"AAA"&index+pageSize-1&"AAA"&yy
+			'
+			response.write "{""success"":true,""results"": " & mRs.recordcount & ",""cols"":[{""ID"":0},{""帐号"":1},{""日志类型"":2},{""时间"":3},{""备注"":4},{""其它"":5},{""IP地址"":6}],""rows"": ["
+			
+			for i=index to yy step 1
+				response.write "{""id"":" & mRs("id") & ", ""useracc"": """ & mRs("useracc") & """, ""logtype"": """ & mRs("logtype") & """, ""dt"": """ & formatdatetime(mRs("dt"),0) & """, ""logmemo"": """ & mRs("logmemo") & """, ""joinid"": """ & mRs("joinid") & """, ""userip"": """ & mRs("userip") &"""}"
+				
+				if i<yy then
+					response.write ","	
+				end if	
+				mRs.movenext	
+			next
+			response.write "]}"
+		end if
+		mRs.close
+	end if
+%>
+<%
+	if itype = 2 then
+		Dim mRs2
+		Set mRs2=Server.CreateObject("Adodb.RecordSet")
+		ssql2="select * from sysLog where 1=1" &  Request("q") &""
+		mRs2.open ssql2, conn, 1,2
+		response.write "{""success"":true,""results"": " & mRs2.recordcount & ",""cols"":[{""ID"":0},{""帐号"":1},{""日志类型"":2},{""时间"":3},{""备注"":4},{""其它"":5},{""IP地址"":6}],""rows"": ["
+		
+		if not mRs2.eof then			
+			do while not mRs2.eof
+				response.write "{""id"":" & mRs2("id") & ", ""useracc"": """ & mRs2("useracc") & """, ""logtype"": """ & mRs2("logtype") & """, ""dt"": """ & formatdatetime(mRs2("dt"),0) & """, ""logmemo"": """ & mRs2("logmemo") & """, ""joinid"": """ & mRs2("joinid") & """, ""userip"": """ & mRs2("userip") &"""}"
+				mRs2.movenext
+				if not mRs2.eof then
+					response.write ","
+				end if				
+			loop	
+		end if
+		response.write "]}"
+		mRs2.close
+		
+		
+		'导出exel
+		dim s,sql,filename,fs,myfile,x  
+		Set fs = server.CreateObject("scripting.filesystemobject")  
+		'--假设你想让生成的EXCEL文件做如下的存放  
+		filename = Server.MapPath("../uploadfile/"+ tablename +".xls") 
+		'文件名称
+		'filename= "order.xls";
+		'--如果原来的EXCEL文件存在的话删除它  
+		if fs.FileExists(filename) then  
+			fs.DeleteFile(filename)  
+		end  if  
+		'--创建EXCEL文件  
+		set myfile = fs.CreateTextFile(filename,true)  
+			
+		'--从数据库中把你想放到EXCEL中的数据查出来  
+		strSql=ssql2
+		
+		Set rstData =conn.execute(strSql)
+		if not rstData.EOF and not rstData.BOF then  
+		 
+			dim  trLine,responsestr  
+			strLine=""  
+			'For each x in rstData.fields  
+				'strLine = strLine & x.name & chr(9)  
+		   'Next  
+		   		   
+		   strLine=strLine & "Id" & chr(9)  
+		   strLine=strLine & "帐号" & chr(9)
+		   strLine=strLine & "日志类型" & chr(9)  
+		   strLine=strLine & "时间" & chr(9)  
+		   strLine=strLine & "备注" & chr(9)  
+		   strLine=strLine & "其它" & chr(9)  
+		   strLine=strLine & "IP地址" & chr(9)   
+		 
+		'--将表的列名先写入EXCEL  
+			myfile.writeline strLine  
+		 
+			Do while Not rstData.EOF  
+				strLine=""  
+		 
+				'for each x in rstData.Fields  
+					'strLine = strLine & x.value &  chr(9)  
+				'next  
+				
+				strLine = strLine & rstData("id") &  chr(9)  
+				strLine = strLine & rstData("useracc") &  chr(9)  
+				strLine = strLine & rstData("logtype") &  chr(9)  
+				strLine = strLine & formatdatetime(rstData("dt"),0) &  chr(9)  
+				strLine = strLine & rstData("logmemo") &  chr(9)  
+				strLine = strLine & rstData("joinid") &  chr(9)  
+				strLine = strLine & rstData("userip") &  chr(9)  
+				
+				myfile.writeline  strLine  
+		 
+				rstData.MoveNext  
+			loop  
+		 
+		end if  
+
+		'Response.Write  "生成EXCEL文件成功，点击<a href="""" target=""_blank""><font color=blue>下载</a></a>！"
+		
+%>
+		<script>window.open("../uploadfile/<%=tablename%>.xls")</script>
+<%
+		
+		set rstData = nothing
+		Conn.Close
+		Set Conn = nothing	
+		
+		
+	end if
+
+%>

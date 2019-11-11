@@ -1,0 +1,75 @@
+﻿<!--#include file="../comm/mconn.asp"-->
+<%
+	Session.CodePage=65001
+	Response.Charset="UTF-8"
+	itype = Request.QueryString("itype")
+	start = Request("start")
+	limit = Request("limit")
+	
+	index=CInt(start)
+	pageSize=CInt(limit)
+  
+	if itype = 1 then
+		Dim mRs
+		Set mRs=Server.CreateObject("Adodb.RecordSet")
+		'mRs.pagesize=20
+		'
+		mRs.open "Select  a.*,b.Devno,b.devname from CollWD a left join devpara b on a.DevID=b.DevID where 1=1" &  Request("q") , conn, 1,2
+		'mRs.absolutepage=
+		'mRs.recordcount=
+		if mRs.recordcount=0 then
+			response.write "{'success':true,'results': " & mRs.recordcount & ",'rows': []}"
+			response.End()
+		end if
+		if not mRs.eof then
+			if index+1>mRs.recordcount then
+				response.End()
+			end if
+			mRs.absoluteposition=index+1
+			dim yy
+			if mRs.recordcount>index+pageSize-1 then
+				yy=index+pageSize-1
+			else 
+			 	yy=mRs.recordcount-1
+			end if
+			
+			'response.write mRs.recordcount&"AAA"&index+pageSize-1&"AAA"&yy
+			'
+			response.write "{'success':true,'results': " & mRs.recordcount & ",'rows': ["
+			for i=index to yy step 1
+				'response.write "{'devid':" & mRs("devid") & ", 'devno': '" & mRs("devno") & "', 'devname': '" & mRs("devname") & "', 'colltime': '" & formatdatetime(mRs("colltime"),0) & "', 'fengsu': '" & mRs("fengsu") & "', 'fengxiang': '" & mRs("fengxiang") & "', 'nengjiandu': '" & mRs("nengjiandu") &"'}"
+				response.write "{'devid':" & mRs("devid") & ", 'devno': '" & mRs("devno") & "', 'devname': '" & mRs("devname") & "', 'colltime': '" & mRs("colltime") & "','nengjiandu': '" & mRs("nengjiandu") &"' , 'lumianwendu': '" & mRs("lumianwendu") & "', 'lujiwendu': '" & mRs("lujiwendu") & "', 'chuanganqiwendu': '" & mRs("chuanganqiwendu") & "', 'yandu': '" & mRs("yandu") & "', 'bingdianwendu': '" & mRs("bingdianwendu") & "', 'shuimohoudu': '" & mRs("shuimohoudu") & "', 'lumianzhuangkuang': '" & mRs("lumianzhuangkuang") & "', 'jiangyuliang': '" & mRs("jiangyuliang") & "', 'fengsu': '" & mRs("fengsu") & "', 'fengxiang': '" & mRs("fengxiang") & "', 'wendu': '" & mRs("wendu") &"', 'shidu': '" & mRs("shidu") &"'}"
+				
+				if i<yy then
+					response.write ","	
+				end if	
+				mRs.movenext	
+			next
+			response.write "]}"
+		end if
+		mRs.close
+	end if
+%>
+<%
+	if itype = 2 then
+		Dim mRs2
+		Set mRs2=Server.CreateObject("Adodb.RecordSet")
+		mRs2.open "Select a.*,b.Devno,b.devname from CollWD a left join devpara b on a.DevID=b.DevID where 1=1" &  Request("q") , conn, 1,2
+		'response.write "{'success':true,'results': " & mRs2.recordcount & ",'cols':[{'设备ID':0,'设备编号':1,'设备名称':2,'检测时间':3,'风速':4,'风向':5,'能见度':6}],'rows': ["
+		response.write "{'success':true,'results': " & mRs2.recordcount & ",'cols':[{'设备ID':0,'设备编号':1,'设备名称':2,'检测时间':3,'能见度(米)':4,'路面温度(℃)':5,'路基温度(℃)':6,'传感器温度(℃)':7,'盐度(%)':8,'冰点温度(℃)':9,'水膜厚度':10,'路面状况':11,'降雨量(毫米)':12,'风速(m/s)':13,'风向':14,'温度(℃)':15,'湿度(%)':16}],'rows': ["
+
+		if not mRs2.eof then			
+			do while not mRs2.eof
+				'response.write "{'devid':" & mRs2("devid") & ", 'devno': '" & mRs2("devno") & "', 'devname': '" & mRs2("devname") & "', 'colltime': '" & mRs2("colltime") & "', 'fengsu': '" & mRs2("fengsu") & "', 'fengxiang': '" & mRs2("fengxiang") & "', 'nengjiandu': '" & mRs2("nengjiandu") &"'}"
+				response.write "{'devid':" & mRs2("devid") & ", 'devno': '" & mRs2("devno") & "', 'devname': '" & mRs2("devname") & "', 'colltime': '" & mRs2("colltime") & "','nengjiandu': '" & mRs2("nengjiandu") &"' , 'lumianwendu': '" & mRs2("lumianwendu") & "', 'lujiwendu': '" & mRs2("lujiwendu") & "', 'chuanganqiwendu': '" & mRs2("chuanganqiwendu") & "', 'yandu': '" & mRs2("yandu") & "', 'bingdianwendu': '" & mRs2("bingdianwendu") & "', 'shuimohoudu': '" & mRs2("shuimohoudu") & "', 'lumianzhuangkuang': '" & mRs2("lumianzhuangkuang") & "', 'jiangyuliang': '" & mRs2("jiangyuliang") & "', 'fengsu': '" & mRs2("fengsu") & "', 'fengxiang': '" & mRs2("fengxiang") & "', 'wendu': '" & mRs2("wendu") &"', 'shidu': '" & mRs2("shidu") &"'}"
+				mRs2.movenext
+				if not mRs2.eof then
+					response.write ","
+				end if				
+			loop	
+		end if
+		response.write "]}"
+		mRs2.close
+	end if
+
+%>

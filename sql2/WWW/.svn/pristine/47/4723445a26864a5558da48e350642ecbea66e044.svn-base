@@ -1,0 +1,18 @@
+﻿
+<!DOCTYPE html>
+<head>
+	<meta name="renderer" content="ie-comp"> 
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+	<title>浏览器版本问题</title>
+	<meta name="renderer" content="ie-comp"> 
+ 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">	
+</head>
+<body scoll=no>
+	<div id="ie8-warning" class="dn">您使用的浏览器小于 Internet Explorer 9，无法显示该页面。建议您升级到Internet Explorer 9或使用360、Firefox、Chrome、Opera浏览器。
+    </div>
+	<div>
+		或者切换浏览器模式后，<a href="login.asp">返回登录页</a>
+	</div>
+</body>
+</html>

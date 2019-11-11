@@ -1,0 +1,211 @@
+﻿W = parseInt($(window).width());
+H = parseInt($(window).height());
+Ht= parseInt($("#default_top_panel").height());
+
+function dress(){
+	W = parseInt($(window).width());
+	H = parseInt($(window).height());
+	Ht= parseInt($("#default_top_panel").height());
+	
+	$("#default_panel_img").css("width",W);
+    $("#default_panel_img").css("height",H-Ht);
+	
+	$("#default_control_panel").css("width",W-20);
+	
+	//用户操作过
+	loadCheckbox();	
+	
+	//checkbox		
+	layui.use(['form', 'layer', 'element'], function(){
+	  var form = layui.form();
+	  
+	   form.on('checkbox(default-checkbox)', function(data){	
+													  
+		  //typevalue=data.elem.typename;
+		  typevalue=data.elem.getAttribute('typename');
+		  //alert(typevalue);
+		  selectvalue=$("#default_place_select").val();
+				
+		  picclass=returnPicclass(typevalue);
+		
+		  if(data.elem.checked)		{
+			//alert(1);
+			defaultAjax(typevalue,selectvalue,picclass);
+			
+		  } else {
+			//alert(0);
+			$("."+ picclass +"").empty();
+		  }
+			
+		  //缓存checkbox
+		  saveCheckbox(typevalue);
+	
+										 
+	  
+		}); 
+	   
+		//console.log(data.elem); //得到checkbox原始DOM对象
+	  	//console.log(data.elem.checked); //是否被选中，true或者false
+	  	//console.log(data.value); //复选框value值，也可以通过data.elem.value得到
+	  	//console.log(data.othis); //得到美化后的DOM对象
+		
+		form.on('select(default_place_select)', function(data){	
+													  
+		  	clearLoadPic();
+	
+			//$("[type='checkbox']").removeAttr("checked");//取消全选
+			
+			//选择SD
+			loadCheckbox();										 
+	  
+		}); 
+		
+		
+		
+	  var $ = layui.jquery, layer = layui.layer,element = layui.element(); //独立版的layer无需执行这一句
+	  
+	  //弹出触发事件
+	  var active = {
+		setSb: function(){
+		  var that = this; 
+		  //多窗口模式，层叠置顶
+		  layer.open({
+			type: 1 //此处以iframe举例
+			,title: $("#default_button_selectsb").html()
+			,area: ['450px', '280px']
+			,shade: 0
+			,maxmin: true
+			,offset: [] 
+			,id: 'LAY_show' //防止重复弹出
+			,content: $("#checkbox_list")
+			,btn: ['关闭'] //只是为了演示
+			,yes: function(index, layero){
+			  layer.close(index);
+			}
+			
+			,zIndex: layer.zIndex //重点1
+			,success: function(layero){
+			  layer.setTop(layero); //重点2
+			}
+		  });
+		},
+		
+		//系统信息
+		showPanelSystem: function(){
+		  var that = this; 
+		  //多窗口模式，层叠置顶
+		  layer.open({
+			type: 1 //此处以iframe举例
+			,title: $("#control_menu_system").html()
+			,area: ['800px', '300px']
+			,shade: 0
+			,maxmin: true
+			,offset: [] 
+			,id: 'LAY_control_system' //防止重复弹出
+			,content: $("#control_panel_system")
+			,btn: ['关闭'] //只是为了演示
+			,yes: function(index, layero){
+			  layer.close(index);
+			}
+			
+			,zIndex: layer.zIndex //重点1
+			,success: function(layero){
+			  layer.setTop(layero); //重点2
+			}
+		  });
+		}
+		
+		
+	  };
+	  
+	  $('.layui-btn').on('click', function(){
+		var othis = $(this), method = othis.data('method');
+		active[method] ? active[method].call(this, othis) : '';
+	  });
+	  
+	  $('.layui-menu').on('click', function(){
+		var othis = $(this), method = othis.data('method');
+		active[method] ? active[method].call(this, othis) : '';
+	  });
+	  
+		  
+	  //向世界问个好
+	  //layer.msg('Hello World');
+	 
+	  //监听Tab切换
+	  element.on('tab(demo)', function(data){
+		layer.msg('切换了：'+ this.innerHTML);
+		console.log(data);
+	  });
+
+	});
+	
+	
+	
+}
+
+$(window).resize(function () {
+	clearLoadPic();	
+						   
+	dress();	
+});
+
+function clearLoadPic(){
+	$(".default-pic-TS").empty();
+	$(".default-pic-LS").empty();
+	$(".default-pic-LIGHT").empty();
+	$(".default-pic-LED").empty();
+	$(".default-pic-FAN").empty();
+	$(".default-pic-COVI").empty();
+	$(".default-pic-FSFX").empty();
+	$(".default-pic-FB").empty();
+	$(".default-pic-FGS").empty();
+	$(".default-pic-FGW").empty();
+	$(".default-pic-FGR").empty();
+	$(".default-pic-DOOR").empty();
+	$(".default-pic-CAM").empty();
+}
+
+$(document).ready(function () {
+	dress();
+	
+	//禁止右键
+	$(document).bind("contextmenu",function(e){
+         return false;
+    });
+	
+	//每20秒更新
+	setInterval(function(){  
+    	updatePic();
+		
+    },20000); 
+	
+	setInterval(function(){  
+    	layui.use(['form'], function(){
+	  		var form = layui.form();
+			form.render('checkbox'); //更新checkbox
+		});
+    },1000); 
+	
+	
+	
+	//$("#default_cover").append("<div id=\"default-trafficlight\"></div>");
+	
+	//$("html").mousemove(function(e){ 
+		//$("#a").css("left",e.pageX).css("top",e.pageY); 
+	//}); 
+})
+
+$("#default_menu_control").on("mouseover",function() {
+	//alert("1"); 
+	
+	$('#control_panel_list').show();
+})
+$("#default_menu_panel").on("mouseleave",function() {
+	//alert("1"); 
+	
+	$('#control_panel_list').hide();
+})
+
+
+

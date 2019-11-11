@@ -1,0 +1,29 @@
+<!--#include file="../comm/mconn.asp"-->
+<%
+	Session.CodePage = 65001
+	Response.Charset = "UTF-8"
+	itype = Request.QueryString("itype")
+	username = session("user")
+	id = int(Request.QueryString("id"))
+	x = Request.QueryString("xvalue")
+	y = Request.QueryString("yvalue")
+	msg = ""
+	result = 0
+	If username <> "" Then
+		if itype = 1 And id <> "" Then
+			If int(x) = "" Or int(y) = "" Or x < 0 Or y < 0 Or x > 100 Or y > 100 Then
+				msg = "请求参数异常"
+			Else
+				x = FormatNumber(x,2) + 0
+				y = FormatNumber(y,2) + 0
+				sql = "update devpara set Pointx=" & x & ",PointY=" & y & " where DevID=" & id
+				Conn.Execute(sql)
+				result = 1
+				msg = "修改设备位置成功"
+			End if
+		End if
+	Else
+		msg = "未登录不可进行操作"
+	End If
+	Response.write "{""result"":" & result & ",""msg"":""" & msg & """}"
+%>

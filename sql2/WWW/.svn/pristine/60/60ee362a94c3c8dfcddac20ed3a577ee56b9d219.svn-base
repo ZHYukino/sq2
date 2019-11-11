@@ -1,0 +1,793 @@
+﻿Ext.namespace('Ext.CXReportCMS');
+  
+//IE导出
+function JSONToExcelConvertor(JSONData, FileName) {  
+	//先转化json 
+	var arrData = typeof JSONData != 'object' ? JSON.parse(JSONData) : JSONData;  
+	//alert(arrData.rows[0].devid);
+	  
+	//alert(arrData.success)
+	
+	var excel = '<table>';  // id="tableabc" class="display:none;"
+	
+	//设置表头  
+	var row = "<tr>";  
+	//alert(arrData.cols.length);
+	for (var i = 0; i < arrData.cols.length; i++) {  
+		for(key in arrData.cols[i]){
+			row += "<td>" + key + '</td>';  
+		}
+	}
+	
+	excel += row + "</tr>";
+	
+	//alert(arrData.rows.length);
+	var arrDataRows=arrData.rows;
+	
+	//alert(arrDataRows.length);
+	
+	//换行设置数据  
+	for (var i = 0; i < arrDataRows.length; i++) {  
+		var row = "<tr>";  
+		  
+		for (var index in arrDataRows[i]) {
+			//if(i==0){
+				//alert(arrDataRows[i][index]);
+			//}
+			//var value =  === "." ? "" : arrDataRows[i][index];  
+			row += '<td>' + arrDataRows[i][index] + '</td>';  
+			
+		}  
+		  
+		excel += row + "</tr>";  
+		
+		//限制数量
+		//if(i==10){
+			//break;
+		//}
+	}  
+	
+	excel += "</table>";  
+		
+	JSONToExcelOk(excel, FileName);
+	
+}
+
+function JSONToExcelOk(excel, FileName){
+	var excelFile = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:x='urn:schemas-microsoft-com:office:excel' xmlns='http://www.w3.org/TR/REC-html40'>";  
+	excelFile += '<meta http-equiv="content-type" content="application/vnd.ms-excel; charset=UTF-8">';  
+	excelFile += '<meta http-equiv="content-type" content="application/vnd.ms-excel';  
+	excelFile += '; charset=UTF-8">';  
+	excelFile += "<head>";  
+	excelFile += "<!--[if gte mso 9]>";  
+	excelFile += "<xml>";  
+	excelFile += "<x:ExcelWorkbook>";  
+	excelFile += "<x:ExcelWorksheets>";  
+	excelFile += "<x:ExcelWorksheet>";  
+	excelFile += "<x:Name>";  
+	excelFile += "{worksheet}";  
+	excelFile += "</x:Name>";  
+	excelFile += "<x:WorksheetOptions>";  
+	excelFile += "<x:DisplayGridlines/>";  
+	excelFile += "</x:WorksheetOptions>";  
+	excelFile += "</x:ExcelWorksheet>";  
+	excelFile += "</x:ExcelWorksheets>";  
+	excelFile += "</x:ExcelWorkbook>";  
+	excelFile += "</xml>";  
+	excelFile += "<![endif]-->";  
+	excelFile += "</head>";  
+	excelFile += "<body>";  
+	excelFile += excel;  
+	excelFile += "</body>";  
+	excelFile += "</html>";  
+
+	  
+	var uri = 'data:application/vnd.ms-excel;charset=utf-8,' + encodeURIComponent(excelFile);  
+	  
+	var link = document.createElement("a");      
+	link.href = uri;  
+	  
+	link.style = "visibility:hidden";  
+	link.download = FileName + ".xls";  
+	  
+	document.body.appendChild(link);  
+	link.click();  
+	document.body.removeChild(link);  
+}
+
+//Chrome导出
+function chromeExportCmsExcel(tablename){
+	var cmsjson='json/exportcmsexcel.asp?sid='+Math.random()+'&itype=1&limit='+ escape(Ext.CXReportCMS.page_count) +'&start='+ escape(Ext.CXReportCMS.record_start) +'&q='+escape(Ext.CXReportCMS.serchstr0)+escape(Ext.CXReportCMS.serchstr) +'&dc='+new Date().getTime();
+
+	//$("#pageload").load(cmsjson);
+	
+	//测试
+	//$("#ext-gen12").html(cmsjson);
+	$.getJSON(cmsjson, function(data){
+	   //alert(data.success); 
+	   JSONToExcelConvertor(data, tablename);
+	});
+	
+	
+	//$.ajax({
+		 //type: "GET",
+		 //url: cmsjson,
+		 //data: {username:$("#username").val(), content:$("#content").val()},
+		 //dataType: "json",
+		 //success: function(data){
+			 //alert(data.success); 
+		  //}
+	 //});
+}
+
+function chromeExportCmsExcelAll(tablename){
+	var cmsjson='json/exportcmsexcel.asp?sid='+Math.random()+'&itype=2&limit=0&start=0&q='+escape(Ext.CXReportCMS.serchstr0)+escape(Ext.CXReportCMS.serchstr) +'&tablename='+ tablename +'&dc='+new Date().getTime();
+
+	$("#pageload").load(cmsjson);
+}
+
+//其他
+Ext.CXReportCMS.devstr=' or devtype=9 or devtype=13 or devtype=11 or devtype=12';
+Ext.CXReportCMS.dev_ds = new Ext.data.Store({
+	proxy: new Ext.data.HttpProxy({
+		method:'post',
+    	url:'json/getdevinfo.asp?sid='+Math.random()+'&itype=1&q=-1'//+ escape(' or devtype=9 or devtype=13 or devtype=11 or devtype=12')
+	}),
+	baseParams:{'q':'','r':''},
+	reader: new Ext.data.JsonReader({
+    	totalProperty: "results", 
+        successProperty: true,    
+        root: "rows",            
+        id: "id" 		
+		},[{name:'disp',mapping:'devname'},
+		   {name:'valu',mapping:'id'}
+		]
+	),
+	autoLoad:false
+});
+ 
+Ext.CXReportCMS.values_ds = new Ext.data.Store({
+	proxy: new Ext.data.HttpProxy({
+		method:'post',
+    	url:'json/getcollcms.asp?sid='+Math.random()+'&itype=1'
+	}),
+	baseParams:{'start':'','limit':'','q':''},
+	reader: new Ext.data.JsonReader({
+    	totalProperty: "results", 
+        successProperty: "success",    
+        root: "rows"           
+        //id: "dataid" 		
+		},[{name:'devno',mapping:'devno'},
+		   {name:'devname',mapping:'devname'},
+		   {name:'sendtime',mapping:'sendtime'},
+		   {name:'state',mapping:'state'},
+		   {name:'roworder',mapping:'roworder'},
+		   {name:'sendtext',mapping:'sendtext'},
+		   {name:'textformat',mapping:'textformat'},
+		   {name:'devtype',mapping:'devtype'}
+		]
+	),
+	autoLoad:false
+});				 
+Ext.CXReportCMS.serchstr0='';
+Ext.CXReportCMS.serchstr='';
+Ext.CXReportCMS.record_start=0;
+Ext.CXReportCMS.page_count=20;
+Ext.CXReportCMS.page_start=0;
+Ext.CXReportCMS.searchdata=function(){
+	if (Ext.getCmp('cms_select1').getValue()){
+		var startDate=Ext.getCmp('cms_startymd').getValue().format('Y-m-d');
+		var endDate=Ext.getCmp('cms_endymd').getValue().format('Y-m-d');
+		if(startDate==null||startDate=='')
+		{
+			Ext.Msg.alert('系统提示','请选择日期');
+			return;
+		}	
+		if(endDate==null||endDate=='')
+		{
+			Ext.Msg.alert('系统提示','请选择日期');
+			return;
+		}
+		if(startDate>endDate)
+		{
+			Ext.Msg.alert('系统提示','开始日期不得大于结束日期');
+			return;
+		}	
+		Ext.CXReportCMS.serchstr='';
+		Ext.CXReportCMS.serchstr+=' and b.sendtime >=\''+startDate+' 00:00:00\' and b.sendtime <=\''+endDate+' 23:59:59\'';
+	}
+	else if (Ext.getCmp('cms_select2').getValue()){
+		var date1=Ext.getCmp('cms_dateym').getValue().format('Y-m-01');
+		var date2=Ext.getCmp('cms_dateym').getValue();
+		date2.setMonth(date2.getMonth()+1);
+		date2=date2.format('Y-m-01');
+		Ext.CXReportCMS.serchstr='';
+		Ext.CXReportCMS.serchstr+=' and b.sendtime >=\''+date1+'\' and b.sendtime <\''+date2+'\'';
+	}
+	else if (Ext.getCmp('cms_select3').getValue()){
+		var date3=Ext.getCmp('cms_datey').getValue().format('Y-01-01');
+		var date4=Ext.getCmp('cms_datey').getValue();
+		date4.setYear(date4.getFullYear()+1);
+		date4=date4.format('Y-01-01');		
+		Ext.CXReportCMS.serchstr='';
+		Ext.CXReportCMS.serchstr+=' and b.sendtime >=\''+date3+'\' and b.sendtime <\''+date4+'\'';
+	}
+	var str0=Ext.getCmp('combo_typecms').getValue();
+	Ext.CXReportCMS.serchstr+={'0':' and c.devtype=13','1':' and c.devtype=9','2':' and c.devtype=11','3':' and c.devtype=12'}[str0]||''//' and (c.devtype=9 or c.devtype=13 or c.devtype=11 or c.devtype=12)'
+	var str1=Ext.getCmp('combo_devcms').getValue();
+	if (str1!=-1 && str1!='所有') {Ext.CXReportCMS.serchstr+=' and b.devid='+str1;}
+	var str2=Ext.getCmp('combo_statecms').getValue();
+	if (str2==0 || str2=='失败') {Ext.CXReportCMS.serchstr+=' and b.state<>1';}
+	else if (str2==1 || str2=='成功') {Ext.CXReportCMS.serchstr+=' and b.state=1';}
+	var strorder=Ext.getCmp('combo_ordercms').getValue();//0 升1降 2设备& " order by a.colltime asc"
+	Ext.CXReportCMS.serchstr+={'0':' order by b.sendtime asc','1':' order by b.sendtime desc','2':' order by b.devid asc'}[strorder]
+	Ext.CXReportCMS.page_start=0;
+	Ext.CXReportCMS.values_ds.load({
+		params:{
+			start:Ext.CXReportCMS.record_start,
+			limit:Ext.CXReportCMS.page_count,
+			q:Ext.CXReportCMS.serchstr0+Ext.CXReportCMS.serchstr
+  		}
+	})
+}
+Ext.CXReportCMS.xmlhttpcmsreport;
+Ext.CXReportCMS.exportdata=function(){
+	var cmsdata='limit=0&start=0&q='+escape(Ext.CXReportCMS.serchstr0)+escape(Ext.CXReportCMS.serchstr)//含有空格，相当于特殊字符，需要加，否则空格被忽列
+	var cmsurl='json/getcollcms.asp?sid='+Math.random()+'&itype=2';
+ 
+	Ext.CXReportCMS.xmlhttpcmsreport= ajaxcreateXMLHttpRequest();
+	Ext.CXReportCMS.xmlhttpcmsreport.open("post", cmsurl, true);
+	Ext.CXReportCMS.xmlhttpcmsreport.setRequestHeader("Content-Type","application/x-www-form-urlencoded");//用post一定要加这句话
+	Ext.CXReportCMS.xmlhttpcmsreport.onreadystatechange=Ext.CXReportCMS.ajaxreportcms;
+	Ext.CXReportCMS.xmlhttpcmsreport.send(cmsdata);	
+}
+
+Ext.CXReportCMS.ajaxreportcms=function(){
+	if (Ext.CXReportCMS.xmlhttpcmsreport.readyState==4 && Ext.CXReportCMS.xmlhttpcmsreport.status==200) {
+		var jsonresponse1;
+		var jsonObject;	
+		jsonresponse1=Ext.CXReportCMS.xmlhttpcmsreport.responseText;
+		//alert(jsonresponse1);
+		jsonObject=eval("("+jsonresponse1+")");
+		var myMask = new Ext.LoadMask(Ext.getBody(), {//也可以是Ext.getCmp('').getEl()窗口名称
+			msg    : "正在操作,请稍后...",
+			msgCls : 'z-index:10000;'
+		});		
+		myMask.show();
+		//setTimeout(function(){		
+		var data2Excel2 = new Ext.icss.Data2ExcelTool2(); 
+	
+		data2Excel2.export2Excel(jsonObject);
+            
+		//},1000);
+		myMask.hide();
+	}
+}
+Ext.CXReportCMS.Gridrowclick=function(row){
+	var rows=Ext.getCmp('grid_cms').getSelectionModel().getSelections();
+	if (rows.length > 0){
+		if (rows[0].get('roworder')==-1){
+			var a=Ext.getCmp('ReportPreLed');
+			a.hide();
+			return;
+		}
+		switch(rows[0].get('devtype'))
+		{
+		case "9":
+			var a=Ext.getCmp('ReportPreLed');
+			a.setSize(96,96);
+			a.setPosition(570,15);
+			a.show();	
+			Ext.CXReportCMS.PlayStrRow(rows[0].get('textformat'),rows[0].get('sendtext'));
+			break;
+		case "13":
+			var a=Ext.getCmp('ReportPreLed');
+			a.setSize(400,40);
+			a.setPosition(430,2);
+			a.show();
+			Ext.CXReportCMS.PlayStrRow(rows[0].get('textformat'),rows[0].get('sendtext'));
+			break;
+		case "11":
+			var a=Ext.getCmp('ReportPreLed');
+			a.setSize(128,64);
+			a.setPosition(570,15);
+			a.show();	
+			Ext.CXReportCMS.PlayStrRow(rows[0].get('textformat'),rows[0].get('sendtext'));
+			break;	
+		case "12":
+			var a=Ext.getCmp('ReportPreLed');
+			a.setSize(96,96);
+			a.setPosition(570,15);
+			a.show();	
+			Ext.CXReportCMS.PlayStrRow(rows[0].get('textformat'),rows[0].get('sendtext'));
+			break;				
+		default:
+			Ext.getCmp('ReportPreLed').hide();
+		} 
+	}	
+}
+Ext.CXReportCMS.PlayStrRow=function(a,b){
+	var strArr =a.split(",");
+	var playstr='';
+	//strArr[2];//停留时间
+	playstr+="<div id='ReportPreLed2' style='background-color:#000;white-space:nowrap;";//white-space:nowrap;强制换行
+	playstr+="font-family:"+({'1':'KaiTi_GB2312,KaiTi;','2':'SimHei;'}[strArr[4]]||'SimSun;');//字体
+	playstr+="color:"+({'1':'Green;','2':'Yellow;'}[strArr[5]]||'Red;');//颜色
+	playstr+="margin-left:"+strArr[7]+";";//左距
+	playstr+="margin-top:"+strArr[8]+";";//上距
+	playstr+="line-height:"+({'0':'48px;','1':'40px;','2':'32px;','3':'24px;','4':'20px;'}[strArr[3]]||'16px;');//字距
+	playstr+="font-size:"+({'0':'48px\'>','1':'40px\'>','2':'32px\'>','3':'24px\'>','4':'20px\'>'}[strArr[3]]||'16px\'>');//字号
+	playstr+=b.replace(/\r\n/g,"<br>").replace(/\n/g, '<br>').replace(/\s/g,"&nbsp;")+"</div>";//内容
+	Ext.getCmp('ReportPreLed').body.update(playstr);	
+}
+Ext.CXReportCMS.viewtip=function(value, meta, rec, rowIdx, colIdx, ds){  
+	if (!!value){
+		var strArr =value.split(",");
+		var showstr='';
+		switch(strArr.length)
+		{
+		case 2:
+			showstr=({1:'自动调节',2:'手动调节'}[strArr[0]]||"未知") +"  亮度值:"+({'-1':'自动'}[strArr[1]]||strArr[1]);
+			break;	
+		case 9:
+			showstr+="停留时间:"+strArr[2]+"秒";//停留时间
+			showstr+="|字体:"+({'1':'楷体','2':'黑体'}[strArr[4]]||'宋体');//字体
+			showstr+="|颜色:"+({'1':'绿色','2':'黄色'}[strArr[5]]||'红色');//颜色
+			showstr+="|左边距:"+strArr[7]+";";//左距
+			showstr+="|上边距:"+strArr[8]+";";//上距
+			showstr+="|字号:"+({'0':'48*48','1':'40*40','2':'32*32','3':'24*24','4':'20*20'}[strArr[3]]||'16*16');//字号					
+			break;
+		default:
+			showstr=value;
+		}
+
+		return '<div ext:qtitle="" ext:qtip="' + value + '">'+ showstr +'</div>';  
+	}
+}
+Ext.CXReportCMS.initwin=function(a1,a2,a3,b1,b2,b3,b4){
+	Ext.getCmp('cms_select1').setValue(a1);	
+	Ext.getCmp('cms_select2').setValue(a2);
+	Ext.getCmp('cms_select3').setValue(a3);
+	Ext.getCmp('cms_startymd').setValue(b1);
+	Ext.getCmp('cms_endymd').setValue(b2);
+	Ext.getCmp('cms_dateym').setValue(b3);
+	Ext.getCmp('cms_datey').setValue(b4);
+}
+
+Ext.CXReportCMS.MyWindow=Ext.extend(Ext.Window ,{
+	id:'cmsreportwin',
+	xtype:"window",
+	title:"情报板发送历史记录",
+	width:840,
+	height:500,
+	closable:true,
+	resizable:false,
+	footer:false,
+	collapsible:false,
+	border:false,
+	layout:"absolute",
+	//minimizable:true,//加上这个会造成打开窗休后，点开始菜单无反应
+	initComponent: function(){
+		this.items=[
+			{
+				xtype:"label",
+				text:"设备类型:",
+				x:20,
+				y:105
+			},
+			{
+				xtype:"label",
+				text:"到",
+				x:230,
+				y:15,
+				width:10
+			},
+			{
+				xtype:"combo",
+				id:"combo_typecms",
+				triggerAction:"all",
+				fieldLabel:"标签",
+				anchor:"",
+				x:90,
+				y:100,
+				width:120,
+				store:
+					new Ext.data.SimpleStore({
+						fields: ['disp', 'valu'],
+						data : [['门架式',0],['T型',1],['F型',2],['LED',3],['所有',-1]]
+					}),	
+				displayField:'disp',
+				mode:'local',
+				valueField:'valu',
+				value:-1,
+				editable:false,
+				listeners:{
+					select:{fn:function(combo,record,index) {
+							Ext.CXReportCMS.devstr={'0':' or devtype=13','1':' or devtype=9','2':' or devtype=11','3':' or devtype=12'}[combo.getValue()]||' or devtype=9 or devtype=13 or devtype=11 or devtype=12'
+							Ext.CXReportCMS.dev_ds.load({
+								params:{
+									r:Ext.CXReportCMS.devstr
+								},
+								callback :function(records,options,success){
+									var p=new Ext.data.Record({
+										disp:'所有',
+										valu:'-1'
+									})							
+									Ext.CXReportCMS.dev_ds.add(p);	
+									Ext.getCmp('combo_devcms').setValue('-1');							
+														
+							}});
+							//Ext.getCmp('addTexttcms').setValue(combo.getRawValue());
+					}}}
+			},
+			{
+				xtype:"grid",
+				id:"grid_cms",
+				title:"我的表格",
+				x:10,
+				y:130,
+				anchor:"99%",
+				height:340,
+				bodyStyle:'width:100%',
+				//trackMouseOver :false,
+				loadMask:{
+					msg :'正在加载数据，请稍后.....'
+                },
+				loadMask:true,//数据加载过程中显示正在加载的效果
+				header:false,
+				enableColumnHide:false,
+				enableColumnMove:false,
+				enableColumnResize:false,
+				enableHdMenu:false,
+				deferRowRender:true,
+				frame:false,
+				footer:false,
+				autoScroll:true,//滚动条
+				ds : Ext.CXReportCMS.values_ds,
+				columnLines: true,
+				stripeRows: true,  //添加斑马纹效果
+				viewConfig: {
+					markDirty: false,
+					forceFit:false//列宽自适应
+				},
+				columns:[
+					new Ext.grid.RowNumberer({
+						header:'序号',
+						width:40,
+						renderer:function(value,metadata,record,rowIndex){
+							return Ext.CXReportCMS.page_start +1+rowIndex;	
+						}				  
+					}),
+					{
+						header:"设备编号",
+						sortable:true,
+						resizable:true,
+						dataIndex:"devno",
+						width:70,
+						summaryType: 'text'	//合计栏
+					},
+					{
+						header:"设备名称",
+						sortable:true,
+						resizable:true,
+						dataIndex:"devname",
+						width:100,
+						summaryType: 'count'//合计栏
+					},
+					{
+						header:"发送时间",
+						sortable:true,
+						resizable:true,
+						dataIndex:"sendtime",
+						width:140
+					},
+					{
+						header:"页号",
+						sortable:true,
+						resizable:true,
+						dataIndex:"roworder",
+						width:40
+					},
+					{
+						header:"状态",
+						sortable:true,
+						resizable:true,
+						dataIndex:"state",
+						width:50
+					},
+					{
+						header:"发送内容",
+						sortable:true,
+						resizable:true,
+						dataIndex:"sendtext",
+						width:150
+					},
+					{
+						header:"其它",
+						sortable:true,
+						resizable:true,
+						dataIndex:"textformat",
+						visible:false,
+						width:400,
+						renderer: Ext.CXReportCMS.viewtip
+					},
+					{
+						header:"类型",
+						sortable:true,
+						resizable:true,
+						dataIndex:"devtype",
+						width:50,
+						hidden:true
+					}
+				],
+				listeners:{  
+					rowclick : function(grid,row){  
+						Ext.CXReportCMS.Gridrowclick(row);
+					}
+				},
+        		bbar: new Ext.PagingToolbar({//分页
+            		pageSize: Ext.CXReportCMS.page_count,
+            		store: Ext.CXReportCMS.values_ds,
+            		displayInfo: true, //非要为true，不然不会显示下面的分页按钮
+					beforePageText:'第',
+					afterPageText:'/{0}页',
+					firstText:'首页',
+					prevText:'上一页',
+					nextText:'下一页',
+					lastText:'尾页',
+					refreshText:'刷新',					
+					displayMsg: '第{0}条到{1}条记录，共{2}条',
+            		emptyMsg: '没有相关记录',
+					doLoad:function(start){
+						Ext.CXReportCMS.page_start= start;
+						var o={},pn=this.getParams();
+						o[pn.start]=start;
+						o[pn.limit]=this.pageSize;
+						Ext.apply(o,{'q':Ext.CXReportCMS.serchstr0+Ext.CXReportCMS.serchstr});  
+						//o[pn.q]=Ext.CXReportCMS.searchstr;
+						if(this.fireEvent('beforechange', this, o) !== false){ 
+							this.store.load({params:o});
+						}
+					}
+        		}),
+				plugins: new Ext.ux.grid.GridSummary()//合计栏 ，使用GridSummary.js插件
+			},
+			{
+				xtype:"button",
+				text:"查询",
+				x:430,
+				y:40,
+				minWidth:80,
+				handler: function () {
+					Ext.CXReportCMS.serchstr0='';
+					Ext.CXReportCMS.searchdata();
+				}
+			},
+			{
+				xtype:"button",
+				text:"导出结果",
+				x:430,
+				y:70,
+				minWidth:80,
+				handler: function () {
+					if (ietype == 0) {
+						var data2Excel = new Ext.icss.Data2ExcelTool(); 
+						data2Excel.export2Excel(Ext.getCmp('grid_cms'));
+					}else{
+						chromeExportCmsExcel("book1");
+					}
+				}
+			},
+			{
+				xtype:"button",
+				text:"导出所有",
+				x:430,
+				y:100,
+				minWidth:80,
+				handler: function () {
+					if (ietype == 0) {
+						Ext.CXReportCMS.exportdata();
+					}else{
+						chromeExportCmsExcelAll("book1");
+					}
+					
+				}
+			},
+			{
+				xtype:"radio",
+				id:'cms_select1',
+				name:"cms_selectdt",
+				fieldLabel:"标签",
+				boxLabel:"指定日期",
+				anchor:"15%",
+				x:20,
+				y:10,
+				width:"",
+				checked:true
+			},
+			{
+				xtype:"radio",
+				id:'cms_select2',
+				name:"cms_selectdt",
+				fieldLabel:"标签",
+				boxLabel:"指定月份",
+				anchor:"15%",
+				x:20,
+				y:40
+			},
+			{
+				xtype:"radio",
+				id:'cms_select3',
+				name:"cms_selectdt",
+				fieldLabel:"标签",
+				boxLabel:"指定年份",
+				anchor:"15%",
+				x:20,
+				y:70
+			},
+			{
+				xtype:"datefield",
+				id:'cms_startymd',
+				format:'Y-m-d',//Y-m-d H:i:s
+				fieldLabel:"标签",
+				anchor:"30%",
+				x:90,
+				y:10,
+				value:new Date()
+			},
+			{
+				xtype:"datefield",
+				id:'cms_endymd',
+				format:'Y-m-d',
+				fieldLabel:"标签",
+				anchor:"50%",
+				x:250,
+				y:10,
+				value:new Date()
+			},
+			{
+				xtype:"datefield",
+				id:'cms_dateym',
+				format:'Y-m',
+				fieldLabel:"标签",
+				anchor:"25%",
+				x:90,
+				y:40,
+				value:new Date()
+			},
+			{
+				xtype:"datefield",
+				id:'cms_datey',
+				format:'Y',
+				fieldLabel:"标签",
+				anchor:"20%",
+				x:90,
+				y:70,
+				value:new Date()
+			},
+			{
+				xtype:"label",
+				text:"排序:",
+				x:245,
+				y:75
+			},
+			{
+				xtype:"combo",
+				id:"combo_ordercms",
+				triggerAction:"all",
+				fieldLabel:"标签",
+				anchor:"",
+				x:275,
+				y:70,
+				width:70,
+				store:
+					new Ext.data.SimpleStore({
+						fields: ['disp', 'valu'],
+						data : [['按时间↑',0],['按时间↓',1],['按设备',2]]
+					}),	
+				displayField:'disp',
+				mode:'local',
+				valueField:'valu',
+				value:0,
+				editable:false
+			},
+			{
+				xtype:"combo",
+				id:"combo_devcms",
+				triggerAction:"all",
+				fieldLabel:"标签",
+				anchor:"",
+				x:275,
+				y:100,
+				width:120,
+				store:Ext.CXReportCMS.dev_ds, 
+				displayField:'disp',
+				mode:'local',
+				valueField:'valu',
+				editable:false,
+				value:"所有",
+				listeners:{
+					render:{fn:function(combo) {
+						this.getStore().load({
+							params:{
+								r:Ext.CXReportCMS.devstr
+							},
+							callback :function(records,options,success){
+								var p=new Ext.data.Record({
+									disp:'所有',
+									valu:'-1'
+								})							
+							Ext.CXReportCMS.dev_ds.add(p);	
+							Ext.getCmp('combo_devcms').setValue('-1');
+						}}
+					);	
+				}}}
+			},
+			{
+				xtype:"label",
+				text:"设备名称:",
+				x:225,
+				y:105
+			},
+			{
+				xtype:"panel",
+				id:"ReportPreLed",
+				title:"我的面板",
+				visible:false,
+				x:420,
+				y:2,
+				width:320,
+				height:32,
+				header:false,
+				bodyStyle:"border-width:0;background:#000",
+				html:"<div id='ReportPreLed2' style='overflow:hidden;line-height:normal;background-color:#000'></div>",
+				hidden:true
+			},
+			{
+				xtype:"label",
+				text:"状态:",
+				x:245,
+				y:45
+			},
+			{
+				xtype:"combo",
+				id:"combo_statecms",
+				triggerAction:"all",
+				fieldLabel:"标签",
+				anchor:"",
+				x:275,
+				y:40,
+				width:70,
+				store:
+					new Ext.data.SimpleStore({
+						fields: ['disp', 'valu'],
+						data : [['所有',-1],['成功',1],['失败',0]]
+					}),	
+				displayField:'disp',
+				mode:'local',
+				valueField:'valu',
+				value:-1,
+				editable:false
+			}
+		]
+		Ext.CXReportCMS.MyWindow.superclass.initComponent.call(this);
+	},
+	listeners:{  
+				beforeshow : function(){  
+	
+				//alert("d")
+						//提示是否关闭窗口
+				},
+				close : function(){  
+			
+				}
+	}
+})
+
+Ext.CXReportCMS.init=function (){
+        var win = Ext.getCmp('cmsreportwin');
+        if(!win){
+            win = new Ext.CXReportCMS.MyWindow();					
+        }
+        win.show(); 	
+}

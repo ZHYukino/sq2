@@ -1,0 +1,105 @@
+/*start login*/
+
+.text-center{
+    text-align:center;    
+}
+
+.box{
+    margin:300px 0 0;
+}
+
+.login-box {
+	width: 100%;
+	max-width:380px;
+	height: 400px;
+	position: absolute;
+	top: 50%;
+
+	margin-top: -200px;
+	/*设置负值，为要定位子盒子的一半高度*/	
+}
+@media screen and (min-width:400px){
+	.login-box {
+		left: 50%;
+		/*设置负值，为要定位子盒子的一半宽度*/
+		margin-left: -200px;
+	}
+}	
+
+.form {
+	width: 100%;
+	max-width:400px;
+	height: 275px;
+	margin: 25px auto 0px auto;
+	padding-top: 20px;
+}	
+.login-content {
+	height: 300px;
+	width: 100%;
+	max-width:400px;
+	background-color: rgba(255, 250, 255, .7);
+	float: left;
+
+    border-bottom-right-radius: 5px;
+    border-bottom-left-radius: 5px;
+
+    -moz-box-shadow: 3px 3px 5px rgba(0, 148, 211, .6); /* 老的 Firefox */
+    box-shadow: 3px 3px 5px rgba(0, 148, 211, .6);
+}		
+	
+	
+.input-group {
+	margin: 3px 0px!important;
+}
+
+.form-group {
+	margin-bottom: 0px !important;
+}
+.login-title {
+	padding: 10px 10px;
+	background-color: rgba(77, 155, 237, .6);
+
+    border-top-right-radius: 5px;
+    border-top-left-radius: 5px;
+}
+.login-title h1 {
+	margin-top: 5px !important;
+}
+.login-title small {
+	color: #fff;
+}
+
+.login-info{height:20px;line-height:20px;}
+.login-infoshow{margin:0 auto;display:block;color:red;text-align:left;}
+
+.btn-info-login {
+    margin:5px 0 20px;
+    height:40px;
+
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+
+.link p {
+	line-height: 20px;
+	margin-top: 30px;
+}
+.btn-sm {
+	padding: 8px 24px !important;
+	font-size: 16px !important;
+}
+
+div#login_bg{ 
+    position:fixed; 
+    top:0; 
+    left:0; 
+    bottom:0; 
+    right:0; 
+    z-index:-1; 
+} 
+div#login_bg > img { 
+    height:100%; 
+    width:100%; 
+    border:0; 
+} 
+/*end login*/

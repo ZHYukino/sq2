@@ -1,0 +1,36 @@
+
+[config]
+SoftName=隧道管理所监控应用软件
+SoftAuthor=创想科技隧道管理系统 V5000
+SoftCopyright=创想交通科技 2012-2017
+TuCount=3
+RoadName1=拉萨端
+RoadName2=林芝端
+;照明模式
+ZMMode=0
+;风机模式
+FJMode=0
+
+[TuName]
+Tu0=德庆隧道
+Tu1=达孜一号隧道
+Tu2=达孜二号隧道
+
+[ScreenConfig]
+ScreenSelect=1
+ScreenIP=10.10.14.164
+ScreenAcount=admin
+ScreenPassword=admin123
+ScreenPlanName=正向
+ScreenCount=4
+pin0=屏幕1
+pin1=屏幕2
+pin2=屏幕3
+pin3=屏幕4
+
+[ScreenValue]
+svalueArray=0,1,3,4
+svalue0=0
+svalue1=1
+svalue2=3
+svalue3=4

@@ -1,0 +1,327 @@
+/**
+ * 切换电视墙相关
+*/
+
+//电视墙大屏登录
+function LoginBigScreen1(){	//登录第一步Logoutclick()
+	var bs_id;
+	var sessionstr;
+	var md5str;
+	var sip=$("#screen_ip").html();
+	var account=$("#screen_account").html();
+	var password=$("#screen_password").html();
+	
+	try{	
+		$.ajax( {  
+			url: '/json/rpc.asp?ip=' + sip,// 跳转到 action
+			data: JSON.stringify({"method":"global.login","params":{"userName":account,"password":"","clientType":"Web3.0"},"id":10000}),  
+			type:'post',  
+			contentType: "application/x-www-form-urlencoded",
+			cache:false,
+			//async : false, //默认为true 异步    
+			dataType:'json',  //json
+			success:function(data, textStatus) {  
+				if (data) {
+					var a = data.error.code;
+					if (a == 268632079) {	
+						bs_id = 0;
+						sessionstr=data.session;
+						md5str=CalcPassMd5(password);
+						
+						var i = ar_CameraBs.push(new Array(sip,sessionstr,md5,bs_id));
+						
+						LoginBigScreen2(sip,sessionstr,md5);
+					}	        
+			  }
+			 },  
+			error : function(XMLHttpRequest, textStatus, errorThrown) {
+				  //alert("异常！\n" + textStatus);  
+			 }
+		});
+	}catch(e){
+		sendScreenMSG("拼接器连接失败1!");
+	}
+}
+
+function LoginBigScreen2(sip,sessionstr,md5){  //登录第二步	
+	var sip=$("#screen_ip").html();
+	var account=$("#screen_account").html();
+	var password=$("#screen_password").html();
+	
+	try{
+		var a = {"method":"global.login","session":parseInt(sessionid),"params":{"userName":account,"password":md5,"clientType":"Web3.0", "authorityType":"OldDigest"},"id":10000};
+		
+		$.ajax( {  
+			url: '/json/rpc.asp?ip=' + sip + '&id=' + sessionid,// 跳转到 action    
+			data:JSON.stringify(a),
+			type:'post',  
+			contentType: "application/x-www-form-urlencoded",
+			cache:false,
+			//async : false, //默认为true 异步    
+			dataType:'json',  //json
+			success:function(data, textStatus) {  
+				if (data) {
+					if (data.result == true){
+						//intervalProcessBs = setInterval("KeepAliveBigScreen()", 30000);
+						SetCameraBs(sip,sessionstr)
+					}
+				}
+			 },  
+			error : function(XMLHttpRequest, textStatus, errorThrown) {
+				  alert("异常！\n" + textStatus);  
+			 }
+		});
+	}catch(e){
+		sendScreenMSG("拼接器连接失败2!");
+	}
+}
+
+function KeepAliveBigScreen(){ 		///------------------会话保持		
+	var a = '';
+	for (var i=0;i<ar_CameraBs.length;i++){	
+		a = {"method":"global.keepAlive","params":{"timeout": 300},"session":parseInt(ar_CameraBs[i][1]),"id":ar_CameraBs[i][3]};	
+		$.ajax( {  
+		    url: '/json/rpc2.asp?ip=' + ar_CameraBs[i][0] + '&id=' + ar_CameraBs[i][1],// 跳转到 action  
+		    data:JSON.stringify(a),
+		    type:'post',  
+		    contentType: "application/x-www-form-urlencoded",
+		    cache:false,
+		    //async : false, //默认为true 异步    
+		    dataType:'json',  //json
+		    success:function(data, textStatus) {  
+		     },  
+		    error : function(XMLHttpRequest, textStatus, errorThrown) {
+		     }
+		});	
+		ar_CameraBs[i][3]++;
+	}
+}
+
+function SetCameraBs(sip,sessionstr){		//修改一个电视墙大屏的信号源	
+	var windowstr=$("#default_screen_select").val();
+	var devicename="abcddddd";//获取设备配置名称
+		
+	if(setmethod==0){
+		var a={"method":"configManager.getConfig","params":{"name":"MonitorWall"},"session":parseInt(sessionstr),"id":parseInt(bs_id)};
+		
+		$.ajax( {  
+			url: '/json/rpc2.asp?ip=' + sip + '&id=' + sessionstr,// 跳转到 action  
+			data:JSON.stringify(a),
+			type:'post',  
+			contentType: "application/x-www-form-urlencoded",
+			cache:false,
+			//async : false, //默认为true 异步    
+			dataType:'json',  //json
+			success:function(data, textStatus) {		
+				compositesetid=data.params.table[0].Blocks[0].CompositeID;
+				
+				setSplicer1(sip,sessionstr);
+			 },  
+			error : function(XMLHttpRequest, textStatus, errorThrown) {
+				
+			 }
+		});	
+		bs_id++;
+		
+		setmethod++;
+	}else{
+		setCameraGoX1(sip,sessionstr,objectsetid,windowstr,devicename);
+	}		
+}
+
+function setSplicer1(sip,sessionstr){
+	var a={"method":"split.factory.instanceByCompositeID","params":{"compositeID":compositesetid},"session":parseInt(sessionstr),"id":parseInt(bs_id)};
+		
+	$.ajax( {  
+	    url: '/json/rpc2.asp?ip=' + pinjieip + '&id=' + sessionstr,// 跳转到 action  
+	    data:JSON.stringify(a),
+	    type:'post',  
+	    contentType: "application/x-www-form-urlencoded",
+	    cache:false,
+	    //async : false, //默认为true 异步    
+	    dataType:'json',  //json
+	    success:function(data, textStatus) {
+			var objectid=data.result;
+			
+			setSplicer2(sip,sessionstr,objectid);
+	     },  
+	    error : function(XMLHttpRequest, textStatus, errorThrown) {
+			alert("no 1");
+	     }
+	});	
+	bs_id++;
+}
+
+function setSplicer2(sip,sessionstr,objectid){
+	var a ={"method":"windowManager.factory.instance","params":{"channel":0,"composite":compositesetid},"session":parseInt(sessionstr),"id":parseInt(bs_id)};
+		
+	$.ajax( {  
+	    url: '/json/rpc2.asp?ip=' + pinjieip + '&id=' + sessionstr,// 跳转到 action  
+	    data:JSON.stringify(a),
+	    type:'post',  
+	    contentType: "application/x-www-form-urlencoded",
+	    cache:false,
+	    //async : false, //默认为true 异步    
+	    dataType:'json',  //json
+	    success:function(data, textStatus) {
+			setSplicer3(sip,sessionstr,objectid);
+	     },  
+	    error : function(XMLHttpRequest, textStatus, errorThrown) {
+			alert("no 2");
+	     }
+	});	
+	bs_id++;
+}
+
+function setSplicer3(sip,sessionstr,objectid){
+	var a ={"method":"split.attachTour","params":{"proc":parseInt(objectid)},"session":parseInt(sessionstr),"id":parseInt(bs_id),"object":parseInt(objectid)};
+		
+	$.ajax( {  
+	    url: '/json/rpc2.asp?ip=' + pinjieip + '&id=' + sessionstr,// 跳转到 action  
+	    data:JSON.stringify(a),
+	    type:'post',  
+	    contentType: "application/x-www-form-urlencoded",
+	    cache:false,
+	    //async : false, //默认为true 异步    
+	    dataType:'json',  //json
+	    success:function(data, textStatus) {
+			setSplicer4(sip,sessionstr,objectid);
+	     },  
+	    error : function(XMLHttpRequest, textStatus, errorThrown) {
+			alert("no 3");
+	     }
+	});	
+	bs_id++;
+}
+
+
+function setSplicer4(sip,sessionstr,objectid){
+	var a ={"method":"split.getMode","params":null,"session":parseInt(sessionstr),"id":parseInt(bs_id),"object":parseInt(objectid)};
+		
+	$.ajax( {  
+	    url: '/json/rpc2.asp?ip=' + pinjieip + '&id=' + sessionstr,// 跳转到 action  
+	    data:JSON.stringify(a),
+	    type:'post',  
+	    contentType: "application/x-www-form-urlencoded",
+	    cache:false,
+	    //async : false, //默认为true 异步    
+	    dataType:'json',  //json
+	    success:function(data, textStatus) {
+			setSplicer5(sip,sessionstr,objectid);
+	     },  
+	    error : function(XMLHttpRequest, textStatus, errorThrown) {
+			alert("no 4");
+	     }
+	});	
+	bs_id++;
+}
+
+function setSplicer5(sip,sessionstr,objectid){
+	var windowstr=$("#input_window").val();
+	var devicename=$("#input_devicename").val();
+	
+	var a ={"method":"split.getAudioOutputEx","params":null,"session":parseInt(sessionstr),"id":parseInt(bs_id),"object":parseInt(objectid)};
+		
+	$.ajax( {  
+	    url: '/json/rpc2.asp?ip=' + pinjieip + '&id=' + sessionstr,// 跳转到 action  
+	    data:JSON.stringify(a),
+	    type:'post',  
+	    contentType: "application/x-www-form-urlencoded",
+	    cache:false,
+	    //async : false, //默认为true 异步    
+	    dataType:'json',  //json
+	    success:function(data, textStatus) {
+			setCameraGo1(sip,sessionstr,objectid,windowstr,devicename);
+	     },  
+	    error : function(XMLHttpRequest, textStatus, errorThrown) {
+			alert("no 5");
+	     }
+	});	
+	bs_id++;
+}
+
+
+//设置屏显
+function setCameraGo1(sip,sessionstr,objectid,windowstr,devicename){
+	var a ={"method":"split.setSource","params":{"window":parseInt(windowstr),"source":{"Device":devicename,"Enable":true,"Interval":10,"VideoChannel":0,"VideoStream":"Main"}},"session":parseInt(sessionstr),"id":parseInt(bs_id),"object":parseInt(objectid)};
+		
+	$.ajax( {  
+	    url: '/json/rpc2.asp?ip=' + pinjieip + '&id=' + sessionstr,// 跳转到 action  
+	    data:JSON.stringify(a),
+	    type:'post',  
+	    contentType: "application/x-www-form-urlencoded",
+	    cache:false,
+	    //async : false, //默认为true 异步    
+	    dataType:'json',  //json
+	    success:function(data, textStatus) {
+			setCameraGo2(sip,sessionstr,objectid,windowstr,devicename);
+	     },  
+	    error : function(XMLHttpRequest, textStatus, errorThrown) {
+			alert("no set 1");
+	     }
+	});	
+	bs_id++;
+}
+
+function setCameraGo2(sip,sessionstr,objectid,windowstr,devicename){
+	var a ={"method":"split.getWinSource","params":{"window":parseInt(windowstr)},"session":parseInt(sessionstr),"id":parseInt(bs_id),"object":parseInt(objectid)};
+		
+	$.ajax( {  
+	    url: '/json/rpc2.asp?ip=' + pinjieip + '&id=' + sessionstr,// 跳转到 action  
+	    data:JSON.stringify(a),
+	    type:'post',  
+	    contentType: "application/x-www-form-urlencoded",
+	    cache:false,
+	    //async : false, //默认为true 异步    
+	    dataType:'json',  //json
+	    success:function(data, textStatus) {
+			setCameraGo3(sip,sessionstr,objectid,windowstr,devicename);
+	     },  
+	    error : function(XMLHttpRequest, textStatus, errorThrown) {
+			alert("no set 2");
+	     }
+	});	
+	bs_id++;
+}
+
+function setCameraGo3(sip,sessionstr,objectid,windowstr,devicename){
+	var a ={"method":"split.getSource","params":{"window":parseInt(windowstr)},"session":parseInt(sessionstr),"id":parseInt(bs_id),"object":parseInt(objectid)};
+		
+	$.ajax( {  
+	    url: '/json/rpc2.asp?ip=' + pinjieip + '&id=' + sessionstr,// 跳转到 action  
+	    data:JSON.stringify(a),
+	    type:'post',  
+	    contentType: "application/x-www-form-urlencoded",
+	    cache:false,
+	    //async : false, //默认为true 异步    
+	    dataType:'json',  //json
+	    success:function(data, textStatus) {
+	     },  
+	    error : function(XMLHttpRequest, textStatus, errorThrown) {
+			alert("no set 3");
+	     }
+	});	
+	bs_id++;
+}
+
+
+function setCameraGoX1(sip,sessionstr,objectid,windowstr,devicename){
+	var a ={"method":"windowManager.getWorkMode","params":{"window":parseInt(windowstr)},"session":parseInt(sessionstr),"id":parseInt(bs_id),"object":parseInt(objectid)};
+		
+	$.ajax( {  
+	    url: '/json/rpc2.asp?ip=' + pinjieip + '&id=' + sessionstr,// 跳转到 action  
+	    data:JSON.stringify(a),
+	    type:'post',  
+	    contentType: "application/x-www-form-urlencoded",
+	    cache:false,
+	    //async : false, //默认为true 异步    
+	    dataType:'json',  //json
+	    success:function(data, textStatus) {
+			setCameraGo1(sip,sessionstr,objectid,windowstr,devicename);
+	     },  
+	    error : function(XMLHttpRequest, textStatus, errorThrown) {
+			alert("no set 1");
+	     }
+	});	
+	bs_id++;
+}

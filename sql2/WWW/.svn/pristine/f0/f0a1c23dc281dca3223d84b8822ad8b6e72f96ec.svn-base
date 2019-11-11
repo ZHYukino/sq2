@@ -1,0 +1,46 @@
+﻿<!--#include file="../comm/mconn.asp"-->
+<%
+	Session.CodePage=65001
+	Response.Charset="UTF-8"
+	itype = Request.QueryString("itype")
+	Dim mRs
+	Set mRs=Server.CreateObject("Adodb.RecordSet")	
+	
+	if itype = 1 then
+		mRs.open "Select top 1 * from CollWD where devid=" & request.querystring("q") & "and colltime>dateadd(minute,-10,getdate()) order by colltime desc", conn, 1,2
+		response.write "{'results': " & mRs.recordcount
+		if not mRs.eof then
+			response.write ",'rows': ["
+			do while not mRs.eof
+				response.write "{'id':" & mRs("devid") & ", 'colltime': '" & mRs("colltime") & "', 'fengsu': '" & mRs("fengsu") & "', 'fengxiang': '" & mRs("fengxiang") & "', 'nengjiandu': '" & mRs("nengjiandu") &"'}"
+				mRs.movenext
+				if not mRs.eof then
+					response.write ","
+				end if				
+			loop
+			response.write "]"
+		end if
+		response.write "}"
+		mRs.close
+	end if
+%>
+<%
+	if itype = 2 then
+		sql="select  b.* from (Select devid,max(colltime) colltime from CollWD where colltime>dateadd(minute,-10,getdate()) group by devid) a  left join CollWD b on a.DevID=b.DevID and a.CollTime= b.colltime"
+		mRs.open sql, conn, 1,1
+		response.write "{'results': " & mRs.recordcount
+		if not mRs.eof then
+			response.write ",'rows': ["
+			do while not mRs.eof
+				response.write "{'id':" & mRs("devid") & ", 'colltime': '" & mRs("colltime") & "', 'fengsu': '" & mRs("fengsu") & "', 'fengxiang': '" & mRs("fengxiang") & "', 'nengjiandu':" & mRs("nengjiandu") &"}"
+				mRs.movenext
+				if not mRs.eof then
+					response.write ","
+				end if				
+			loop
+			response.write "]"
+		end if
+		response.write "}"
+		mRs.close
+	end if
+%>

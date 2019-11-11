@@ -1,0 +1,63 @@
+<%
+'http://www.cnblogs.com/cooska/archive/2010/12/03/1990781.html
+'==================================================
+'函数名：BytesToBstr
+'作 用：将获取的源码转换为中文
+'参 数：Body ------要转换的变量
+'参 数：Cset ------要转换的类型
+'==================================================
+Function BytesToBstr(Body,Cset)
+	Dim Objstream
+	Set Objstream = Server.CreateObject("adodb.stream")
+	objstream.Type = 1
+	objstream.Mode =3
+	objstream.Open
+	objstream.Write body
+	objstream.Position = 0
+	objstream.Type = 2
+	objstream.Charset = Cset
+	BytesToBstr = objstream.ReadText 
+	objstream.Close
+	set objstream = nothing
+End Function
+
+Function PostHttpPage(RefererUrl,PostUrl,PostData) 	
+	Dim xmlHttp 
+	Dim RetStr
+	 
+	'Set xmlHttp = CreateObject("Msxml2.XMLHTTP") 
+	Set xmlHttp = CreateObject("WinHTTP.WinHTTPRequest.5.1")
+	xmlHttp.Open "POST", PostUrl, false
+	
+	'response.write PostData & "<br>"
+	xmlHttp.setRequestHeader "Accept", "text/javascript, text/html, application/xml, text/xml, */*"
+	xmlHttp.setRequestHeader "Accept-Language", "zh-cn"
+	xmlHttp.setRequestHeader "x-request", "JSON"
+	xmlHttp.setRequestHeader "Referer", RefererUrl
+	xmlHttp.setRequestHeader "x-requested-with", "XMLHTTPRequest"
+	xmlHttp.setRequestHeader "Content-Type", "application/x-www-form-urlencoded"
+	xmlHttp.setRequestHeader "Accept-Encoding", "gzip, deflate"
+	xmlHttp.setRequestHeader "Connection", "Keep-Alive"
+	xmlHttp.setRequestHeader "Cache-Control", "no-cache"
+	xmlHttp.setRequestHeader "Cookie", "DHLangCookie30=%2Fweb_lang%2FSimpChinese.txt; DhWebSnapPath=C%3A%5CPictureDownload%5C; DhWebRecordPath=C%3A%5CRecordDownload%5C; DhWebClientSessionID=" & c &"; username=admin; DhWebCookie=%7B%22username%22%3A%22admin%22%2C%22pswd%22%3A%22%22%2C%22talktype%22%3A%221%22%2C%22logintype%22%3A%220%22%2C%22openall%22%3A%221%22%2C%22loginid%22%3A183170408%7D"
+	XmlHTTP.setRequestHeader "Content-Length",Len(PostData)	
+	
+	xmlHttp.Send PostData 
+	If Err.Number <> 0 Then 
+		Set xmlHttp=Nothing
+		PostHttpPage = "$False$"
+		Exit Function
+	End If
+	PostHttpPage = bytesToBSTR(xmlHttp.responseBody,"GB2312")
+	Set xmlHttp = nothing
+End Function
+
+on error resume next
+a = Request.QueryString("ip")
+b = Request.Form
+c = Request.QueryString("id")
+
+c = PostHttpPage("http://" & a & "/","http://" & a & "/RPC2",b)
+response.write c
+call catch("页面错误") 
+%>

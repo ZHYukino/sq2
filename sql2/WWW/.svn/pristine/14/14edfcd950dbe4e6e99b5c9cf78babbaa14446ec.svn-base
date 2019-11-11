@@ -1,0 +1,30 @@
+<!--#include file="../comm/mconn.asp"-->
+<%
+	Session.CodePage = 65001
+	Response.Charset = "UTF-8"
+	itype = Request.QueryString("itype")
+	username = session("user")
+	total = int(Request.QueryString("total"))
+	msg = ""
+	result = 0
+	If username <> "" Then
+		If itype = 1 And total > 0 Then
+			For i = 0 To total - 1
+				devid = int(Request.QueryString("id" & i))
+				state = int(Request.QueryString("state" & i))
+				If devid <> "" And state <> "" And state <> -1 then
+					sql = "update Devsend set i1=" & state & ",State=-1,SendTime=GETDATE() where DevID=" & devid
+					Conn.Execute(sql)
+				End If
+			Next
+			result = 1
+			msg = "应用成功"
+			'日志
+			sql = "insert into LogSys(logman,LogTime,Logdesc,LogMemo,logtype) values ('" & username & "',GETDATE(),'信息灯控制','调整信息灯状态',3)"
+			Conn.Execute(sql)
+		End If
+	Else
+		msg = "未登录不可进行操作"
+	End if
+	Response.write "{""result"":" & result & ",""msg"":""" & msg & """}"
+%>

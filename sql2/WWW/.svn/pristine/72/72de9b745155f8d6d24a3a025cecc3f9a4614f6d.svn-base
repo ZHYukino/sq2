@@ -1,0 +1,35 @@
+﻿<!--#include file="../comm/mconn2.asp"-->
+<%
+	Session.CodePage = 65001
+	Response.Charset = "UTF-8"
+	itype = Request.QueryString("itype")
+	RowOrder = int(request.QueryString("rowcount"))
+	TuIndex = request.QueryString("tunnel")
+	UpDown = request.QueryString("updown")
+	result = 0
+	msg = ""
+	if itype = 1 And RowOrder <> "" And RowOrder > 0 And TuIndex <> "" And UpDown <> "" then
+		Dim mRs
+		Set mRs = Server.CreateObject("Adodb.RecordSet")
+		mRs.open "Select devid,devno,devname from devpara where Enabled=1 and devtype in(9,11,12,13) and TuIndex=" & TuIndex & " and UpDown=" & UpDown, conn, 1, 2
+		if not mRs.eof Then
+			do while not mRs.eof
+				ssql = "insert into sendcms (devid,devno,sendtype,sendtime,state) values ("& mRs("devid") & "," & mRs("devno") & ",0,GETDATE(),-1)"
+				Conn.Execute(ssql)
+				Set rs = Conn.Execute("SELECT @@IDENTITY as newIDValue")
+				cid = rs("newIDValue")
+				For j = 0 To RowOrder - 1
+					ssql = "insert into SendCmsDet (JobNo,RowOrder,SendText,TextFormat) values (" & cid & "," & j & ",'" & request.QueryString("sendtext" & j) & "','" & request.QueryString("textformat") & "')"
+					Conn.Execute(ssql)
+				Next
+				ssql = "insert into syslog(useracc,dt,logtype,joinid,logmemo,userip) values ('"& session("user") & "',GETDATE(),2," & cid &  ",'下发情报板信息','" & session("userip") & "')"
+				Conn.Execute(ssql)
+			Loop
+			result = 1
+			msg = "发送成功"
+		End If
+	Else
+		msg = "参数错误"
+	end If
+	Response.write "{""result"":" & result & ",""msg"":""" & msg & """}"
+%>

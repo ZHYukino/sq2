@@ -1,0 +1,60 @@
+<!--#include file="../comm/mconn.asp"-->
+<%
+	Session.CodePage = 65001
+	Response.Charset = "UTF-8"
+	itype = Request.QueryString("itype")
+	id = Request.QueryString("id")
+	Dim mRs
+	Set mRs = Server.CreateObject("Adodb.RecordSet")
+	If itype = 1 Then
+		mRs.open "select FType,FSCoVal,FSViVal,FECoVal,FEViVal,FEnabled,FshowHint from AutoFJ where FType in(1,2,3)", conn, 1, 2
+		If Not mRs.eof Then
+			response.write "{"
+			do while not mRs.eof
+				Response.write """" & mRs("FType") & """:{""FSCoVal"":""" & mRs("FSCoVal") & """,""FSViVal"":""" & mRs("FSViVal") & """,""FECoVal"":""" & mRs("FECoVal") & """,""FEViVal"":""" & mRs("FEViVal") & """,""FEnabled"":""" & mRs("FEnabled") & """,""FshowHint"":""" & mRs("FshowHint") & """}"
+				mRs.movenext
+				if not mRs.eof then
+					response.write ","
+				end if
+			Loop
+			response.write "}"
+		'else
+			'Response.write "{""results"":0,""rows"":[]}"
+		End If
+		mRs.close
+	End If
+	If itype = 2 Then
+		mRs.open "select FType,FSInVal,FSOutVal,FEInVal,FEOutVal,FEnabled,FshowHint,FTimeInterval from AutoZM where FType in(1,2,3,4)", conn, 1, 2
+		If Not mRs.eof Then
+			response.write "{"
+			do while not mRs.eof
+				Response.write """" & mRs("FType") & """:{""FSInVal"":""" & mRs("FSInVal") & """,""FSOutVal"":""" & mRs("FSOutVal") & """,""FEInVal"":""" & mRs("FEInVal") & """,""FEOutVal"":""" & mRs("FEOutVal") & """,""FEnabled"":""" & mRs("FEnabled") & """,""FshowHint"":""" & mRs("FshowHint") & """,""FTimeInterval"":""" & mRs("FTimeInterval") & """}"
+				mRs.movenext
+				if not mRs.eof then
+					response.write ","
+				end if
+			Loop
+			response.write "}"
+		'else
+			'Response.write "{""results"":0,""rows"":[]}"
+		End If
+		mRs.close
+	End If
+	If itype = 3 And id <> "" And id > 10 Then
+		mRs.open "select FEnabled,FshowHint,FTime from AutoZM where FType=" & id, conn, 1, 2
+		If Not mRs.eof Then
+			response.write "{"
+			do while not mRs.eof
+				Response.write """FEnabled"":""" & mRs("FEnabled") & """,""FshowHint"":""" & mRs("FshowHint") & """,""FTime"":""" & mRs("FTime") & """}"
+				mRs.movenext
+				if not mRs.eof then
+					response.write ","
+				end if
+			Loop
+			response.write "}"
+		'else
+			'Response.write "{""results"":0,""rows"":[]}"
+		End If
+		mRs.close
+	End If
+%>

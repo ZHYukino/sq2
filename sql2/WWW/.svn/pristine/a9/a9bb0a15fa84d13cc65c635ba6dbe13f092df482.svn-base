@@ -1,0 +1,22 @@
+<!--#include file="../comm/RWIniFile.inc"-->
+<%
+	Session.CodePage = 65001
+	Response.Charset = "UTF-8"
+	itype = Request.QueryString("itype")
+	If itype = 1 Then
+		count = ReadIni("/opt.ini","config","TuCount")
+		response.write "{'results': " & count
+		If count > 0 Then
+			response.write  ",'rows': ["
+			for i = 0 to count-1
+				tuvalue=ReadIni("/opt.ini","TuName","Tu"&i)
+				response.write "{'id':" & i & ", 'tuvalue': '" & tuvalue & "'}"
+				if i < count -1 then
+					response.write ","
+				end If
+			Next
+			response.write "]"
+		End If
+		response.write "}"
+	End if
+%>

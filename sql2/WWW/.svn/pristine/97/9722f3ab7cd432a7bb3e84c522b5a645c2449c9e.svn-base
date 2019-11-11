@@ -1,0 +1,13 @@
+﻿<%@ language=VBScript%>
+<!--#include file="comm/mconn.asp"-->
+<%
+	If session("user") <> "" then
+		ssql = "insert into LogSys(logman,LogTime,Logdesc,LogMemo,logtype) values ('" & session("user") & "',GETDATE(),'退出隧道监控','',1)"
+		Conn.Execute(ssql)
+	End if
+	session("user") = ""
+	session("Server_Name") = ""
+	'session.Contents.RemoveAll()
+	response.redirect "login.asp"
+	response.End()
+%>

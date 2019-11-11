@@ -1,0 +1,277 @@
+﻿Ext.namespace('Ext.CXCMSPreInfo');
+
+Ext.CXCMSPreInfo.Type=0;//情报板类型
+Ext.CXCMSPreInfo.serchstr='';
+Ext.CXCMSPreInfo.record_start=0;
+Ext.CXCMSPreInfo.page_count=20;
+Ext.CXCMSPreInfo.page_start=0;
+Ext.CXCMSPreInfo.values_ds = new Ext.data.Store({
+	proxy: new Ext.data.HttpProxy({
+		method:'post',
+    	url:'json/getpreinfocms.asp?sid='+Math.random()+'&itype=2'
+	}),
+	baseParams:{'start':'','limit':'','q':''},
+	reader: new Ext.data.JsonReader({
+    	totalProperty: "results", 
+        successProperty: "success",    
+        root: "rows"           
+        //id: "dataid" 		
+		},[{name:'preinfoid',mapping:'preinfoid'},
+		   {name:'preinfoname',mapping:'preinfoname'},
+		   {name:'preinfocontent',mapping:'preinfocontent'},
+		   {name:'Enable',mapping:'Enable'}
+		]
+	),
+	autoLoad:false
+});
+
+Ext.CXCMSPreInfo.searchdata=function(){
+	Ext.CXCMSPreInfo.page_start=0	
+	Ext.CXCMSPreInfo.values_ds.load({
+		params:{
+			start:Ext.CXCMSPreInfo.record_start,
+			limit:Ext.CXCMSPreInfo.page_count,
+			q:Ext.CXCMSPreInfo.Type
+	}});
+}
+
+Ext.CXCMSPreInfo.insertdate=function(){
+	if (Ext.getCmp('cmspreinfotext1').getValue()==''){
+	return false};	
+	var a = {"content":Ext.encode(Ext.getCmp('cmspreinfotext1').getValue()),"type":Ext.CXCMSPreInfo.Type};
+	$.ajax({  //Ext.encode escape
+	    url: 'json/getpreinfocms.asp?sid='+Math.random()+'&itype=3' ,
+	    data: a,  
+	    type:'post',  
+	    contentType: "application/x-www-form-urlencoded",
+	    cache:false,
+	    //async : false, //默认为true 异步    
+	    dataType:'text',  //json
+		success:function(data, textStatus) { 
+	    	if (data) {
+				if (data=='true'){
+					Ext.Msg.alert('系统提示','保存成功');	
+					Ext.CXCMSPreInfo.searchdata();
+				} else{
+					Ext.Msg.alert('系统提示','保存失败');	
+				}
+	     	}
+	    },  
+	    error : function(XMLHttpRequest, textStatus, errorThrown) {
+	          alert("异常！\n" + textStatus);  
+	     }
+	});
+	
+}
+Ext.CXCMSPreInfo.deletedate=function(id){
+	var a = {"id":id};
+	$.ajax({  //Ext.encode escape
+	    url: 'json/getpreinfocms.asp?sid='+Math.random()+'&itype=4' ,
+	    data: a,  
+	    type:'post',  
+	    contentType: "application/x-www-form-urlencoded",
+	    cache:false,
+	    //async : false, //默认为true 异步    
+	    dataType:'text',  //json
+		success:function(data, textStatus) { 
+	    	if (data) {
+				if (data=='true'){
+					Ext.Msg.alert('系统提示','删除成功');	
+					Ext.CXCMSPreInfo.searchdata();
+				} else{
+					Ext.Msg.alert('系统提示','删除失败');	
+				}
+	     	}
+	    },  
+	    error : function(XMLHttpRequest, textStatus, errorThrown) {
+	          alert("异常！\n" + textStatus);  
+	     }
+	});
+	
+}
+Ext.CXCMSPreInfo.updatedate=function(id){
+	if (Ext.getCmp('cmspreinfotext1').getValue()==''){
+	return false};	
+	var a = {"content":Ext.encode(Ext.getCmp('cmspreinfotext1').getValue()),"id":id};
+	$.ajax({  //Ext.encode escape
+	    url: 'json/getpreinfocms.asp?sid='+Math.random()+'&itype=5' ,
+	    data: a,  
+	    type:'post',  
+	    contentType: "application/x-www-form-urlencoded",
+	    cache:false,
+	    //async : false, //默认为true 异步    
+	    dataType:'text',  //json
+		success:function(data, textStatus) { 
+	    	if (data) {
+				if (data=='true'){
+					Ext.Msg.alert('系统提示','修改成功');	
+					Ext.CXCMSPreInfo.searchdata();
+				} else{
+					Ext.Msg.alert('系统提示','修改失败');	
+				}
+	     	}
+	    },  
+	    error : function(XMLHttpRequest, textStatus, errorThrown) {
+	          alert("异常！\n" + textStatus);  
+	     }
+	});
+	
+}
+
+Ext.CXCMSPreInfo.MyWindow=Ext.extend(Ext.Window ,{
+	id:'preinfowin',
+	xtype:"window",
+	title:"情报板预置信息",
+	width:400,
+	height:350,
+	closable:true,
+	resizable:false,
+	footer:false,
+	collapsible:false,
+	border:false,
+	layout:"absolute",
+	//minimizable:true,//加上这个会造成打开窗休后，点开始菜单无反应
+	initComponent: function(){
+		this.items=[
+			{
+				xtype:"grid",
+				id:"grid_user",
+				title:"我的表格",
+				x:10,
+				y:10,
+				anchor:"98.5%",
+				height:300,			
+				header:false,
+				enableColumnHide:false,
+				enableColumnMove:false,
+				enableColumnResize:false,
+				enableHdMenu:false,
+				deferRowRender:true,
+				frame:false,
+				footer:false,
+				loadMask:{
+					msg :'正在加载数据，请稍后.....'
+                },
+				loadMask:true,//数据加载过程中显示正在加载的
+				autoScroll:true,//滚动条
+				ds :Ext.CXCMSPreInfo.values_ds,
+				columnLines: true,
+				stripeRows: true,  //添加斑马纹效果
+				viewConfig: {
+					markDirty: false,
+					forceFit:true//列宽自适应
+				},	
+				//selType : 'cellmodel',  //选格模式
+				columns:[
+					new Ext.grid.RowNumberer({
+						header:'序号',
+						width:40,
+						renderer:function(value,metadata,record,rowIndex){
+							return Ext.CXCMSPreInfo.page_start +1+rowIndex;	
+						}				  
+					}),
+					{
+						header:"是否启用",
+						xtype:"booleancolumn",
+						trueText:"启用",
+						falseText:"停用",
+						sortable:true,
+						resizable:true,
+						dataIndex:"Enable",
+						width:50,
+						hidden:true
+					},
+					{
+						header:"内容",
+						sortable:true,
+						resizable:true,
+						dataIndex:"preinfocontent",
+						width:150,
+						summaryType: 'count'//合计栏
+					},
+					{
+                    	text:"操作",
+						header:"操作",
+                    	xtype:"actioncolumn",
+                    	width:40,
+                    	items:[{
+                             icon:"images/delete.gif", // 指定图标
+                             tooltip:"删除",
+                             handler: function(grid, rowIndex, colIndex)
+                             {
+                             	var rec = grid.getStore().getAt(rowIndex);
+								Ext.Msg.confirm('系统提示','是否删除该记录？',
+									function(btn){
+										if(btn=='yes'){
+											Ext.CXCMSPreInfo.deletedate(rec.get('preinfoid'));
+										}
+									},this);								
+                             }
+                         }]
+               		}
+				],
+				tbar:[{xtype:"textarea",id:"cmspreinfotext1",fieldLabel:"标签",width:185,x:0,y:0},
+					  '-',{
+						icon:"images/add.gif", // 指定图标  
+						text:'添加',  
+						handler:function(){  
+							Ext.CXCMSPreInfo.insertdate();
+						}
+					},'-',{
+						icon:"images/edit.gif", // 指定图标  
+						text:'修改',  
+						handler:function(){  
+							var rows=Ext.getCmp('grid_user').getSelectionModel().getSelections();
+							if (rows.length > 0){
+								Ext.CXCMSPreInfo.updatedate(rows[0].get('preinfoid'));
+							}
+						}
+					}
+            	],
+        		bbar: new Ext.PagingToolbar({//分页
+            		pageSize: Ext.CXCMSPreInfo.page_count,
+            		store: Ext.CXCMSPreInfo.values_ds,
+            		displayInfo: true, //非要为true，不然不会显示下面的分页按钮
+					beforePageText:'第',
+					afterPageText:'/{0}页',
+					firstText:'首页',
+					prevText:'上一页',
+					nextText:'下一页',
+					lastText:'尾页',
+					refreshText:'刷新',					
+					displayMsg: '第{0}条到{1}条记录，共{2}条',
+            		emptyMsg: '没有相关记录',
+					doLoad:function(start){
+						Ext.CXCMSPreInfo.page_start= start;
+						var o={},pn=this.getParams();
+						o[pn.start]=start;
+						o[pn.limit]=this.pageSize;
+						Ext.apply(o,{'q':Ext.CXCMSPreInfo.Type});   
+						//o[pn.q]=Ext.CXReportWD.serchstr;
+						if(this.fireEvent('beforechange', this, o) !== false){ 
+							this.store.load({params:o});
+						}
+					}
+        		}),
+				listeners:{  
+					rowdblclick : function(grid,row){  
+						var rows=grid.getSelectionModel().getSelections();
+						if (rows.length > 0){
+							Ext.getCmp('cmspreinfotext1').setValue(rows[0].get('preinfocontent'));
+						}	
+					}
+				},				
+				plugins: new Ext.ux.grid.GridSummary()//合计栏 ，使用GridSummary.js插
+			}
+		]
+		Ext.CXCMSPreInfo.MyWindow.superclass.initComponent.call(this);
+	},
+	listeners:{  
+				beforeshow : function(){  
+					Ext.CXCMSPreInfo.searchdata();
+				},
+				close : function(){  
+			
+				}
+	}
+})

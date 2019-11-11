@@ -1,0 +1,24 @@
+<!--#include file="../comm/mconn.asp"-->
+<%
+	Session.CodePage=65001
+	Response.Charset="UTF-8"
+	itype = Request.QueryString("itype")
+	if itype = 1 then
+		Dim mRs
+		Set mRs=Server.CreateObject("Adodb.RecordSet")
+		mRs.open "Select * from devvalue where 1=1", conn, 1,2
+		if not mRs.eof then
+			response.write "{'results': " & mRs.recordcount & ",'rows': ["
+			do while not mRs.eof
+				response.write "{'id':" & mRs("devid") & ", 'dt': '" & mRs("dt") & "', 'i1': '" & mRs("i1") & "', 'i2': '" & mRs("i2") & "', 'n1': '" & mRs("n1") & "', 'n2': '" & mRs("n2") & "', 'v1': '" & mRs("v1") & "', 'v2': '" & mRs("v2") &"'}"
+				mRs.movenext
+				if not mRs.eof then
+					response.write ","
+				end if				
+			loop
+			response.write "]}"
+		end if
+		mRs.close
+	end if
+
+%>

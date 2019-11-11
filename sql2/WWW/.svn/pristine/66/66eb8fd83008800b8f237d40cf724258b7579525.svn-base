@@ -1,0 +1,25 @@
+<!--#include file="../comm/mconn.asp"-->
+<%
+	Session.CodePage = 65001
+	Response.Charset = "UTF-8"
+	itype = Request.QueryString("itype")
+	If itype = 1 Then
+		Dim mRs
+		Set mRs = Server.CreateObject("Adodb.RecordSet")
+		mRs.open "select * from FirePlan where Enabled=1", conn, 1, 2
+		response.write "{'results': " & mRs.recordcount
+		If Not mRs.eof Then
+			response.write  ",'rows': ["
+			do while not mRs.eof
+				response.write "{'id':" & mRs("FID") & ", 'tunnel': '" & mRs("Tunnel") & "', 'updown': '" & mRs("UpDown") & "', 'led': '" & mRs("LED") & "', 'fan': '" & mRs("FAN") & "', 'door': '" & mRs("DOOR") & "', 'fb': '" & mRs("FB") & "', 'ls': '" & mRs("LS") & "', 'ts': '" & mRs("TS") & "', 'name': '" & mRs("Name") & "', 'sendtext': '" & mRs("SendText") & "', 'textformat': '" & mRs("TextFormat") & "'}"
+				mRs.movenext
+				if not mRs.eof then
+					response.write ","
+				end If
+			Loop
+			response.write "]"
+		End If
+		response.write "}"
+		mRs.close
+	End If
+%>

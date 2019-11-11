@@ -1,0 +1,105 @@
+<!--#include file="../comm/RWIniFile.inc"-->
+<%
+	Session.CodePage = 65001
+	Response.Charset = "UTF-8"
+	itype = Request.QueryString("itype")
+	name = Request.QueryString("name")
+	total = int(Request.QueryString("total"))
+	If itype = 1 And total <> "" And name <> "" Then
+		fx = ReadIni("\FJ.ini",name,"fx")
+		fxid = ReadIni("\FJ.ini",name,"fxid")
+		Response.write "{""fx"":""" & fx & """,""fxid"":""" & fxid & """,""data"":["
+		If total > 0 then
+			For i = 0 To total - 1
+				id = int(Request.QueryString("id" & i))
+				If id <> "" then
+					isselect = ReadIni("\FJ.ini",name,"fj" & id)
+					If isselect = "" Then isselect = 0
+					Response.write "{""devid"":""" & id & """,""isselect"":""" & isselect & """}"
+				Else
+					Response.write "{""devid"":"""",""isselect"":""""}"
+				End If
+				If i <> total -1 Then
+					Response.write ","
+				End If
+			Next
+		End If
+		Response.write "]}"
+	End If
+	If itype = 2 And name <> "" And total <> "" Then
+		Dim name2(3)
+		name2(0) = "晴天"
+		name2(1) = "阴天"
+		name2(2) = "晚上"
+		name2(3) = "夜间"
+		Response.write "["
+		For i = 0 To 3
+			name3 = name & name2(i)
+			Response.write "["
+			If total > 0 then
+				For j = 0 To total - 1
+					id = int(Request.QueryString("id" & j))
+					If id <> "" then
+						isopen = ReadIni("\ZM.ini",name3,"dj" & id)
+						isselect = ReadIni("\ZM.ini",name3,"zm" & id)
+						If isselect = "" Then isselect = 0
+						If isopen = "" Then isopen = 0
+						Response.write "{""devid"":""" & id & """,""isopen"":""" & isopen & """,""isselect"":""" & isselect & """}"
+					Else
+						Response.write "{""devid"":"""",""isopen"":"""",""isselect"":""""}"
+					End If
+					If j <> total -1 Then
+						Response.write ","
+					End If
+				Next
+			End If
+			Response.write "]"
+			If i <> 3 Then
+				Response.write ","
+			End If
+		Next
+		Response.write "]"
+	End If
+	If itype = 3 And total <> "" Then
+		Dim name3(7)
+		name3(0) = "时间1"
+		name3(1) = "时间2"
+		name3(2) = "时间3"
+		name3(3) = "时间4"
+		name3(4) = "时间5"
+		name3(5) = "时间6"
+		name3(6) = "时间7"
+		name3(7) = "时间8"
+		Response.write "["
+		For i = 0 To 7
+			name = name3(i)
+			usetime = ReadIni("\ZM.ini",name,"StartTime")
+			use = ReadIni("\ZM.ini",name,"UseTime")
+			hint = ReadIni("\ZM.ini",name,"UseShowHint")
+			If use = "" Then use = 0
+			If hint = "" Then hint = 0
+			If usetime = "" Then usetime = "00:00"
+			Response.write "{""use"":""" & use & """,""hint"":""" & hint & """,""time"":""" & usetime & """,""data"":["
+			If total > 0 then
+				For j = 0 To total - 1
+					id = int(Request.QueryString("id" & j))
+					If id <> "" then
+						isopen = ReadIni("\ZM.ini",name,"dj" & id)
+						If isopen = "" Then isopen = 0
+						Response.write "{""devid"":""" & id & """,""isopen"":""" & isopen & """}"
+					Else
+						Response.write "{""devid"":"""",""isopen"":""""}"
+					End If
+					If j <> total -1 Then
+						Response.write ","
+					End If
+				Next
+			End If
+			Response.write "]}"
+			If i <> 7 Then
+				Response.write ","
+			End If
+		Next
+		Response.write "]"
+	End If
+%>

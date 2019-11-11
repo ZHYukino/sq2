@@ -1,0 +1,262 @@
+﻿Ext.namespace('Ext.CXUserEdit');
+
+Ext.CXUserEdit.Type=0;//0增加，1修改
+Ext.CXUserEdit.xmlhttpuseredit;
+Ext.CXUserEdit.xmlhttpuseredit2;
+Ext.CXUserEdit.xmlhttpuseredit3;
+Ext.CXUserEdit.xmlhttpuseredit4;
+Ext.CXUserEdit.initwin=function(){
+	Ext.getCmp('usereditacc').setValue('');	
+	Ext.getCmp('usereditname').setValue('');	
+	Ext.getCmp('usereditpasswd').setValue('');	
+	Ext.getCmp('usereditpasswd2').setValue('');	
+	Ext.getCmp('usereditenable').setValue(true);
+	Ext.getCmp('usereditacc').setDisabled(false);
+	Ext.getCmp('usereditpasswd').setDisabled(false);
+	Ext.getCmp('usereditpasswd2').setDisabled(false);	
+}
+Ext.CXUserEdit.valuewin=function(a,b,c,d,e){
+	Ext.getCmp('usereditacc').setValue(a);	
+	Ext.getCmp('usereditname').setValue(b);	
+	Ext.getCmp('usereditpasswd').setValue(c);	
+	Ext.getCmp('usereditpasswd2').setValue(d);	
+	Ext.getCmp('usereditenable').setValue(e);
+	Ext.getCmp('usereditacc').setDisabled(true);
+	Ext.getCmp('usereditpasswd').setDisabled(true);
+	Ext.getCmp('usereditpasswd2').setDisabled(true);
+}
+Ext.CXUserEdit.savedate=function(){
+	if (Ext.CXUserEdit.Type==0){
+		if (Ext.getCmp('usereditacc').getValue()==''){
+			Ext.Msg.alert('系统提示','用户帐号不能为空');
+			return false;
+		} else if (Ext.getCmp('usereditname').getValue()==''){
+			Ext.Msg.alert('系统提示','用户名称不能为空');
+			return false;
+		} else if (Ext.getCmp('usereditpasswd').getValue()==''){
+			Ext.Msg.alert('系统提示','用户密码不能为空');
+			return false;
+		} else if (Ext.getCmp('usereditpasswd2').getValue()==''){
+			Ext.Msg.alert('系统提示','验证密码不能为空');
+			return false;
+		} else if (Ext.getCmp('usereditpasswd').getValue()!=Ext.getCmp('usereditpasswd2').getValue()){
+			Ext.Msg.alert('系统提示','两次输入密码不一致');
+			return false;
+		} else {
+			var usereditdata='q='+escape(Ext.getCmp('usereditacc').getValue())//含有空格，相当于特殊字符，需要加，否则空格被忽列
+			var userediturl='json/getuser.asp?sid='+Math.random()+'&itype=3';
+			Ext.CXUserEdit.xmlhttpuseredit= ajaxcreateXMLHttpRequest();
+			Ext.CXUserEdit.xmlhttpuseredit.open("post", userediturl, false);
+			Ext.CXUserEdit.xmlhttpuseredit.setRequestHeader("Content-Type","application/x-www-form-urlencoded");//用post一定要加这句话
+			Ext.CXUserEdit.xmlhttpuseredit.send(usereditdata);				
+			if (Ext.CXUserEdit.xmlhttpuseredit.readyState==4 && Ext.CXUserEdit.xmlhttpuseredit.status==200){
+				var jsonresponse1;
+				var jsonObject;	
+				jsonresponse1=Ext.CXUserEdit.xmlhttpuseredit.responseText;
+				jsonObject=eval("("+jsonresponse1+")");
+				if (jsonObject.rows[0].num>0){
+					Ext.Msg.alert('系统提示','用户帐号已经存在,请重新输入');
+					return false;						
+				}
+			}
+		}
+		var usereditdata2='q1='+escape(Ext.getCmp('usereditacc').getValue())+'&q2='+escape(Ext.getCmp('usereditname').getValue())+'&q3='+escape(Ext.getCmp('usereditpasswd').getValue())+'&q4='+escape(Ext.getCmp('usereditenable').getValue()==true?1:0)
+		var userediturl2='json/getuser.asp?sid='+Math.random()+'&itype=4';
+		Ext.CXUserEdit.xmlhttpuseredit2= ajaxcreateXMLHttpRequest();
+		Ext.CXUserEdit.xmlhttpuseredit2.open("post", userediturl2, false);
+		Ext.CXUserEdit.xmlhttpuseredit2.setRequestHeader("Content-Type","application/x-www-form-urlencoded");//用post一定要加这句话
+		Ext.CXUserEdit.xmlhttpuseredit2.send(usereditdata2);				
+		if (Ext.CXUserEdit.xmlhttpuseredit2.readyState==4 && Ext.CXUserEdit.xmlhttpuseredit2.status==200){
+			var jsonresponse12;
+			var jsonObject2;	
+			jsonresponse12=Ext.CXUserEdit.xmlhttpuseredit2.responseText;
+			if (jsonresponse12!='true'){
+				Ext.Msg.alert('系统提示','保存失败('+jsonresponse12+')');	
+				return false;
+			}	 
+		}
+		return true
+	} else {
+		if (Ext.getCmp('usereditname').getValue()==''){
+			Ext.Msg.alert('系统提示','用户名称不能为空');
+			return false;
+		} else {
+			var usereditdata3='q1='+escape(Ext.getCmp('usereditacc').getValue())+'&q2='+escape(Ext.getCmp('usereditname').getValue())+'&q3='+escape(Ext.getCmp('usereditenable').getValue()==true?1:0)
+			var userediturl3='json/getuser.asp?sid='+Math.random()+'&itype=5';
+			Ext.CXUserEdit.xmlhttpuseredit3= ajaxcreateXMLHttpRequest();
+			Ext.CXUserEdit.xmlhttpuseredit3.open("post", userediturl3, false);
+			Ext.CXUserEdit.xmlhttpuseredit3.setRequestHeader("Content-Type","application/x-www-form-urlencoded");//用post一定要加这句话
+			Ext.CXUserEdit.xmlhttpuseredit3.send(usereditdata3);				
+			if (Ext.CXUserEdit.xmlhttpuseredit3.readyState==4 && Ext.CXUserEdit.xmlhttpuseredit3.status==200){
+				var jsonresponsetext3;
+				var jsonObject3;	
+				jsonresponsetext3=Ext.CXUserEdit.xmlhttpuseredit3.responseText;
+				if (jsonresponsetext3!='true'){
+					Ext.Msg.alert('系统提示','保存失败('+jsonresponsetext3+')');	
+					return false;
+				}	
+			}		
+		}
+		return true
+	}	
+}
+Ext.CXUserEdit.deletedate=function(a){
+	var usereditdata4='q='+escape(a);
+	var userediturl4='json/getuser.asp?sid='+Math.random()+'&itype=6';
+	Ext.CXUserEdit.xmlhttpuseredit4= ajaxcreateXMLHttpRequest();
+	Ext.CXUserEdit.xmlhttpuseredit4.open("post", userediturl4, false);
+	Ext.CXUserEdit.xmlhttpuseredit4.setRequestHeader("Content-Type","application/x-www-form-urlencoded");//用post一定要加这句话
+	Ext.CXUserEdit.xmlhttpuseredit4.send(usereditdata4);				
+	if (Ext.CXUserEdit.xmlhttpuseredit4.readyState==4 && Ext.CXUserEdit.xmlhttpuseredit4.status==200){
+		var jsonresponsetext4;
+		var jsonObject4;	
+		jsonresponsetext4=Ext.CXUserEdit.xmlhttpuseredit4.responseText;
+		if (jsonresponsetext4!='true'){
+			Ext.Msg.alert('系统提示','删除失败('+jsonresponsetext4+')');	
+			return false;
+		}	
+	}
+	return true
+}
+Ext.CXUserEdit.MyWindow=Ext.extend(Ext.Window ,{
+	id:'usereditwin',									
+	xtype:"window",
+	title:"用户编辑",
+	width:300,
+	height:200,
+	autoScroll:false,
+	layout:"absolute",
+	modal:true,//模态窗口
+	initComponent: function(){
+		this.items=[
+			{
+				xtype:"label",
+				text:"用户帐号:",
+				x:15,
+				y:15
+			},
+			{
+				xtype:"label",
+				text:"用户名称:",
+				x:15,
+				y:50
+			},
+			{
+				xtype:"label",
+				text:"用户密码:",
+				x:15,
+				y:85
+			},
+			{
+				xtype:"label",
+				text:"验证密码:",
+				x:15,
+				y:120
+			},
+			{
+				xtype:"label",
+				text:"是否启用:",
+				x:15,
+				y:150
+			},
+			{
+				xtype:"textfield",
+				id:"usereditacc",
+				fieldLabel:"标签",
+				anchor:"",
+				x:70,
+				y:10
+			},
+			{
+				xtype:"textfield",
+				id:"usereditname",
+				fieldLabel:"标签",
+				anchor:"",
+				x:70,
+				y:45
+			},
+			{
+				xtype:"textfield",
+				id:"usereditpasswd",
+				fieldLabel:"标签",
+				anchor:"",
+				inputType:'password',
+				x:70,
+				y:80
+			},
+			{
+				xtype:"textfield",
+				id:"usereditpasswd2",
+				fieldLabel:"标签",
+				anchor:"",
+				inputType:'password',
+				x:70,
+				y:115
+			},
+			{
+				xtype:"button",
+				text:"保存",
+				x:215,
+				y:30,
+				minWidth:60,
+				handler:function(){
+					if (!Ext.CXUserEdit.savedate()){return};
+					
+					if (Ext.CXUserEdit.Type==0){
+						Ext.CXSysLog.insertdata(username,1,"添加用户"+Ext.getCmp('usereditacc').getValue()+"帐号",-1,userip);
+						Ext.Msg.confirm('系统提示','保存成功,是否继续增加？',
+							function(btn){
+								if(btn=='yes'){
+									Ext.CXUserEdit.initwin();													
+								} else {	
+									Ext.getCmp('usereditwin').close();
+								}
+							},this);
+					} else {
+						Ext.CXSysLog.insertdata(username,1,"修改用户"+Ext.getCmp('usereditacc').getValue()+"信息",-1,userip);
+						Ext.Msg.alert('系统提示','保存成功');
+						Ext.getCmp('usereditwin').close();
+					}
+				}
+			},
+			{
+				xtype:"button",
+				text:"取消",
+				x:215,
+				y:65,
+				minWidth:60,
+				handler:function(){ 
+					Ext.Msg.confirm('系统提示','数据未保存,是否退出？',
+						function(btn){
+							if(btn=='yes'){
+								Ext.getCmp('usereditwin').close();	
+								Ext.CXUser.searchdata();
+							}
+					  	},this);
+				}
+			},
+			{
+				xtype:"checkbox",
+				id:"usereditenable",
+				fieldLabel:"标签",
+				boxLabel:"",
+				anchor:"",
+				checked:true,
+				x:70,
+				y:148,
+				width:16
+			}
+		]
+		Ext.CXUserEdit.MyWindow.superclass.initComponent.call(this);
+	},
+	listeners:{ 
+				beforeshow : function(){  
+					 
+						
+				},
+				close : function(){  
+					Ext.CXUser.searchdata();
+				}
+	}
+})		
+	

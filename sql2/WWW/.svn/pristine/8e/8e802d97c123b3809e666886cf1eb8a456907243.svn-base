@@ -1,0 +1,23 @@
+<!--#include file="../comm/RWIniFile.inc"-->
+<%
+	Session.CodePage = 65001
+	Response.Charset = "UTF-8"
+	itype = Request.QueryString("itype")
+	total = int(Request.QueryString("total"))
+	name = Request.QueryString("name") '下拉框名字
+	name = Replace(name," ","")
+	If itype = 1 And total <> "" And name <> "" And total > 0 Then
+		Response.write "["
+		For i = 0 To total - 1
+			ename = Request.QueryString("ename" & i)
+			If ename <> "" then
+				tip = ReadIni("\cache.ini",name,ename)
+				Response.write "{""ename"":""" & ename & """,""tip"":""" & tip & """}"
+			End If
+			If i < total -1 Then
+				Response.write ","
+			End If
+		Next
+		Response.write "]"
+	End If
+%>

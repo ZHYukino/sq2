@@ -1,0 +1,20 @@
+﻿Ext.namespace('Ext.CXSysLog');
+
+Ext.CXSysLog.xmlhttpsyslog;
+Ext.CXSysLog.insertdata=function(useracc,logtype,logmemo,joinid,userip){
+	var syslogdata='useracc='+escape(useracc)+'&logtype='+escape(logtype)+'&logmemo='+escape(logmemo)+'&joinid='+escape(joinid)+'&userip='+escape(userip)//含有空格，相当于特殊字符，需要加，否则空格被忽列
+	var syslogurl='json/setsyslog.asp?sid='+Math.random()+'&itype=1';
+ 
+	Ext.CXSysLog.xmlhttpsyslog= ajaxcreateXMLHttpRequest();
+	Ext.CXSysLog.xmlhttpsyslog.open("post", syslogurl, true);
+	Ext.CXSysLog.xmlhttpsyslog.setRequestHeader("Content-Type","application/x-www-form-urlencoded");//用post一定要加这句话
+	Ext.CXSysLog.xmlhttpsyslog.onreadystatechange=Ext.CXSysLog.ajaxsyslog;
+	Ext.CXSysLog.xmlhttpsyslog.send(syslogdata);	
+}
+
+Ext.CXSysLog.ajaxsyslog=function(){
+	if (Ext.CXSysLog.xmlhttpsyslog.readyState==4 && Ext.CXSysLog.xmlhttpsyslog.status==200) {
+	
+	}
+}
+

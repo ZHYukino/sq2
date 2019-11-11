@@ -1,0 +1,86 @@
+<!--#include file="../comm/mconn.asp"-->
+<!--#include file="../comm/RWIniFile.inc"-->
+<%
+	Session.CodePage = 65001
+	Response.Charset = "UTF-8"
+	username = session("user")
+	itype = Request.QueryString("itype")
+	name = Request.QueryString("name")
+	total = int(Request.QueryString("total"))
+	msg = ""
+	result = 0
+	If username <> "" Then
+		If itype = 1 And total <> "" And name <> "" And total > 0 Then
+			fx = Request.QueryString("fx")
+			WriteIni "/FJ.ini",name,"fx",fx
+			fxid = Request.QueryString("fxid")
+			WriteIni "/FJ.ini",name,"fxid",fxid
+			For i = 0 To total - 1
+				devid = int(Request.QueryString("id" & i))
+				isselect = int(Request.QueryString("isselect" & i))
+				If isselect <> 1 Then isselect = 0
+				If devid <> "" Then
+					WriteIni "/FJ.ini",name,"fj" & devid,isselect
+				End If
+			next
+			'日志
+			sql = "insert into LogSys(logman,LogTime,Logdesc,LogMemo,logtype) values ('" & username & "',GETDATE(),'参数修改','修改通风设备关系',3)"
+			Conn.Execute(sql)
+			msg = "修改成功"
+			result = 1
+		End If
+		If itype = 2 And total <> "" And name <> "" And total > 0 Then
+			name2 = Request.QueryString("name2")
+			If name2 <> "" then
+				name = name & name2
+				For i = 0 To total - 1
+					devid = int(Request.QueryString("id" & i))
+					isopen = int(Request.QueryString("isopen" & i))
+					isselect = int(Request.QueryString("isselect" & i))
+					If isopen <> 1 Then isopen = 0
+					If isselect <> 1 Then isselect = 0
+					If devid <> "" Then
+						WriteIni "/ZM.ini",name,"dj" & devid,isopen
+						WriteIni "/ZM.ini",name,"zm" & devid,isselect
+					End If
+				Next
+				'日志
+				sql = "insert into LogSys(logman,LogTime,Logdesc,LogMemo,logtype) values ('" & username & "',GETDATE(),'参数修改','修改照明环境控制方案配置',3)"
+				Conn.Execute(sql)
+				msg = "修改成功"
+				result = 1
+			End if
+		End If
+		If itype = 3 And total <> "" And name <> "" And total > 0 Then
+			use = int(Request.QueryString("use"))
+			hint = int(Request.QueryString("hint"))
+			usetime = Request.QueryString("time")
+			If use <> 1 Then use = 0
+			If hint <> 1 Then hint = 0
+			WriteIni "/ZM.ini",name,"UseTime",use
+			WriteIni "/ZM.ini",name,"UseShowHint",hint
+			If IsDate(usetime) Then
+				usetime = FormatDateTime(usetime,4)
+				WriteIni "/ZM.ini",name,"StartTime",usetime
+			Else
+				WriteIni "/ZM.ini",name,"StartTime","00:00"
+			End if
+			For i = 0 To total - 1
+				devid = int(Request.QueryString("id" & i))
+				isopen = int(Request.QueryString("isopen" & i))
+				If isopen <> 1 Then isopen = 0
+				If devid <> "" Then
+					WriteIni "/ZM.ini",name,"dj" & devid,isopen
+				End If
+			Next
+			'日志
+			sql = "insert into LogSys(logman,LogTime,Logdesc,LogMemo,logtype) values ('" & username & "',GETDATE(),'参数修改','修改照明时间控制方案配置',3)"
+			Conn.Execute(sql)
+			msg = "修改成功"
+			result = 1
+		End if
+	Else
+		msg = "未登录不可进行操作"
+	End If
+	Response.write "{""result"":" & result & ",""msg"":""" & msg & """}"
+%>

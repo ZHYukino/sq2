@@ -1,0 +1,28 @@
+<!--#include file="../comm/mconn.asp"-->
+<%
+	Session.CodePage = 65001
+	Response.Charset = "UTF-8"
+	itype = Request.QueryString("itype")
+	username = session("user")
+	id = int(Request.QueryString("id"))
+	state = int(Request.QueryString("state"))
+	changetype = Request.QueryString("changetype")
+	cname = Request.QueryString("cname")
+	tip = Request.QueryString("tip")
+	msg = ""
+	result = 0
+	If username <> "" Then
+		if itype = 1 And id <> "" And state <> "" Then
+			sql = "update Devsend set i1=" & state & ",State=-1,SendTime=GETDATE() where DevID=" & id
+			Conn.Execute(sql)
+			'日志
+			sql = "insert into LogSys(logman,LogTime,Logdesc,LogMemo,logtype) values ('" & username & "',GETDATE(),'" & changetype & "','" & cname & " " & tip & "',3)"
+			Conn.Execute(sql)
+			result = 1
+			msg = tip & "发送成功"
+		End If
+	Else
+		msg = "未登录不可进行操作"
+	End if
+	Response.write "{""result"":" & result & ",""msg"":""" & msg & """}"
+%>

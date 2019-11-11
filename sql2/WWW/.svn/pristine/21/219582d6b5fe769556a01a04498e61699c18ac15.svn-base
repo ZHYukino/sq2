@@ -1,0 +1,669 @@
+﻿// JavaScript Document
+/*------------------------------------------------------------------------------------------------------
+设备信息加载
+------------------------------------------------------------------------------------------------------*/
+var devurl="json/getdevinfo.asp?sid=" + Math.random()+ "&itype=1&q=" ;
+
+var flowurl="json/getflowinfo.asp?sid=" + Math.random()+ "&itype=1" ;
+//TCMS加载 Devtype=9
+function ajaxChangedTCMS()
+{
+	if (xmlhttptcms.readyState==4 && xmlhttptcms.status==200) 
+	{
+		var jsonresponse;
+		var jsonObject;	
+		jsonresponse=xmlhttptcms.responseText;
+		jsonObject=eval("("+jsonresponse+")");
+		//document.getElementById("x-desktop").innerHTML=xmlHttp.responseText;
+		//alert(jsonObject.results);
+		//alert(jsonObject.rows[0].id);
+		//var cms1 = addTcmsMarker(new BMap.Point(91.232167,29.629142), "情报板1\nK12+123");
+		//var cms2 = addTcmsMarker(new BMap.Point(93.32486,29.952107), "情报板2\nK16+623");		
+	 	for (var i=0;i<jsonObject.results;i++)
+		{
+			arr_tcms[i] = new Array();
+			arr_tcms[i].push(jsonObject.rows[i].id);
+			arr_tcms[i].push(i);
+			arr_tcms[i].push(-1);
+			arr_tcms[i].push(addTcmsMarker(i,new BMap.Point(jsonObject.rows[i].pointx,jsonObject.rows[i].pointy),jsonObject.rows[i].devname+"\n"+jsonObject.rows[i].daddr));	
+			arr_tcms[i].push("");
+			arr_tcms[i].push(jsonObject.rows[i].devname);
+		}
+	}
+}
+var xmlhttptcms= ajaxcreateXMLHttpRequest();
+xmlhttptcms.onreadystatechange=ajaxChangedTCMS;
+xmlhttptcms.open("GET", devurl  + 9, true);
+xmlhttptcms.send(null);
+
+//SCMS加载 Devtype=12
+function ajaxChangedSCMS()
+{
+	if (xmlhttpscms.readyState==4 && xmlhttpscms.status==200) 
+	{
+		var jsonresponse;
+		var jsonObject;	
+		jsonresponse=xmlhttpscms.responseText;
+		jsonObject=eval("("+jsonresponse+")");
+		//document.getElementById("x-desktop").innerHTML=xmlHttp.responseText;
+		//alert(jsonObject.results);
+		//alert(jsonObject.rows[0].id);
+		//var cms1 = addScmsMarker(new BMap.Point(91.232167,29.629142), "情报板1\nK12+123");
+		//var cms2 = addScmsMarker(new BMap.Point(93.32486,29.952107), "情报板2\nK16+623");		
+	 	for (var i=0;i<jsonObject.results;i++)
+		{
+			arr_scms[i] = new Array();
+			arr_scms[i].push(jsonObject.rows[i].id);
+			arr_scms[i].push(i);
+			arr_scms[i].push(-1);
+			arr_scms[i].push(addScmsMarker(i,new BMap.Point(jsonObject.rows[i].pointx,jsonObject.rows[i].pointy),jsonObject.rows[i].devname+"\n"+jsonObject.rows[i].daddr));	
+			arr_scms[i].push("");
+			arr_scms[i].push(jsonObject.rows[i].devname);
+		}
+	}
+}
+var xmlhttpscms= ajaxcreateXMLHttpRequest();
+xmlhttpscms.onreadystatechange=ajaxChangedSCMS;
+xmlhttpscms.open("GET", devurl  + 12, true);
+xmlhttpscms.send(null);
+
+//FCMS加载 Devtype=11
+function ajaxChangedFCMS()
+{
+	if (xmlhttpfcms.readyState==4 && xmlhttpfcms.status==200) 
+	{
+		var jsonresponse;
+		var jsonObject;	
+		jsonresponse=xmlhttpfcms.responseText;
+		jsonObject=eval("("+jsonresponse+")");
+		//document.getElementById("x-desktop").innerHTML=xmlHttp.responseText;
+		//alert(jsonObject.results);
+		//alert(jsonObject.rows[0].id);
+		//var cms1 = addFcmsMarker(new BMap.Point(91.232167,29.629142), "情报板1\nK12+123");
+		//var cms2 = addFcmsMarker(new BMap.Point(93.32486,29.952107), "情报板2\nK16+623");		
+	 	for (var i=0;i<jsonObject.results;i++)
+		{
+			arr_fcms[i] = new Array();
+			arr_fcms[i].push(jsonObject.rows[i].id);
+			arr_fcms[i].push(i);
+			arr_fcms[i].push(-1);
+			arr_fcms[i].push(addFcmsMarker(i,new BMap.Point(jsonObject.rows[i].pointx,jsonObject.rows[i].pointy),jsonObject.rows[i].devname+"\n"+jsonObject.rows[i].daddr));	
+			arr_fcms[i].push("");
+			arr_fcms[i].push(jsonObject.rows[i].devname);
+		}
+	}
+}
+var xmlhttpfcms= ajaxcreateXMLHttpRequest();
+xmlhttpfcms.onreadystatechange=ajaxChangedFCMS;
+xmlhttpfcms.open("GET", devurl  + 11, true);
+xmlhttpfcms.send(null);
+
+//CMS加载 Devtype=13
+function ajaxChangedCMS()
+{
+	if (xmlhttpcms.readyState==4 && xmlhttpcms.status==200) 
+	{
+		jsonresponse=xmlhttpcms.responseText;
+		jsonObject=eval("("+jsonresponse+")");
+		//var cms3 = addcmsMarker(new BMap.Point(92.345204,29.94009), "设备状态报警\n");	
+	 	for (var i=0;i<jsonObject.results;i++)
+		{
+			arr_cms[i] = new Array();
+			arr_cms[i].push(jsonObject.rows[i].id);
+			arr_cms[i].push(i);	
+			arr_cms[i].push(-1);		
+			arr_cms[i].push(addcmsMarker(i,new BMap.Point(jsonObject.rows[i].pointx,jsonObject.rows[i].pointy),jsonObject.rows[i].devname+"\n"+jsonObject.rows[i].daddr));	
+			arr_cms[i].push("");
+			arr_cms[i].push(jsonObject.rows[i].devname);
+		}
+	}
+}
+var xmlhttpcms= ajaxcreateXMLHttpRequest();
+xmlhttpcms.onreadystatechange=ajaxChangedCMS;
+xmlhttpcms.open("GET", devurl  + 13, true);
+xmlhttpcms.send(null);
+
+//VD加载 Devtype=8
+function ajaxChangedVD()
+{
+	if (xmlhttpvd.readyState==4 && xmlhttpvd.status==200) 
+	{
+		jsonresponse=xmlhttpvd.responseText;
+		jsonObject=eval("("+jsonresponse+")");
+		//var vd1 = addVdMarker(new BMap.Point(92.285413,29.77571), "微波车检1\nK12+123");
+		//var vd2 = addVdMarker(new BMap.Point(92.775241,29.916051), "微波车检2\nK16+623");	
+	 	for (var i=0;i<jsonObject.results;i++)
+		{
+			arr_vd[i] = new Array();
+			arr_vd[i].push(jsonObject.rows[i].id);
+			arr_vd[i].push(i);
+			arr_vd[i].push(1);	//设备状态		
+			arr_vd[i].push(addVdMarker(i,new BMap.Point(jsonObject.rows[i].pointx,jsonObject.rows[i].pointy),jsonObject.rows[i].devname+"\n"+jsonObject.rows[i].daddr));	
+			arr_vd[i].push(""); //状态内容
+			arr_vd[i].push(jsonObject.rows[i].devname);
+			arr_vd[i].push("");
+			arr_vd[i].push("-1");//记录报警，-1初始化，0 false, 1 true报警
+		}
+	}
+}
+var xmlhttpvd= ajaxcreateXMLHttpRequest();
+xmlhttpvd.onreadystatechange=ajaxChangedVD;
+xmlhttpvd.open("GET", devurl  + 8, true);
+xmlhttpvd.send(null);
+
+//WD加载 Devtype=7
+function ajaxChangedWD()
+{
+	if (xmlhttpwd.readyState==4 && xmlhttpwd.status==200) 
+	{
+		jsonresponse=xmlhttpwd.responseText;
+		jsonObject=eval("("+jsonresponse+")");
+		//var WD1 = addWDMarker(new BMap.Point(93.557126,29.877978), "能见度检测1\nK12+123");
+		//var WD2 = addWDMarker(new BMap.Point(93.557126,29.877978), "能见度检测2\nK16+623");	
+	 	for (var i=0;i<jsonObject.results;i++)
+		{
+			arr_wd[i] = new Array();
+			arr_wd[i].push(jsonObject.rows[i].id);
+			arr_wd[i].push(i);
+			arr_wd[i].push(1);	//设备状态	
+			arr_wd[i].push(addWDMarker(i,new BMap.Point(jsonObject.rows[i].pointx,jsonObject.rows[i].pointy),jsonObject.rows[i].devname+"\n"+jsonObject.rows[i].daddr));
+			arr_wd[i].push(""); //状态内容
+			arr_wd[i].push(jsonObject.rows[i].devname);
+			arr_wd[i].push("");
+			arr_wd[i].push("-1");//记录报警，-1初始化，0 false, 1 true报警
+		}
+	}
+}
+var xmlhttpwd= ajaxcreateXMLHttpRequest();
+xmlhttpwd.onreadystatechange=ajaxChangedWD;
+xmlhttpwd.open("GET", devurl  + 7, true)
+xmlhttpwd.send(null)
+
+//ET加载 Devtype=6
+function ajaxChangedET()
+{
+	if (xmlhttpet.readyState==4 && xmlhttpet.status==200) 
+	{
+		jsonresponse=xmlhttpet.responseText;
+		jsonObject=eval("("+jsonresponse+")");
+		//var et1 = addEtMarker(new BMap.Point(92.929318,30.076197), "路侧广播1\nK12+123");
+		//var et2 = addEtMarker(new BMap.Point(91.832379,29.82385), "路侧广播2\nK16+623");	
+	 	for (var i=0;i<jsonObject.results;i++)
+		{
+			arr_et[i] = new Array();
+			arr_et[i].push(jsonObject.rows[i].id);
+			arr_et[i].push(i);
+			arr_et[i].push(1);			
+			arr_et[i].push(addEtMarker(i,new BMap.Point(jsonObject.rows[i].pointx,jsonObject.rows[i].pointy),jsonObject.rows[i].devname+"\n"+jsonObject.rows[i].daddr));
+			arr_et[i].push("");
+			arr_et[i].push(jsonObject.rows[i].devname);
+		}
+	}
+}
+var xmlhttpet= ajaxcreateXMLHttpRequest();
+xmlhttpet.onreadystatechange=ajaxChangedET;
+xmlhttpet.open("GET", devurl  + 6, true)
+xmlhttpet.send(null)
+
+//CCTV加载 Devtype=5
+function ajaxChangedCCTV()
+{
+	if (xmlhttpcctv.readyState==4 && xmlhttpcctv.status==200) 
+	{
+		jsonresponse=xmlhttpcctv.responseText;
+		jsonObject=eval("("+jsonresponse+")");
+		//var camera1 = addCCTVMarker(new BMap.Point(92.161231,29.747618), "高清摄像机1\nK12+123\n192.168.1.70");
+		//var camera2 = addCCTVMarker(new BMap.Point(93.93427,29.837886), "高清摄像机2\nK16+623\n192.168.1.71");
+	 	for (var i=0;i<jsonObject.results;i++)
+		{
+			arr_CCTV[i] = new Array();
+			arr_CCTV[i].push(jsonObject.rows[i].id);
+			arr_CCTV[i].push(i);
+			arr_CCTV[i].push(1);		
+			arr_CCTV[i].push(addCCTVMarker(i,new BMap.Point(jsonObject.rows[i].pointx,jsonObject.rows[i].pointy),jsonObject.rows[i].devname+"\n"+jsonObject.rows[i].daddr+"\n"+jsonObject.rows[i].ipaddr));	
+			arr_CCTV[i].push("");
+			arr_CCTV[i].push(jsonObject.rows[i].devname);
+		}
+	}
+}
+var xmlhttpcctv= ajaxcreateXMLHttpRequest();
+xmlhttpcctv.onreadystatechange=ajaxChangedCCTV;
+xmlhttpcctv.open("GET", devurl  + 5, true)
+xmlhttpcctv.send(null)
+
+
+
+//daoluEvent infotype=1
+var xmlhttpdlevent= ajaxcreateXMLHttpRequest();
+var hasdlevent;
+function ajaxChangeddlEvent(){
+	if (xmlhttpdlevent.readyState==4 && xmlhttpdlevent.status==200) {
+		jsonresponse=xmlhttpdlevent.responseText;
+		jsonObject=eval("("+jsonresponse+")");
+		//var daolu1 = addDLEventMarker(new BMap.Point(92.591268,29.853925), "道路事件1\nK12+123");
+		//var daolu2 = addDLEventMarker(new BMap.Point(91.666803,29.795771), "道路事件2\nK16+623");
+		for (var i=0;i<arr_dlEvent.length;i++){arr_dlEvent[i][2]=0;}
+	 	for (var i=0;i<jsonObject.results;i++){
+			hasdlevent=false;
+			for (var j=0;j<arr_dlEvent.length;j++){
+				if (jsonObject.rows[i].id==arr_dlEvent[j][0]){
+					arr_dlEvent[j][2]=1;
+					hasdlevent=true;
+					break;
+				}
+			}
+			if (!hasdlevent){
+				atmp = new Array();
+				atmp.push(jsonObject.rows[i].id);
+				atmp.push(i);
+				atmp.push(1);
+				atmp.push(addDLEventMarker(i,new BMap.Point(jsonObject.rows[i].pointx,jsonObject.rows[i].pointy),jsonObject.rows[i].infoname+"\n"+jsonObject.rows[i].infoaddr));	
+				atmp.push(jsonObject.rows[i].StatDT);
+				atmp.push(jsonObject.rows[i].EndDT);
+				atmp.push(jsonObject.rows[i].infoTitle);
+				atmp.push(jsonObject.rows[i].infoContent);
+				arr_dlEvent.push(atmp);
+			}
+		}
+		for (var i=arr_dlEvent.length-1;i>=0;i--){
+			if (arr_dlEvent[i][2]==0){
+				arr_dlEvent[i][3].remove();
+				arr_dlEvent.splice(i,1);
+			}
+		}	
+	}
+}
+
+function GetdlEvent(){
+	var roadurl="json/geteventinfo.asp?sid=" + Math.random()+ "&itype=1&q=" ;
+	xmlhttpdlevent.onreadystatechange=ajaxChangeddlEvent;
+	xmlhttpdlevent.open("GET", roadurl + 1, true)
+	xmlhttpdlevent.send(null)
+}
+
+GetdlEvent();
+
+//yanghuEvent infotype=2
+var xmlhttpyhevent = ajaxcreateXMLHttpRequest();
+var hasyhevent;
+function ajaxChangedyhEvent()
+{
+	if (xmlhttpyhevent.readyState==4 && xmlhttpyhevent.status==200) 
+	{	
+		jsonresponse=xmlhttpyhevent.responseText;
+		jsonObject=eval("("+jsonresponse+")");
+		//var yanghu1 = addYHEventMarker(new BMap.Point(91.411541,29.661285), "养护信息1\nK12+123");
+		//var yanghu2 = addYHEventMarker(new BMap.Point(93.064998,29.996157), "养护信息2\nK16+623");
+		for (var i=0;i<arr_yhEvent.length;i++){arr_yhEvent[i][2]=0;}
+	 	for (var i=0;i<jsonObject.results;i++){
+			hasyhevent=false;
+			for (var j=0;j<arr_yhEvent.length;j++){
+				if (jsonObject.rows[i].id==arr_yhEvent[j][0]){
+					arr_yhEvent[j][2]=1;
+					hasyhevent=true;
+					break;
+				}
+			}
+			if (!hasyhevent){
+				atmp = new Array();
+				atmp.push(jsonObject.rows[i].id);
+				atmp.push(i);
+				atmp.push(1);
+				atmp.push(addYHEventMarker(i,new BMap.Point(jsonObject.rows[i].pointx,jsonObject.rows[i].pointy),jsonObject.rows[i].infoname+"\n"+jsonObject.rows[i].infoaddr));	
+				atmp.push(jsonObject.rows[i].StatDT);
+				atmp.push(jsonObject.rows[i].EndDT);
+				atmp.push(jsonObject.rows[i].infoTitle);
+				atmp.push(jsonObject.rows[i].infoContent);
+				arr_yhEvent.push(atmp);
+			}
+		}
+		for (var i=arr_yhEvent.length-1;i>=0;i--){
+			if (arr_yhEvent[i][2]==0){
+				arr_yhEvent[i][3].remove();
+				arr_yhEvent.splice(i,1);
+			}
+		}	 
+	}
+}
+
+function GetyhEvent(){
+	var roadurl="json/geteventinfo.asp?sid=" + Math.random()+ "&itype=1&q=" ;
+	xmlhttpyhevent.onreadystatechange=ajaxChangedyhEvent;
+	xmlhttpyhevent.open("GET", roadurl + 2, true);
+	xmlhttpyhevent.send(null);
+}
+
+GetyhEvent();
+
+//flow流量模拟
+/*
+var lineA10 = Array(
+new BMap.Point(91.181,29.655761),
+new BMap.Point(91.300582,29.673838));
+
+var polyline1 = new BMap.Polyline([], {strokeColor:"red", strokeWeight:6, strokeOpacity:0.5});
+polyline1.setPath(lineA10);
+polyline1.setStrokeOpacity(1);
+map.addOverlay(polyline1);
+*/
+
+function ajaxChangedflow()
+{
+	if (xmlhttpflow.readyState==4 && xmlhttpflow.status==200) 
+	{
+		jsonresponse=xmlhttpflow.responseText;
+		jsonObject=eval("("+jsonresponse+")");
+		$.each(jsonObject.rows,function(key,val){
+			var line = Array(new BMap.Point(val.pointsx,val.pointsy),
+				new BMap.Point(val.pointex,val.pointey));
+			var polyline = new BMap.Polyline([], {strokeColor:"red", strokeWeight:6, strokeOpacity:0.5});
+			polyline.setPath(line);
+			polyline.setStrokeOpacity(1);
+			map.addOverlay(polyline);
+			arr_flow.push(polyline);	
+		});
+		/*
+	 	for (var i=0;i<jsonObject.results;i++)
+		{		
+			var line = Array(new BMap.Point(jsonObject.rows[i].pointsx,jsonObject.rows[i].pointsy),
+				new BMap.Point(jsonObject.rows[i].pointex,jsonObject.rows[i].pointey));
+			var polyline = new BMap.Polyline([], {strokeColor:"red", strokeWeight:6, strokeOpacity:0.5});
+			polyline.setPath(line);
+			polyline.setStrokeOpacity(1);
+			map.addOverlay(polyline);
+			arr_flow.push(polyline);	
+		}*/
+	}
+}
+var xmlhttpflow = ajaxcreateXMLHttpRequest();
+xmlhttpflow.onreadystatechange=ajaxChangedflow;
+xmlhttpflow.open("GET", flowurl, true);
+xmlhttpflow.send(null);
+
+
+/*------------------------------------------------------------------------------------------------------
+设备状态更新
+------------------------------------------------------------------------------------------------------*/
+var xmlhttpstate
+var has
+function devchangstate(i,arr_,jsonObject,s1,s2,w,h){
+	for (var j=0;j<arr_.length;j++){
+		if (jsonObject.rows[i].id==arr_[j][0]){
+			if (jsonObject.rows[i].state!=arr_[j][2]){
+				var s=(jsonObject.rows[i].state==1?s1:s2);
+				arr_[j][2]=jsonObject.rows[i].state;
+				arr_[j][4]=jsonObject.rows[i].Contents;
+				var myIcon = new BMap.Icon( "img/"+s,new BMap.Size(w, h));  
+				arr_[j][3].setIcon(myIcon);
+			}
+			has=true;
+			break;
+		}
+	}
+}
+
+function ajaxChangedstate(){
+	if (xmlhttpstate.readyState==4 && xmlhttpstate.status==200) {
+		var jsonresponse;
+		var jsonObject;	
+		jsonresponse=xmlhttpstate.responseText;
+		jsonObject=eval("("+jsonresponse+")");
+		//document.getElementById("x-desktop").innerHTML=xmlhttpstate.responseText;
+	 	for (var i=0;i<jsonObject.results;i++){
+			has=false;			
+			if (!has) {devchangstate(i,arr_tcms,jsonObject,"tcms.png","tcms2.png",30,44);}
+			if (!has) {devchangstate(i,arr_scms,jsonObject,"scms.png","scms2.png",32,32);}
+			if (!has) {devchangstate(i,arr_fcms,jsonObject,"fcms.png","fcms2.png",30,40);}
+			if (!has) {devchangstate(i,arr_cms,jsonObject,"cms.png","cms2.png",32,32);}
+			if (!has) {devchangstate(i,arr_vd,jsonObject,"vd.png","vd2.png",20,20);}
+			if (!has) {devchangstate(i,arr_wd,jsonObject,"wd.png","wd2.png",20,20);}
+			if (!has) {devchangstate(i,arr_et,jsonObject,"et.png","et2.png",20,20);}
+			if (!has) {devchangstate(i,arr_CCTV,jsonObject,"cctv.png","cctv2.png",32,32);} 
+		}
+	}
+}
+
+function getDevState(){
+	var stateurl="json/getstate.asp?sid=" + Math.random()+ "&itype=1" ;
+	xmlhttpstate= ajaxcreateXMLHttpRequest();
+	xmlhttpstate.onreadystatechange=ajaxChangedstate;
+	xmlhttpstate.open("GET", stateurl, true);
+	xmlhttpstate.send(null);
+}
+/*------------------------------------------------------------------------------------------------------
+系统设置参数更新
+------------------------------------------------------------------------------------------------------*/
+var xmlhttpsysset
+function ajaxChangedsysset(){
+	if (xmlhttpsysset.readyState==4 && xmlhttpsysset.status==200) {
+		var jsonresponse;
+		var jsonObject;	
+		jsonresponse=xmlhttpsysset.responseText;
+		jsonObject=eval("("+jsonresponse+")");
+	 	Ext.SysSet.ID=jsonObject.rows[0].id;
+		Ext.SysSet.enablevd=jsonObject.rows[0].EnableVD;
+		Ext.SysSet.enablewd=jsonObject.rows[0].EnableWD;
+		Ext.SysSet.intervd=jsonObject.rows[0].IntervalVD;
+		Ext.SysSet.interwd=jsonObject.rows[0].IntervalWD;		
+		Ext.SysSet.flow=jsonObject.rows[0].flow;
+		Ext.SysSet.occ=jsonObject.rows[0].occ;
+		Ext.SysSet.nengjiandu=jsonObject.rows[0].nengjiandu;
+		updateAlarm();
+	}
+}
+function getSysSet(){
+	var sysseturl="json/getsysset.asp?sid="+Math.random()+"&itype=1" ;
+	xmlhttpsysset= ajaxcreateXMLHttpRequest();
+	xmlhttpsysset.onreadystatechange=ajaxChangedsysset;
+	xmlhttpsysset.open("GET", sysseturl, true);
+	xmlhttpsysset.send(null);
+}
+getSysSet();
+/*------------------------------------------------------------------------------------------------------
+流量、能见度报警
+------------------------------------------------------------------------------------------------------*/
+var xmlhttpvdalarm
+function ajaxChangedvdalarm(){
+	if (xmlhttpvdalarm.readyState==4 && xmlhttpvdalarm.status==200) {
+		var jsonresponse;
+		var jsonObject;	
+		jsonresponse=xmlhttpvdalarm.responseText;
+		jsonObject=eval("("+jsonresponse+")");
+		for (var i=0;i<arr_vd.length;i++){
+			for (var j=0;j<jsonObject.results;j++){
+				if (arr_vd[i][0]==jsonObject.rows[j].id){
+					//alert(jsonObject.rows[j].count1+"  "+Ext.SysSet.flow)
+					var b=(jsonObject.rows[j].count1>Ext.SysSet.flow||false)||
+						(jsonObject.rows[j].count2>Ext.SysSet.flow||false)||
+						(jsonObject.rows[j].count3>Ext.SysSet.flow||false)||
+						(jsonObject.rows[j].count4>Ext.SysSet.flow||false)||
+						(jsonObject.rows[j].occ1>Ext.SysSet.occ||false)||
+						(jsonObject.rows[j].occ2>Ext.SysSet.occ||false)||
+						(jsonObject.rows[j].occ3>Ext.SysSet.occ||false)||
+						(jsonObject.rows[j].occ4>Ext.SysSet.occ||false)||false;
+					//alert(b)
+					if (b) {
+						//报警
+						if (arr_vd[i][7]!=1){//能见度检测值'+jsonObject.rows[j].nengjiandu
+							arr_vd[i][7]=1;
+							var s1 = '交通流量报警:'+arr_vd[i][5];
+							var s2_1=(jsonObject.rows[j].count1>Ext.SysSet.flow&&'流量值:'+jsonObject.rows[j].count1)||
+								(jsonObject.rows[j].count2>Ext.SysSet.flow&&'流量值:'+jsonObject.rows[j].count2)||
+								(jsonObject.rows[j].count3>Ext.SysSet.flow&&'流量值:'+jsonObject.rows[j].count3)||
+								(jsonObject.rows[j].count4>Ext.SysSet.flow&&'流量值:'+jsonObject.rows[j].count4)||
+								(jsonObject.rows[j].occ1>Ext.SysSet.occ&&'占有值:'+jsonObject.rows[j].occ1)||
+								(jsonObject.rows[j].occ2>Ext.SysSet.occ&&'占有值:'+jsonObject.rows[j].occ2)||
+								(jsonObject.rows[j].occ3>Ext.SysSet.occ&&'占有值:'+jsonObject.rows[j].occ3)||
+								(jsonObject.rows[j].occ4>Ext.SysSet.occ&&'占有值:'+jsonObject.rows[j].occ4)||'';
+							var s2_2=(jsonObject.rows[j].count1>Ext.SysSet.flow&&'流量值:'+Ext.SysSet.flow)&&
+								(jsonObject.rows[j].count2>Ext.SysSet.flow&&'流量值:'+Ext.SysSet.flow)||
+								(jsonObject.rows[j].count3>Ext.SysSet.flow&&'流量值:'+Ext.SysSet.flow)||
+								(jsonObject.rows[j].count4>Ext.SysSet.flow&&'流量值:'+Ext.SysSet.flow)||
+								(jsonObject.rows[j].occ1>Ext.SysSet.occ&&'占有值:'+Ext.SysSet.occ)||
+								(jsonObject.rows[j].occ2>Ext.SysSet.occ&&'占有值:'+Ext.SysSet.occ)||
+								(jsonObject.rows[j].occ3>Ext.SysSet.occ&&'占有值:'+Ext.SysSet.occ)||
+								(jsonObject.rows[j].occ4>Ext.SysSet.occ&&'占有值:'+Ext.SysSet.occ)||'';
+							var s2 = '<p>报警时间: '+jsonObject.rows[j].colltime+'</p>';
+							s2 += '<p>'+s2_1+',大于最高阀值'+s2_2+'</p>';
+							var win = Ext.getCmp('showalarmvd'+arr_vd[i][0]);
+							if(!win){							
+								var win = new Ext.Window({
+									title:s1, 
+									id:'showalarmvd'+arr_vd[i][0],		
+									width:400, 
+									height:110,
+									html : s2,
+									iconCls: 'bogus',
+									maximizable:false,     //显示最大化按钮
+									layout:"absolute",
+									items:[
+										{
+											xtype:"button",
+											text:"查看详细信息",
+											x:260,
+											y:40,
+											width:90,
+											handler: function() {
+												var arr_=i;
+												return function(){
+													clickVDobj(arr_,arr_vd[arr_][3].getTitle());
+													//arr_wd[arr_][3].click();	//												
+													//alert(arr_)	
+													//alert(i) //闭包，所以i值始终为arr_wd.length
+												}											 
+											}()
+										}   
+									]
+								}); 
+							}
+							win.show(); 
+						}
+					}else{
+						//取消报警	
+						if (arr_vd[i][7]==1){
+							arr_vd[i][7]=0;
+							var win = Ext.getCmp('showalarmvd'+arr_vd[i][0]);
+							if(!!win){	
+								win.close();
+							}
+						}
+					}
+					break;
+				}
+			}		
+		}
+	}
+}
+function VDAlarm(){
+	if (Ext.SysSet.enablevd){
+		var vdalarmurl="json/getvdinfo.asp?sid="+Math.random()+"&itype=2" ;
+		xmlhttpvdalarm= ajaxcreateXMLHttpRequest();
+		xmlhttpvdalarm.onreadystatechange=ajaxChangedvdalarm;
+		xmlhttpvdalarm.open("GET", vdalarmurl, true);
+		xmlhttpvdalarm.send(null);
+	}
+}
+
+var xmlhttpwdalarm
+function ajaxChangedwdalarm(){
+	if (xmlhttpwdalarm.readyState==4 && xmlhttpwdalarm.status==200) {
+		var jsonresponse;
+		var jsonObject;	
+		jsonresponse=xmlhttpwdalarm.responseText;
+		jsonObject=eval("("+jsonresponse+")");
+		for (var i=0;i<arr_wd.length;i++){
+			for (var j=0;j<jsonObject.results;j++){
+				if (arr_wd[i][0]==jsonObject.rows[j].id){
+					var b=jsonObject.rows[j].nengjiandu<=Ext.SysSet.nengjiandu||false;
+					//alert(b)
+					if (b) {
+						//报警
+						if (arr_wd[i][7]!=1){
+							arr_wd[i][7]=1;
+							var s1 = '能见度检测阀值报警:'+arr_wd[i][5];
+							var s2 = '<p>报警时间: '+jsonObject.rows[j].colltime+'</p>';
+							s2 += '<p>能见度检测值'+jsonObject.rows[j].nengjiandu+',低于最低阀值'+Ext.SysSet.nengjiandu+'</p>';
+							var win = Ext.getCmp('showalarmwd'+arr_wd[i][0]);
+							if(!win){							
+								var win = new Ext.Window({
+									title:s1, 
+									id:'showalarmwd'+arr_wd[i][0],		
+									width:400, 
+									height:110,
+									html : s2,
+									iconCls: 'bogus',
+									maximizable:false,     //显示最大化按钮
+									layout:"absolute",
+									items:[
+										{
+											xtype:"button",
+											text:"查看详细信息",
+											x:260,
+											y:40,
+											width:90,
+											handler: function() {
+												var arr_=i;
+												return function(){
+													clickWDobj(arr_,arr_wd[arr_][3].getTitle());
+													//arr_wd[arr_][3].click();	//												
+													//alert(arr_)	
+													//alert(i) //闭包，所以i值始终为arr_wd.length
+												}											 
+											}()
+										}   
+									]
+								}); 
+							}
+							win.show(); 
+						}
+					}else{
+						//取消报警	
+						if (arr_wd[i][7]==1){
+							arr_wd[i][7]=0;
+							var win = Ext.getCmp('showalarmwd'+arr_wd[i][0]);
+							if(!!win){	
+								win.close();
+							}
+						}
+					}
+					break;	
+				}
+			}		
+		}
+	}
+}
+function WDAlarm(){
+	if (Ext.SysSet.enablewd){
+		var wdalarmurl="json/getwdinfo.asp?sid="+Math.random()+"&itype=2" ;
+		xmlhttpwdalarm= ajaxcreateXMLHttpRequest();
+		xmlhttpwdalarm.onreadystatechange=ajaxChangedwdalarm;
+		xmlhttpwdalarm.open("GET", wdalarmurl, true);
+		xmlhttpwdalarm.send(null);
+	}
+}
+/*------------------------------------------------------------------------------------------------------
+道路事件、系统设置参数更新
+------------------------------------------------------------------------------------------------------*/
+function updateEvent(){
+	GetdlEvent();
+	GetyhEvent();
+	getSysSet();
+}
+
+function updateAlarm(){
+	if (Ext.SysSet.intervd!=Ext.SysSet.intervdold){
+		Ext.SysSet.intervdold=Ext.SysSet.intervd;
+		if (!!Ext.SysSet.timvd){
+			clearInterval(Ext.SysSet.timvd);
+		}
+		Ext.SysSet.timvd=window.setInterval(VDAlarm,60000*parseInt(Ext.SysSet.intervd));	
+	}
+	if (Ext.SysSet.interwd!=Ext.SysSet.interwdold){
+		Ext.SysSet.interwdold=Ext.SysSet.interwd;
+		if (!!Ext.SysSet.timwd){
+			clearInterval(Ext.SysSet.timwd);
+		}
+		Ext.SysSet.timwd=window.setInterval(WDAlarm,60000*parseInt(Ext.SysSet.interwd));		
+	}
+
+}

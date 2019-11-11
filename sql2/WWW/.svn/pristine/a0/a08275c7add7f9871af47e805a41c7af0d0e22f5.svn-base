@@ -1,0 +1,15 @@
+<!--#include file="../comm/RWIniFile.inc"-->
+<%
+	Session.CodePage = 65001
+	Response.Charset = "UTF-8"
+	itype = Request.QueryString("itype")
+	'If Request.Cookies("AutoConfig") = "" Then
+		'Response.Cookies("AutoConfig")("FJMode") = 0
+		'Response.Cookies("AutoConfig")("ZMMode") = 0
+		Response.Cookies("AutoConfig").Expires = (now() + 7)
+	'End if
+	If itype = 1 Then state = Request.Cookies("AutoConfig")("FJMode")
+	If itype = 2 Then state = Request.Cookies("AutoConfig")("ZMMode")
+	If state = "" Then state = 0
+	Response.write state
+%>

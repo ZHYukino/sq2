@@ -1,0 +1,27 @@
+﻿<!--#include file="../comm/mconn.asp"-->
+<%
+	Session.CodePage=65001
+	Response.Charset="UTF-8"
+	itype = Request.QueryString("itype")
+	
+	if itype = 1 then
+		Dim mRs
+		Set mRs=Server.CreateObject("Adodb.RecordSet")
+		mRs.open "Select * from eventinfo where isnull(isdel,0)=0 and Enable=1 and infotype=" & request.querystring("q"), conn, 1,2
+		response.write "{'results': " & mRs.recordcount
+		if not mRs.eof then
+			response.write ",'rows': ["
+			do while not mRs.eof
+				response.write "{'id':" & mRs("infoid") & ", 'infoname': '" & mRs("infoname") & "', 'infoaddr': '" & mRs("infoaddr") & "', 'infocontent': '" & mRs("infocontent") & "', 'pointx': '" & mRs("pointx") & "', 'pointy': '" & mRs("pointy") & "', 'StatDT': '" & mRs("StatDT") & "', 'EndDT': '" & mRs("EndDT") & "', 'infoTitle': '" & mRs("infoTitle") & "', 'infoContent': '" & mRs("infoContent") &"'}"
+				mRs.movenext
+				if not mRs.eof then
+					response.write ","
+				end if				
+			loop
+			response.write "]"
+		end if
+		response.write "}"
+		mRs.close
+	end if
+	
+%>

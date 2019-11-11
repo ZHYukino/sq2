@@ -1,0 +1,24 @@
+﻿<!--#include file="../comm/mconn2.asp"-->
+<%
+	Session.CodePage = 65001
+	Response.Charset = "UTF-8"
+	itype = Request.QueryString("itype")
+	TuIndex = Request.QueryString("tunnel")
+	if itype = 1 then
+		Dim mRs
+		Set mRs = Server.CreateObject("Adodb.RecordSet")
+		mRs.open "Select devid,devno,updown,tuindex from devpara where Enabled=1 and devtype in(9,11,12,13) and tuindex=" & TuIndex, conn, 1, 2
+		if not mRs.eof then
+			response.write "{""results"":" & mRs.recordcount & ",""rows"":["
+			do while not mRs.eof
+				response.write "{""id"":" & mRs("devid") & ",""devno"":""" & mRs("devno") & """,""updown"":" & mRs("updown") & "}"
+				mRs.movenext
+				if not mRs.eof then
+					response.write ","
+				end if
+			loop
+			response.write "]}"
+		end if
+		mRs.close
+	end if
+%>

@@ -1,0 +1,102 @@
+﻿//全局
+//预加载
+var loadAction="";      //计时判断加载
+var percentnum=0;		//加载设备时
+var loadarr=[[0,0]];    //是否已加载的数组
+var loadflag=0;        
+var loadstrflag=0;
+var bLogin = 0;			//视频连接状态
+
+var ledrelation_id="";  //照明表id
+var fanrelation_id="";  //风机表id
+var ledtime_id="";      //照明时钟表id
+var lstsup_id="";       //上行表id
+var lstsdown_id="";     //上行表id
+var lstsup_ename="";    //上行表ename
+var lstsdown_ename="";  //上行表ename
+
+var ary_cmstext="";	    //情报板内容数组
+var ary_cmsstyle="";    //情报板样式数组
+var cms_showwidth="";	//情报板宽度
+var cms_showheight="";  //情报板高度
+var ary_cmstime="";		//停留时间
+
+var cmsSwitchAction=""; //计时方法
+
+var flag = true;
+
+//初始化
+//电视墙大屏变量定义
+var bs_id=1;		//拼接操作id
+var bs_setmethod=0; 	//是否登陆
+var bs_compositeid="";	//切屏项目	
+var bs_loadnum=0;	//初始化命令顺序
+var bs_lcsnum=0;	//设置合屏命令顺序
+var bs_stwnum=0;	//设置切屏命令顺序
+var bs_stwnumauto=0;//设置自动切屏命令顺序
+var bs_objectid1=0;	//切屏项目split
+var bs_objectid2=0;	//切屏项目monitorWall
+var bs_objectid3=0;	//切屏项目windowManager
+var bs_objectid4=0;	//切屏项目netApp	
+var bs_devices={};//设备列表
+var pub;		//解密存放
+
+//上墙
+var bs_screenno=0;//上屏顺序
+var arry_fireid=[];//火灾相邻设备ID
+
+var ar_Camera = new Array();
+var ar_CameraEx = new Array();
+var ar_CameraCT = new Array();
+var ar_CameraBs = new Array();
+var intervalProcess;
+var intervalProcessEx;
+var intervalProcessCT;
+var intervalProcessbigScreen;
+var ct_objectid=0;
+
+//判断浏览器
+function ajaxcreateXMLHttpRequest(){
+	var xmlHttp=null;
+	//一般先判断非IE浏览器
+	//window对象中有XMLHttpRequest存在就是非IE，包括（IE7，IE8）
+	if(window.XMLHttpRequest){
+		xmlHttp=new XMLHttpRequest();//非IE以及IE7，IE8浏览器
+		if(xmlHttp.overrideMimeType){
+			xmlHttp.overrideMimeType("text/xml");//重置mime类型
+		}
+	//window对象中有ActiveXObject属性存在就是IE浏览器的低版本
+	}
+	else if(window.ActiveXObject){
+		var versions=['Microsoft.XMLHTTP', 'MSXML.XMLHTTP', 'Msxml2.XMLHTTP.7.0','Msxml2.XMLHTTP.6.0','Msxml2.XMLHTTP.5.0', 'Msxml2.XMLHTTP.4.0', 'MSXML2.XMLHTTP.3.0', 'MSXML2.XMLHTTP'];//各种IE浏览器创建Ajax对象时传递的参数
+		for(var i=0; i<versions.length; i++){
+			try{
+				xmlHttp=new ActiveXObject(versions[i]);//各个IE浏览器版本的参数不同
+				if(xmlHttp){
+					return xmlHttp;
+				}
+			}catch(e){
+				xmlHttp=false;
+			}
+		}
+	}
+	return xmlHttp;
+}
+
+//判断浏览器
+function ietypecheck(){
+	var Sys = {};
+	var ua = navigator.userAgent.toLowerCase();
+	var s;
+		(s = ua.match(/(msie\s|trident.*rv:)([\d.]+)/)) ? Sys.ie = s[2] :
+		(s = ua.match(/firefox\/([\d.]+)/)) ? Sys.firefox = s[1] :
+		(s = ua.match(/chrome\/([\d]+)/)) ? Sys.chrome = s[1] :
+		(s = ua.match(/opera.([\d.]+)/)) ? Sys.opera = s[1] :
+		(s = ua.match(/version\/([\d.]+).*safari/)) ? Sys.safari = s[1] : 0;
+	if (Sys.ie){ietype = 0}
+	else {ietype =1}
+}
+
+var ietype;
+ietypecheck();
+

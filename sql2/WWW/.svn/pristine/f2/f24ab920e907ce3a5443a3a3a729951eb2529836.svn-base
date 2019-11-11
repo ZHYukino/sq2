@@ -1,0 +1,44 @@
+<!--#include file="../comm/mconn.asp"-->
+<%
+	Session.CodePage = 65001
+	Response.Charset = "UTF-8"
+	itype = Request.QueryString("itype")
+	id1 = Request.QueryString("id1")
+	id2 = Request.QueryString("id2")
+	Dim mRs
+	Set mRs = Server.CreateObject("Adodb.RecordSet")
+	If itype = 1 And id1 <> "" And id2 <> "" Then
+		mRs.open "select FDevID3,FIsSelect from AutoFJDet where FDevID1='" & id1 & "' and FDevID2=" & id2, conn, 1, 2
+		If Not mRs.eof Then
+			response.write "{""total"": " & mRs.recordcount & ",""rows"": ["
+			do while not mRs.eof
+				response.write "{""id"":""" & mRs("FDevID3") & """,""isselect"":""" & mRs("FIsSelect") & """}"
+				mRs.movenext
+				if not mRs.eof then
+					response.write ","
+				end if
+			Loop
+			response.write "]}"
+		'else
+			'Response.write "{""results"":0,""rows"":[]}"
+		End If
+		mRs.close
+	End If
+	If itype = 2 And id1 <> "" And id2 <> "" Then
+		mRs.open "select FDevID2,FISOpen,FIsSelect from AutoZMDet where FAutoZMID='" & id1 & "' and FDevID1=" & id2, conn, 1, 2
+		If Not mRs.eof Then
+			response.write "{""total"": " & mRs.recordcount & ",""rows"": ["
+			do while not mRs.eof
+				response.write "{""id"":""" & mRs("FDevID2") & """,""isopen"":""" & mRs("FISOpen") & """,""isselect"":""" & mRs("FIsSelect") & """}"
+				mRs.movenext
+				if not mRs.eof then
+					response.write ","
+				end if
+			Loop
+			response.write "]}"
+		'else
+			'Response.write "{""results"":0,""rows"":[]}"
+		End If
+		mRs.close
+	End If
+%>

@@ -1,0 +1,14 @@
+
+[config]
+TuCount=3
+RoadName1=拉萨端
+RoadName2=林芝端
+;照明模式
+ZMMode=0
+;风机模式
+FJMode=0
+
+[TuName]
+Tu0=德庆隧道
+Tu1=达孜一号隧道
+Tu2=达孜二号隧道

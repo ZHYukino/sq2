@@ -1,0 +1,48 @@
+﻿<!--#include file="../comm/mconn.asp"-->
+<%
+	Session.CodePage=65001
+	Response.Charset="UTF-8"
+	itype = Request.QueryString("itype")
+	Dim mRs
+	Set mRs=Server.CreateObject("Adodb.RecordSet")	
+	
+	if itype = 1 then
+
+		mRs.open "Select top 1 DevID,CollTIme,isnull(count1,0) count1,isnull(count2,0) count2,isnull(count3,0) count3,isnull(count4,0) count4,isnull(count5,0) count5,isnull(count6,0) count6,isnull(occ1,0) occ1,isnull(occ2,0) occ2,isnull(occ3,0) occ3,isnull(occ4,0) occ4,isnull(occ5,0) occ5,isnull(occ6,0) occ6,isnull(speed1,0) speed1,isnull(speed2,0) speed2,isnull(speed3,0) speed3,isnull(speed4,0) speed4,isnull(speed5,0) speed5,isnull(speed6,0) speed6 from CollVD where devid=" & request.querystring("q") & " and colltime>dateadd(minute,-10,getdate()) order by colltime desc", conn, 1,2
+		response.write "{'results': " & mRs.recordcount
+		if not mRs.eof then
+			response.write ",'rows': ["
+			do while not mRs.eof
+				response.write "{'id':" & mRs("devid") & ", 'colltime': '" & mRs("colltime") & "', 'count1':" & mRs("count1") & ", 'count2':" & mRs("count2")  & ", 'count3': " & mRs("count3") & ", 'count4':" & mRs("count4") & ", 'occ1':" & mRs("occ1") & ", 'occ2':" & mRs("occ2")  & ", 'occ3':" & mRs("occ3")  & ", 'occ4':" & mRs("occ4") & ", 'speed1':" & mRs("speed1") & ", 'speed2':" & mRs("speed2") & ", 'speed3':" & mRs("speed3") & ", 'speed4':" & mRs("speed4") &"}"
+				mRs.movenext
+				if not mRs.eof then
+					response.write ","
+				end if				
+			loop
+			response.write "]"
+		end if
+		response.write "}"
+		mRs.close
+	end if
+%>
+
+<%
+	if itype = 2 then
+		sql="select b.DevID,b.CollTIme,isnull(b.count1,0) count1,isnull(b.count2,0) count2,isnull(b.count3,0) count3,isnull(b.count4,0) count4,isnull(b.count5,0) count5,isnull(b.count6,0) count6,isnull(b.occ1,0) occ1,isnull(b.occ2,0) occ2,isnull(b.occ3,0) occ3,isnull(b.occ4,0) occ4,isnull(b.occ5,0) occ5,isnull(b.occ6,0) occ6,isnull(b.speed1,0) speed1,isnull(b.speed2,0) speed2,isnull(b.speed3,0) speed3,isnull(b.speed4,0) speed4,isnull(b.speed5,0) speed5,isnull(b.speed6,0) speed6 from (Select devid,max(colltime) colltime from CollVD where colltime>dateadd(minute,-10,getdate()) group by devid) a  left join CollVD b on a.DevID=b.DevID and a.CollTime= b.colltime"
+		mRs.open sql, conn, 1,1
+		response.write "{'results': " & mRs.recordcount
+		if not mRs.eof then
+			response.write ",'rows': ["
+			do while not mRs.eof
+				response.write "{'id':" & mRs("devid") & ", 'colltime': '" & mRs("colltime") & "', 'count1':" & mRs("count1") & ", 'count2':" & mRs("count2")  & ", 'count3': " & mRs("count3") & ", 'count4':" & mRs("count4") & ", 'occ1':" & mRs("occ1") & ", 'occ2':" & mRs("occ2")  & ", 'occ3':" & mRs("occ3")  & ", 'occ4':" & mRs("occ4") & ", 'speed1':" & mRs("speed1") & ", 'speed2':" & mRs("speed2") & ", 'speed3':" & mRs("speed3") & ", 'speed4':" & mRs("speed4") &"}"
+				mRs.movenext
+				if not mRs.eof then
+					response.write ","
+				end if				
+			loop
+			response.write "]"
+		end if
+		response.write "}"
+		mRs.close
+	end if
+%>

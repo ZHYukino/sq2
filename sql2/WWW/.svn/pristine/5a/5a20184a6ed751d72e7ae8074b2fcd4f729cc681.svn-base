@@ -1,0 +1,182 @@
+﻿<!--#include file="../comm/mconn.asp"-->
+<%
+Function IIf(Condition, ValueIfTrue, ValueIfFalse)
+	If Condition Then
+		IIf = ValueIfTrue
+    Else
+        IIf = ValueIfFalse
+    End if
+End Function
+%>
+<%
+	Session.CodePage=65001
+	Response.Charset="UTF-8"
+	itype = Request.QueryString("itype")
+
+  
+	if itype = 1 then
+		start = Request("start")
+		limit = Request("limit")
+		
+		index=CInt(start)
+		pageSize=CInt(limit)	
+		Dim mRs
+		Set mRs=Server.CreateObject("Adodb.RecordSet")
+		'mRs.pagesize=20
+		'
+		mRs.open "Select  * from userinfo where 1=1" &  Request("q") , conn, 1,2
+		'mRs.absolutepage=
+		'mRs.recordcount=
+		if mRs.recordcount=0 then
+			response.write "{'success':true,'results': " & mRs.recordcount & ",'rows': []}"
+			response.End()
+		end if
+		if not mRs.eof then
+			if index+1>mRs.recordcount then
+				response.End()
+			end if
+			mRs.absoluteposition=index+1
+			dim yy
+			if mRs.recordcount>index+pageSize-1 then
+				yy=index+pageSize-1
+			else 
+			 	yy=mRs.recordcount-1
+			end if
+			
+
+			response.write "{'success':true,'results': " & mRs.recordcount & ",'rows': ["
+			for i=index to yy step 1
+				response.write "{'UserAcc':'" & mRs("UserAcc") & "', 'UserPass': '" & mRs("UserPass") & "', 'UserName': '" & mRs("UserName") & "', 'DT': '" & mRs("DT")  & "', 'Enable': '" & LCase(mRs("Enable")) &"'}"
+				
+				if i<yy then
+					response.write ","	
+				end if	
+				mRs.movenext	
+			next
+			response.write "]}"
+		end if
+		mRs.close
+	end if
+%>
+<%
+	if itype = 2 then
+		Dim mRs2
+		Set mRs2=Server.CreateObject("Adodb.RecordSet")		
+
+		mRs2.open "Select  * from userinfo where 1=1" &  Request("q") , conn, 1,2				
+		response.write "{'success':true,'results': " & mRs2.recordcount & ",'cols':[{'用户帐号':0,'用户密码':1,'用户名称':2,'建立时间':3,'是否启用':4}],'rows': ["
+		
+		if not mRs2.eof then			
+			do while not mRs2.eof
+				response.write "{'UserAcc':'" & mRs2("UserAcc") & "', 'UserPass': '******', 'UserName': '" & mRs2("UserName") & "', 'DT': '" & mRs2("DT")  & "', 'Enable': '" & IIf(mRs2("Enable"),"启用","停用") &"'}"
+				mRs2.movenext
+				if not mRs2.eof then
+					response.write ","
+				end if				
+			loop	
+		end if
+		response.write "]}"
+		mRs2.close
+	end if
+
+%>
+<%
+	if itype = 3 then
+		Dim mRs3
+		Set mRs3=Server.CreateObject("Adodb.RecordSet")
+		mRs3.open "select COUNT(*) num from UserInfo where 1=1 and UserAcc='" &  Request("q") & "'", conn, 1,1
+		response.write "{'success':true,'results': " & mRs3.recordcount & ",'rows': ["
+		if not mRs3.eof then			
+			do while not mRs3.eof
+				response.write "{'num':'" & mRs3("num") &"'}"
+				mRs3.movenext
+				if not mRs3.eof then
+					response.write ","
+				end if				
+			loop	
+		end if
+		response.write "]}"
+		mRs3.close
+	end if
+
+%>
+<%
+	if itype = 4 then
+		ssql4 = "insert into UserInfo (UserAcc,UserPass,UserName,DT,Enable) values ('"& Request("q1") & "','" & Request("q3") & "','" & Request("q2") & "',GETDATE()," &  Request("q4") & ")"
+		err.clear
+		On Error Resume Next 
+		Conn.Execute(ssql4)
+		if err.number<>0 then
+			response.write err.description 
+			err.clear
+		else
+			response.write "true"
+		end if	
+	end if
+
+%>
+<%
+	if itype = 5 then
+		ssql5 = "update UserInfo set UserName='" & Request("q2") & "',Enable=" & Request("q3") & " where UserAcc='" &  Request("q1") & "'"
+		err.clear
+		On Error Resume Next 
+		Conn.Execute(ssql5)
+		if err.number<>0 then
+			response.write err.description 
+			err.clear
+		else
+			response.write "true"
+		end if	
+	end if
+
+%>
+<%
+	if itype = 6 then
+		ssql5 = "delete from UserInfo where UserAcc='" & Request("q") & "'"
+		err.clear
+		On Error Resume Next 
+		Conn.Execute(ssql5)
+		if err.number<>0 then
+			response.write err.description 
+			err.clear
+		else
+			response.write "true"
+		end if	
+	end if
+
+%>
+<%
+	if itype = 7 then
+		Dim mRs7
+		Set mRs7=Server.CreateObject("Adodb.RecordSet")
+		mRs7.open "select COUNT(*) num from UserInfo where 1=1 and UserAcc='" &  Request("q1") & "' and UserPass='" &  Request("q2") & "'", conn, 1,1
+		response.write "{'success':true,'results': " & mRs7.recordcount & ",'rows': ["
+		if not mRs7.eof then			
+			do while not mRs7.eof
+				response.write "{'num':'" & mRs7("num") &"'}"
+				mRs7.movenext
+				if not mRs7.eof then
+					response.write ","
+				end if				
+			loop	
+		end if
+		response.write "]}"
+		mRs7.close
+	end if
+
+%>
+<%
+	if itype = 8 then
+		ssql8 = "update UserInfo set UserPass='" & Request("q2") & "' where UserAcc='" &  Request("q1") & "'"
+		err.clear
+		On Error Resume Next 
+		Conn.Execute(ssql8)
+		if err.number<>0 then
+			response.write err.description 
+			err.clear
+		else
+			response.write "true"
+		end if	
+	end if
+
+%>

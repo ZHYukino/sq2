@@ -1,0 +1,13 @@
+[DatabaseConn]
+Server_Name=.
+;Server_Name=USER-20160627LW\MSSQLSERVER2018
+abcbeifen=10.10.7.142
+Server_User=sa
+Server_Psw=112233
+Data_Name=LL_SD
+
+Server_Name2=.
+;Server_Name2=USER-20160627LW\MSSQLSERVER2018
+Server_User2=sa
+Server_Psw2=112233
+Data_Name2=LL_GS

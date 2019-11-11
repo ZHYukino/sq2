@@ -1,0 +1,46 @@
+<!--#include file="../comm/mconn.asp"-->
+<!--#include file="../comm/RWIniFile.inc"-->
+<%
+	Session.CodePage = 65001
+	Response.Charset = "UTF-8"
+	username = session("user")
+	itype = Request.QueryString("itype")
+	tunnel = int(Request.QueryString("Tunnel"))
+	name = Request.QueryString("name") '填写的新方案名
+	name = Replace(name," ","")
+	updown = int(Request.QueryString("updown"))
+	ts = int(Request.QueryString("ts"))
+	ls = int(Request.QueryString("ls"))
+	fan = int(Request.QueryString("fan"))
+	door = int(Request.QueryString("door"))
+	led = int(Request.QueryString("led"))
+	fb = int(Request.QueryString("fb"))
+	sendtext = Request.QueryString("sendtext")
+	textformat = Request.QueryString("textformat")
+	msg = ""
+	result = 0
+	If username <> "" Then
+		If itype = 1 And name <> "" And tunnel <> "" And updown <> "" And ts <> "" And ls <> "" And fan <> "" And door <> "" And led <> "" And fb <> "" Then
+			'将方案名加入数据库中(格式化名字)
+			Dim mRs
+			Set mRs = Server.CreateObject("Adodb.RecordSet")
+			mRs.open "select 1 from FirePlan where Enabled=1 and Name='" & name & "'", conn, 1, 2
+			If Not mRs.eof Then
+				msg = "该方案名已存在"
+				result = 0
+			Else
+				mRs.close
+				sql = "insert into FirePlan(Name,Tunnel,UpDown,TS,LS,LED,FAN,DOOR,FB,SendText,TextFormat,Enabled) values('" & name & "'," & tunnel & "," & updown & "," & ts & "," & ls & "," & led & "," & fan & "," & door & "," & fb & ",'" & sendtext & "','" & textformat & "',1)"
+				Conn.Execute(sql)
+				msg = "保存成功"
+				result = 1
+			End If
+			mRs.close
+		Else
+			msg = "提交参数错误"
+		End If
+	Else
+		msg = "未登录不可进行操作"
+	End If
+	Response.write "{""result"":" & result & ",""msg"":""" & msg & """}"
+%>

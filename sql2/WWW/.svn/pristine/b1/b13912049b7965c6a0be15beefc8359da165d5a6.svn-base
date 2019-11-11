@@ -1,0 +1,40 @@
+<!--#include file="../comm/mconn.asp"-->
+<%
+	Session.CodePage = 65001
+	Response.Charset = "UTF-8"
+	devtype = int(Request.QueryString("devtype")) '设备类别 为0或空即不分设备
+	tablename = Request.QueryString("tablename")
+	Dim fs,filename,myfile,rstData
+	Set fs = server.CreateObject("scripting.filesystemobject")
+	If tablename = "" Then tablename = "Book1"
+	filename = Server.MapPath("../uploadfile/" + tablename + ".xls")
+	If fs.FileExists(filename) Then
+		fs.DeleteFile(filename)
+	End If
+	Set myfile = fs.CreateTextFile(filename,true)
+	sql = "select a.Tunnel tunnel,a.DevCname cname,a.DevAddr devaddr,c.FCName typename from Devpara a left join Devstate b on a.DevID=b.DevID left join DevType c on a.DevType=c.FID where b.State=2"
+	If devtype <> "" And devtype <> 0 Then
+		sql = sql & " and a.DevType=" & devtype
+	End If
+	Set rstData = Conn.Execute(sql)
+	If Not rstData.EOF And Not rstData.BOF Then
+		strLine = ""
+		strLine = strLine & "设备名称" & chr(9)
+		strLine = strLine & "设备桩号" & chr(9)
+		strLine = strLine & "隧道号" & chr(9)
+		strLine = strLine & "设备类别" & chr(9)
+		myfile.writeline strLine
+		Do While Not rstData.EOF
+			strLine = ""
+			strLine = strLine & rstData("cname") & chr(9)
+			strLine = strLine & rstData("devaddr") & chr(9)
+			strLine = strLine & rstData("tunnel") & chr(9)
+			strLine = strLine & rstData("typename") & chr(9)
+			myfile.writeline strLine
+			rstData.MoveNext
+		Loop
+		rstData.close
+		Set rstData = nothing
+	End If
+%>
+<script>window.open("../uploadfile/<%=tablename%>.xls")</script>

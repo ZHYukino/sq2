@@ -1,0 +1,39 @@
+<!--#include file="../comm/mconn.asp"-->
+<!--#include file="../comm/RWIniFile.inc"-->
+<%
+	Session.CodePage = 65001
+	Response.Charset = "UTF-8"
+	itype = Request.QueryString("itype")
+	name = Request.QueryString("DevTypeName")
+	tunnel = int(Request.QueryString("Tunnel"))
+	If itype = 1 And name <> "" Then
+		Dim mRs
+		Set mRs = Server.CreateObject("Adodb.RecordSet")
+		sql = "select DevID,DevCName,Tunnel from Devpara where Enabled=1 and DevTypeName='" & name & "'"
+		If tunnel <> "" Then
+			sql = sql & " and Tunnel=" & tunnel
+		End if
+		mRs.open sql, conn, 1, 2
+		If Not mRs.eof Then
+			Dim tunnellist()
+			count = ReadIni("\opt.ini","config","TuCount")
+			ReDim tunnellist(count)
+			For i=0 To count - 1
+				tunnellist(i) = ReadIni("\opt.ini","TuName","Tu" & i)
+			next
+			response.write "{"
+			do while not mRs.eof
+				tunnel = mRs("Tunnel")
+				response.write """" & mRs("DevID") & """:{""name"":""" & mRs("DevCName") & """,""tunnel"":""" & tunnel & """,""tunnelname"":""" & tunnellist(tunnel) & """}"
+				mRs.movenext
+				if not mRs.eof then
+					response.write ","
+				end If
+			Loop
+			response.write "}"
+		else
+			Response.write ""
+		End If
+		mRs.close
+	End If
+%>

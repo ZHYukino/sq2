@@ -1,0 +1,48 @@
+﻿<!--#include file="../comm/mconn.asp"-->
+<%
+	Session.CodePage=65001
+	Response.Charset="UTF-8"
+	itype = Request.QueryString("itype")
+	Dim mRs
+	Set mRs=Server.CreateObject("Adodb.RecordSet")	
+%>
+<%
+	if itype = 1 then
+		mRs.open "select top 1 * from sysset where 1=1 " & Request("q") & " order by id asc", conn, 1,2
+		if not mRs.eof then
+			response.write "{"&chr(34)&"results"&chr(34)&": " & mRs.recordcount & ","&chr(34)&"rows"&chr(34)&": ["
+			do while not mRs.eof
+				response.write "{"&chr(34)&"id"&chr(34)&":" & mRs("id") & ","&chr(34)&"EnableVD"&chr(34)&":" & LCase(mRs("EnableVD")) & ","&chr(34)&"IntervalVD"&chr(34)&":" &chr(34)& mRs("IntervalVD")&chr(34) & ", "&chr(34)&"EnableWD"&chr(34)&":" & LCase(mRs("EnableWD")) & ","&chr(34)&"IntervalWD"&chr(34)&":" &chr(34)& mRs("IntervalWD")&chr(34)& ","&chr(34)&"flow"&chr(34)&":"&chr(34)&"" & mRs("flow") & ""&chr(34)&","&chr(34)&"occ"&chr(34)&":"&chr(34) & mRs("occ") &chr(34)&","&chr(34)&"nengjiandu"&chr(34)&":"&chr(34) & mRs("nengjiandu") &chr(34)&"}"
+				mRs.movenext
+				if not mRs.eof then
+					response.write ","
+				end if				
+			loop
+			response.write "]}"
+		else
+			mRs.close
+			Conn.Execute("insert into sysset(EnableVD,EnableWD) values(0,0)")
+			Set mRs=Conn.Execute("SELECT @@IDENTITY as newIDValue")
+			response.write "{"&chr(34)&"results"&chr(34)&":1,"&chr(34)&"rows"&chr(34)&": ["		
+			response.write "{"&chr(34)&"id"&chr(34)&":" & mRs("newIDValue") & ","&chr(34)&"EnableVD"&chr(34)&":false,"&chr(34)&"IntervalVD"&chr(34)&":1,"&chr(34)&"EnableWD"&chr(34)&":false,"&chr(34)&"IntervalWD"&chr(34)&":1,"&chr(34)&"flow"&chr(34)&":0,"&chr(34)&"occ"&chr(34)&":0,"&chr(34)&"nengjiandu"&chr(34)&":0}"
+			response.write "]}"
+			mRs.close
+		end if	
+%>
+<%
+	elseif itype = 2 then
+		ssql2 = "update sysset set enablevd=" & Request("enablevd") & ",enablewd=" & Request("enablewd") & ",IntervalVD=" & Request("intervd") & ",IntervalWD=" & Request("interwd") & ",flow='" & Request("flow") & "',occ='" & Request("occ") & "',nengjiandu='" & Request("nengjiandu") & "' where id=" &  Request("id") & ""
+		err.clear
+		On Error Resume Next 
+		Conn.Execute(ssql2)
+		if err.number<>0 then
+			response.write err.description & ssql2
+			err.clear
+		else
+			response.write "true"
+		end if	
+	
+%>
+<%
+	end if
+%>	

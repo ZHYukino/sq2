@@ -1,0 +1,265 @@
+﻿Ext.namespace('Ext.CXUser');
+
+Ext.CXUser.serchstr='';
+Ext.CXUser.record_start=0;
+Ext.CXUser.page_count=20;
+Ext.CXUser.page_start=0;
+Ext.CXUser.values_ds = new Ext.data.Store({
+	proxy: new Ext.data.HttpProxy({
+		method:'post',
+    	url:'json/getuser.asp?sid='+Math.random()+'&itype=1'
+	}),
+	baseParams:{'start':'','limit':'','q':''},
+	reader: new Ext.data.JsonReader({
+    	totalProperty: "results", 
+        successProperty: "success",    
+        root: "rows"           
+        //id: "dataid" 		
+		},[{name:'UserAcc',mapping:'UserAcc'},
+		   {name:'UserPass',mapping:'UserPass'},
+		   {name:'UserName',mapping:'UserName'},
+		   {name:'DT',mapping:'DT'},
+		   {name:'Enable',mapping:'Enable'}
+		]
+	),
+	autoLoad:false
+});
+
+Ext.CXUser.searchdata=function(){
+	Ext.CXUser.page_start=0;
+	Ext.CXUser.values_ds.load({
+		params:{
+			start:Ext.CXUser.record_start,
+			limit:Ext.CXUser.page_count,
+			q:Ext.CXUser.serchstr
+	}});
+}
+
+Ext.CXUser.xmlhttpuserreport;
+Ext.CXUser.exportdata=function(){
+	var userdata='limit=0&start=0&q='+escape(' ');//含有空格，相当于特殊字符，需要加，否则空格被忽列
+	
+	var userurl='json/getuser.asp?sid='+Math.random()+'&itype=2';
+ 
+	Ext.CXUser.xmlhttpuserreport= ajaxcreateXMLHttpRequest();
+	Ext.CXUser.xmlhttpuserreport.open("post", userurl, true);
+	Ext.CXUser.xmlhttpuserreport.setRequestHeader("Content-Type","application/x-www-form-urlencoded");//用post一定要加这句话
+	Ext.CXUser.xmlhttpuserreport.onreadystatechange=Ext.CXUser.ajaxreportuser;
+	Ext.CXUser.xmlhttpuserreport.send(userdata);	
+}
+Ext.CXUser.ajaxreportuser=function(){
+	if (Ext.CXUser.xmlhttpuserreport.readyState==4 && Ext.CXUser.xmlhttpuserreport.status==200) {
+		var jsonresponse;
+		var jsonObject;	
+		jsonresponse=Ext.CXUser.xmlhttpuserreport.responseText;
+		jsonObject=eval("("+jsonresponse+")");
+		var myMask = new Ext.LoadMask(Ext.getBody(), {//也可以是Ext.getCmp('').getEl()窗口名称
+			msg    : "正在操作,请稍后...",
+			msgCls : 'z-index:10000;'
+		});		
+		myMask.show();
+		//setTimeout(function(){		
+		var data2Excel2 = new Ext.icss.Data2ExcelTool2(); 
+	
+		data2Excel2.export2Excel(jsonObject);
+            
+		//},1000);
+		myMask.hide();
+	}
+}
+
+Ext.CXUser.MyWindow=Ext.extend(Ext.Window ,{
+	id:'userwin',
+	xtype:"window",
+	title:"用户管理",
+	width:600,
+	height:400,
+	closable:true,
+	resizable:false,
+	footer:false,
+	collapsible:false,
+	border:false,
+	layout:"absolute",
+	//minimizable:true,//加上这个会造成打开窗休后，点开始菜单无反应
+	initComponent: function(){
+		this.items=[
+			{
+				xtype:"grid",
+				id:"grid_user",
+				title:"我的表格",
+				x:10,
+				y:10,
+				anchor:"98.5%",
+				height:350,			
+				header:false,
+				enableColumnHide:false,
+				enableColumnMove:false,
+				enableColumnResize:false,
+				enableHdMenu:false,
+				deferRowRender:true,
+				frame:false,
+				footer:false,
+				loadMask:{
+					msg :'正在加载数据，请稍后.....'
+                },
+				loadMask:true,//数据加载过程中显示正在加载的
+				autoScroll:true,//滚动条
+				ds :Ext.CXUser.values_ds,
+				columnLines: true,
+				stripeRows: true,  //添加斑马纹效果
+				viewConfig: {
+					markDirty: false,
+					forceFit:true//列宽自适应
+				},	
+				//selType : 'cellmodel',  //选格模式
+				columns:[
+					new Ext.grid.RowNumberer({
+						header:'序号',
+						width:40,
+						renderer:function(value,metadata,record,rowIndex){
+							return Ext.CXUser.page_start +1+rowIndex;	
+						}				  
+					}),
+					{
+						header:"是否启用",
+						xtype:"booleancolumn",
+						trueText:"启用",
+						falseText:"停用",
+						sortable:true,
+						resizable:true,
+						dataIndex:"Enable",
+						width:50
+					},
+					{
+						header:"用户帐号",
+						sortable:true,
+						resizable:true,
+						dataIndex:"UserAcc",
+						width:100,
+						summaryType: 'text'	//合计栏
+					},
+					{
+						header:"用户名称",
+						sortable:true,
+						resizable:true,
+						dataIndex:"UserName",
+						width:80,
+						summaryType: 'count'//合计栏
+					},
+					{
+						//xtype:'datecolumn',
+						//dateFormat :'Y-m-d H:i:s',
+						header:"建立时间",
+						sortable:true,
+						resizable:true,
+						dataIndex:"DT",
+						width:140
+					},
+					{
+                    	text:"操作",
+						header:"操作",
+                    	xtype:"actioncolumn",
+                    	width:60,
+                    	items:[{
+							icon:"images/edit.gif", // 指定图标
+                            tooltip:"编辑",
+                            handler: function(grid, rowIndex, colIndex){
+                            	var rec = grid.getStore().getAt(rowIndex);
+                                var win = Ext.getCmp('usereditwin');
+								if(!win){
+									win = new Ext.CXUserEdit.MyWindow();					
+								}
+								Ext.CXUserEdit.Type=1;
+								Ext.CXUserEdit.valuewin(rec.get('UserAcc'),rec.get('UserName'),'******','******',rec.get('Enable'));
+								win.show(); 
+                       		}
+                         },{
+                             icon:"images/delete.gif", // 指定图标
+                             tooltip:"删除",
+                             handler: function(grid, rowIndex, colIndex)
+                             {
+                             	var rec = grid.getStore().getAt(rowIndex);
+								Ext.Msg.confirm('系统提示','是否删除该用户？',
+									function(btn){
+										if(btn=='yes'){
+											if (!Ext.CXUserEdit.deletedate(rec.get('UserAcc'))){return};
+											Ext.CXSysLog.insertdata(username,1,"删除用户"+rec.get('UserAcc'),-1,userip);
+											Ext.Msg.alert('系统提示','删除成功');
+											Ext.CXUser.searchdata();
+										}
+									},this);								
+                             }
+                         }]
+               		}
+				],
+				tbar:['-',{
+						icon:"images/add.gif", // 指定图标  
+						text:'添加',  
+						handler:function(){  
+							var win = Ext.getCmp('usereditwin');
+							if(!win){
+								win = new Ext.CXUserEdit.MyWindow();					
+							}
+							Ext.CXUserEdit.Type=0;
+							Ext.CXUserEdit.initwin();
+							win.show(); 
+							/*var p ={  
+								UserAcc:'fff',  
+								UserName:''  
+								};  
+							 grid.getStore().insert(0,p); */
+						}
+					},'-','->',{
+						icon:"images/e1.gif", // 指定图标  
+						text:'导出',  
+						handler:function(){  
+							var data2Excel = new Ext.icss.Data2ExcelTool(); 
+							data2Excel.export2Excel(Ext.getCmp('grid_user'));
+						}
+					},'-',{
+						icon:"images/e2.gif", // 指定图标  
+						text:'导出全部',  
+						handler:function(){  
+							Ext.CXUser.exportdata();
+						}
+					}
+            	],
+        		bbar: new Ext.PagingToolbar({//分页
+            		pageSize: Ext.CXUser.page_count,
+            		store: Ext.CXUser.values_ds,
+            		displayInfo: true, //非要为true，不然不会显示下面的分页按钮
+					beforePageText:'第',
+					afterPageText:'/{0}页',
+					firstText:'首页',
+					prevText:'上一页',
+					nextText:'下一页',
+					lastText:'尾页',
+					refreshText:'刷新',					
+					displayMsg: '第{0}条到{1}条记录，共{2}条',
+            		emptyMsg: '没有相关记录',
+					doLoad:function(start){
+						Ext.CXUser.page_start= start;
+						var o={},pn=this.getParams();
+						o[pn.start]=start;
+						o[pn.limit]=this.pageSize;
+						Ext.apply(o,{'q':Ext.CXUser.serchstr});   
+						//o[pn.q]=Ext.CXReportWD.serchstr;
+						if(this.fireEvent('beforechange', this, o) !== false){ 
+							this.store.load({params:o});
+						}
+					}
+        		}),
+				plugins: new Ext.ux.grid.GridSummary()//合计栏 ，使用GridSummary.js插
+			}
+		]
+		Ext.CXUser.MyWindow.superclass.initComponent.call(this);
+	},
+	listeners:{  
+				beforeshow : function(){  
+					Ext.CXUser.searchdata();
+				},
+				close : function(){  
+			
+				}
+	}
+})

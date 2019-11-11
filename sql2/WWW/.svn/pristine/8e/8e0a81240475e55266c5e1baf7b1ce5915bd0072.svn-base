@@ -1,0 +1,47 @@
+<%
+Session.CodePage=65001
+Response.Charset="UTF-8"
+%>
+<!DOCTYPE html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+	<title>高速监控综合业务平台</title>
+	<meta name="renderer" content="webkit">
+  	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+ 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
+</head>
+<body>
+	<input type="text" id="json">
+	<script type="text/javascript" src="js/myVariable.js"></script>
+	<script type="text/javascript" src="js/devinfo.js"></script>
+	<script type="text/javascript">
+		var devjson = "";
+		function getdevjson(updown,tunnel){
+			var rows="";
+			var count = 0;
+			var arr_ = arr_LS;
+			for (var i=0;i<arr_.length;i++){
+				if (arr_[i][2]==tunnel && arr_[i][6]==updown)
+				{
+					count = count +1;
+					rows=rows + "{\"id\":\"" + arr_[i][1] + "\",\"ename\":\"" + arr_[i][4] + "\",\"shape\":\"" + arr_[i][9] + "\",\"cname\":\"" + arr_[i][27] + "\",\"devtpyename\":\"LS\",\"formatSpace\":\"\"},";
+				}
+			}
+			arr_ = arr_TS;
+			for (var i=0;i<arr_.length;i++){
+				if (arr_[i][2]==tunnel && arr_[i][6]==updown)
+				{
+					count = count +1;
+					rows=rows + "{\"id\":\"" + arr_[i][1] + "\",\"ename\":\"" + arr_[i][4] + "\",\"shape\":\"" + arr_[i][9] + "\",\"cname\":\"" + arr_[i][27] + "\",\"devtpyename\":\"TS\",\"formatSpace\":\"\"},";
+				}
+			}
+			rows = rows + "{}"
+			devjson="{\"total\": " +count+ ",\"rows\": [" +rows+ "]}";
+		}
+		getdevjson(0,0);//上行，隧道1
+		$("#json").val(devjson);
+	</script>
+</body>
+</html>

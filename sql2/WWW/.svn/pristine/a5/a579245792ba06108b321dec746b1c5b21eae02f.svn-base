@@ -1,0 +1,109 @@
+<!--#include file="../comm/mconn.asp"-->
+<%
+	Session.CodePage = 65001
+	Response.Charset = "UTF-8"
+	Dim rows()
+	username = session("user")
+	itype = Request.Form("itype")
+	id1 = Request.Form("id1")
+	id2 = Request.Form("id2")
+	total = Request.Form("total")
+	msg = ""
+	result = 0
+	If username <> "" Then
+		Dim mRs
+		Set mRs = Server.CreateObject("Adodb.RecordSet")
+		'mRs.open "select Account from Popedom where Have=0 and Account='" & username & "'", conn, 1, 2
+		'if not mRs.eof Then
+			'mRs.close
+			If itype = 1 And id1 <> "" And id2 <> "" Then
+				mRs.open "select 1 from devpara where DevID in (" & id1 & "," & id2 & ")", conn, 1, 2
+				If mRs.recordcount = 2 And id1\100 = 9 And id2\100 = 10 Then
+					count = 0
+					For i = 0 To total - 1
+						mRs.close
+						devid = Request.Form("devid" & i)
+						isselect = Request.Form("isselect" & i)
+						If isselect <> 1 Then isselect = 0
+						mRs.open "select 1 from devpara where DevID=" & devid, conn, 1, 2
+						If not mRs.eof And devid\100 = 8 Then
+							mRs.close
+							mRs.open "select FID from AutoFJDet where FDevID1=" & id1 & " and FDevID2=" & id2 & " and FDevID3=" & devid, conn, 1, 2
+							sql = ""
+							If Not mRs.eof Then
+								sql = "update AutoFJDet set FIsSelect=" & isselect & " where FID=" & mRs("FID")
+							Else
+								sql = "insert into AutoFJDet(FDevID1,FDevID2,FDevID3,FIsSelect) values(" & id1 & "," & id2 & "," & devid & "," & isselect & ")"
+							End If
+							mRs.close
+							Conn.Execute(sql)
+						Else
+							count = count + 1
+						End if
+					Next
+					'日志
+					sql = "insert into LogSys(logman,LogTime,Logdesc,LogMemo,logtype) values ('" & username & "',GETDATE(),'参数修改','修改通风设备关系',3)"
+					Conn.Execute(sql)
+					msg = "修改成功(" & count & ")"
+					result = 1
+				Else
+					msg = "请求参数异常"
+				End If
+				mRs.close
+			End If
+			If itype = 2 And id1 <> "" And id2 <> "" Then
+				If id1 = 1 Or id1 = 2 Or id1 = 3 Or id1 = 4 Or id1 = 11 Or id1 = 12 Or id1 = 13 Or id1 = 14 Or id1 = 15 Or id1 = 16 Or id1 = 17 Or id1 = 18 then
+					mRs.open "select 1 from devpara where DevID=" & id2, conn, 1, 2
+					If Not mRs.eof And id2\100 = 4 Then
+						count = 0
+						For i = 0 To total - 1
+							mRs.close
+							devid = Request.Form("devid" & i)
+							isopen = Request.Form("isopen" & i)
+							isselect = Request.Form("isselect" & i)
+							If isopen <> 1 Then isopen = 0
+							If isselect <> 1 Then isselect = 0
+							mRs.open "select 1 from devpara where DevID=" & devid, conn, 1, 2
+							If not mRs.eof And devid\100 = 6 Then
+								mRs.close
+								mRs.open "select FID from AutoZMDet where FAutoZMID=" & id1 & " and FDevID1=" & id2 & " and FDevID2=" & devid, conn, 1, 2
+								sql = ""
+								If Not mRs.eof Then
+									sql = "update AutoZMDet set FIsSelect=" & isselect & ",FISOpen=" & isopen & " where FID=" & mRs("FID")
+								Else
+									sql = "insert into AutoZMDet(FAutoZMID,FDevID1,FDevID2,FISOpen,FIsSelect) values(" & id1 & "," & id2 & "," & devid & "," & isopen & "," & isselect & ")"
+								End If
+								mRs.close
+								Conn.Execute(sql)
+							Else
+								count = count + 1
+							End if
+						Next
+						logdata = ""
+						If id1 < 6 then
+							logdata = "修改照明环境控制方案配置"
+						Else
+							logdata = "修改照明时间控制方案配置"
+						End If
+						'日志
+						sql = "insert into LogSys(logman,LogTime,Logdesc,LogMemo,logtype) values ('" & username & "',GETDATE(),'参数修改','" & logdata & "',3)"
+						Conn.Execute(sql)
+						msg = "修改成功(" & count & ")"
+						result = 1
+					Else
+						msg = "请求参数异常"
+					End If
+					mRs.close
+				Else
+					msg = "请求参数异常"
+				End If
+			End if
+		'Else
+			'msg = "没有权限进行操作(0)"
+		'End If
+		'mRs.close
+	Else
+		msg = "未登录不可进行操作"
+	End If
+	Response.write "{""result"":" & result & ",""msg"":""" & msg & """}"
+%>

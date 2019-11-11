@@ -1,0 +1,51 @@
+﻿Ext.namespace('Ext.CMSPreview');
+
+//窗体置顶函数
+Ext.CMSPreview.WindowAlwaysOnTop = function(){
+    this.init = function(win){
+         win.on('deactivate', function(){
+            var i=1;
+            this.manager.each(function(){i++});
+            this.setZIndex(this.manager.zseed + (i*10));
+         });
+         win.on('activate', function(){
+            var i=1;
+            this.manager.each(function(){i++});
+            this.setZIndex(this.manager.zseed + (i*10));
+         }); 
+    }
+} 
+Ext.CMSPreview.MyWindow=function(a,w,h){
+	return	new Ext.Window({
+		id:a+'win',
+		header:false,
+		border:false,
+		//baseCls:'',          //  这个很关键 背景透明
+		shadow:false,
+        frame:false,
+		maximizable: false,
+        resizable: false,
+        hideMode: 'offsets',
+        constrain: false,	
+		width:w,
+		height:h+15,
+		layout:"absolute",
+		html:'',
+		maximizable:false,  
+		//modal : true, 
+		items:[{
+			xtype:"panel",
+			id:a,
+			title:"我的面板",
+			header:false,
+			height:h,
+			width:w,
+			bodyStyle:"border-width:0;background:#000",
+			html:"<div id='"+a+"'2 style='overflow:hidden;line-height:normal;background-color:#000'></div>",
+			x:0,
+			y:0			   
+		}],
+		plugins: new Ext.CMSPreview.WindowAlwaysOnTop()
+     });
+}
+

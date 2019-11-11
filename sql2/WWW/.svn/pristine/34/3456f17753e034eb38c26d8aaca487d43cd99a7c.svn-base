@@ -1,0 +1,2641 @@
+﻿//全局
+
+//预加载
+var loadAction="";      //计时判断加载
+var percentnum=0;		//加载设备时
+var loadarr=[[0,0]];    //是否已加载的数组
+var loadflag=0;        
+var loadstrflag=0;
+
+
+var gWndId = 0;
+var bLogin = 0;			//视频连接状态
+
+var ledrelation_id="";  //照明表id
+var fanrelation_id="";  //风机表id
+var ledtime_id="";      //照明时钟表id
+
+var lstsup_id="";       //上行表id
+var lstsdown_id="";     //上行表id
+
+var lstsup_ename="";    //上行表ename
+var lstsdown_ename="";  //上行表ename
+
+var covipanelindex="";
+var fsfxpanelindex="";
+var lightpanelindex="";
+
+//var ledrelation_array=new Array();
+//var fanrelation_array=new Array();
+
+var ary_cmstext="";	    //情报板内容数组
+var ary_cmsstyle="";    //情报板样式数组
+var cms_showwidth="";	//情报板宽度
+var cms_showheight="";  //情报板高度
+var ary_cmstime="";		//停留时间
+
+var cmsSwitchAction=""; //计时方法
+
+var fannum=0;
+var flag = true;
+
+//判断浏览器
+function ajaxcreateXMLHttpRequest(){
+	var xmlHttp=null;
+	//一般先判断非IE浏览器
+	//window对象中有XMLHttpRequest存在就是非IE，包括（IE7，IE8）
+	if(window.XMLHttpRequest){
+		xmlHttp=new XMLHttpRequest();//非IE以及IE7，IE8浏览器
+		if(xmlHttp.overrideMimeType){
+			xmlHttp.overrideMimeType("text/xml");//重置mime类型
+		}
+	//window对象中有ActiveXObject属性存在就是IE浏览器的低版本
+	}
+	else if(window.ActiveXObject){
+		var versions=['Microsoft.XMLHTTP', 'MSXML.XMLHTTP', 'Msxml2.XMLHTTP.7.0','Msxml2.XMLHTTP.6.0','Msxml2.XMLHTTP.5.0', 'Msxml2.XMLHTTP.4.0', 'MSXML2.XMLHTTP.3.0', 'MSXML2.XMLHTTP'];//各种IE浏览器创建Ajax对象时传递的参数
+		for(var i=0; i<versions.length; i++){
+			try{
+				xmlHttp=new ActiveXObject(versions[i]);//各个IE浏览器版本的参数不同
+				if(xmlHttp){
+					return xmlHttp;
+				}
+			}catch(e){
+				xmlHttp=false;
+			}
+		}
+	}
+	return xmlHttp;
+}
+
+//判断浏览器
+function ietypecheck(){
+	var Sys = {};
+	var ua = navigator.userAgent.toLowerCase();
+	var s;
+		(s = ua.match(/(msie\s|trident.*rv:)([\d.]+)/)) ? Sys.ie = s[2] :
+		(s = ua.match(/firefox\/([\d.]+)/)) ? Sys.firefox = s[1] :
+		(s = ua.match(/chrome\/([\d]+)/)) ? Sys.chrome = s[1] :
+		(s = ua.match(/opera.([\d.]+)/)) ? Sys.opera = s[1] :
+		(s = ua.match(/version\/([\d.]+).*safari/)) ? Sys.safari = s[1] : 0;
+	if (Sys.ie){ietype = 0}
+	else {ietype =1}
+}
+
+function returnPicclass(typevalue){
+	var picclass;
+	switch(typevalue){
+		case "TS":
+			//交通信号灯
+			picclass="default-pic-TS";
+			break;
+		case "LS":
+			//车道指示标志
+			picclass="default-pic-LS";
+			break;
+		case "LIGHT":
+			//光强
+			picclass="default-pic-LIGHT";
+			break;
+		case "LED":
+			//照明
+			picclass="default-pic-LED";
+			break;
+		case "FAN":
+			//风机
+			picclass="default-pic-FAN";
+			break;
+		case "COVI":
+			//COVI
+			picclass="default-pic-COVI";
+			break;
+		case "FSFX":
+			//风速风向
+			picclass="default-pic-FSFX";
+			break;
+		case "FB":
+			//手报
+			picclass="default-pic-FB";
+			break;
+		case "FGS":
+			//烟感
+			picclass="default-pic-FGS";
+			break;
+		case "FGW":
+			//温感
+			picclass="default-pic-FGW";
+			break;
+		case "FGR":
+			//消防箱
+			picclass="default-pic-FGR";
+			break;
+		case "DOOR":
+			//防火门
+			picclass="default-pic-DOOR";
+			break;
+		case "CAM":
+			//摄像机
+			picclass="default-pic-CAM";
+			break;
+	}
+	return picclass;
+}
+
+//右键菜单
+function bindRightKey(id,picclass,shape){
+	switch(picclass){
+		//信号灯
+		case "default-pic-TS":
+			//右键
+			var shape=parseInt(shape);
+			switch(shape){
+				case 3:
+					$("#"+id).contextMenu('menu_TS_1', {
+						onShowMenu: function(e, menu) {
+							this.shadow = false;//去除阴影
+							//定位菜单
+							setTimeout(function(){
+								onShowMenu(e.pageX,e.pageY,$($(menu[0])[0]).width(),$($(menu[0])[0]).height());
+							},1);
+							return menu;
+						},
+						bindings:{	
+							'TS_red': function(t) {	
+								rightMenuAjax("TS",t.id,1,"TS_red")
+							},
+							'TS_yellow': function(t) {
+								rightMenuAjax("TS",t.id,2,"TS_yellow")
+							},
+							'TS_green': function(t) {	
+								rightMenuAjax("TS",t.id,4,"TS_green") 
+							}
+						}
+					});
+					break;
+				case 4:
+					$("#"+id).contextMenu('menu_TS_2', {
+						onShowMenu: function(e, menu) {
+							this.shadow = false;//去除阴影
+							//定位菜单
+							setTimeout(function(){
+								onShowMenu(e.pageX,e.pageY,$($(menu[0])[0]).width(),$($(menu[0])[0]).height());
+							},1);
+							return menu;
+						},
+						bindings:{	
+							'TS_red': function(t) {	
+								rightMenuAjax("TS",t.id,1,"TS_red")
+							},
+							'TS_yellow': function(t) {
+								rightMenuAjax("TS",t.id,2,"TS_yellow")
+							},
+							'TS_green': function(t) {	
+								rightMenuAjax("TS",t.id,4,"TS_green") 
+							},
+							'TS_turnleft': function(t) {
+								rightMenuAjax("TS",t.id,8,"TS_turnleft")
+							}
+						}
+					});
+					break;
+				default:
+					$("#"+id).contextMenu('menu_TS_1', {
+						onShowMenu: function(e, menu) {
+							this.shadow = false;//去除阴影
+							//定位菜单
+							setTimeout(function(){
+								onShowMenu(e.pageX,e.pageY,$($(menu[0])[0]).width(),$($(menu[0])[0]).height());
+							},1);
+							return menu;
+						},
+						bindings:{	
+							'TS_red': function(t) {	
+								rightMenuAjax("TS",t.id,1,"TS_red")
+							},
+							'TS_yellow': function(t) {
+								rightMenuAjax("TS",t.id,2,"TS_yellow")
+							},
+							'TS_green': function(t) {	
+								rightMenuAjax("TS",t.id,4,"TS_green") 
+							}
+						}
+					});
+					break;
+			}
+			break;
+		case "default-pic-LS":
+			getLSMenu(id,shape);
+			break;
+		//LED
+		case "default-pic-LED":
+			$("#"+id).contextMenu('menu_LED', {
+				onShowMenu: function(e, menu) {
+					this.shadow = false;//去除阴影
+					//定位菜单
+					setTimeout(function(){
+				  		onShowMenu(e.pageX,e.pageY,$($(menu[0])[0]).width(),$($(menu[0])[0]).height());
+					},1);
+					return menu;
+				},
+				bindings:{
+					'LED_close': function(t) {
+						rightMenuAjax("LED",t.id,0,"LED_close")
+					},
+					'LED_open': function(t) {
+						rightMenuAjax("LED",t.id,1,"LED_open")
+					}
+				}
+			});			
+			break;
+		case "default-pic-FAN":
+			$("#"+id).contextMenu('menu_FAN', {
+				onShowMenu: function(e, menu) {
+					this.shadow = false;//去除阴影
+					//定位菜单
+					setTimeout(function(){
+				  		onShowMenu(e.pageX,e.pageY,$($(menu[0])[0]).width(),$($(menu[0])[0]).height());
+					},1);
+					return menu;
+				},
+				bindings:{
+					'FAN_stop': function(t) {
+						rightMenuAjax("FAN",t.id,0,"FAN_stop") 
+					},
+					'FAN_right': function(t) {
+						rightMenuAjax("FAN",t.id,1,"FAN_right")
+					},
+					'FAN_left': function(t) {
+						rightMenuAjax("FAN",t.id,2,"FAN_left")
+					}
+				}
+			});
+			break;
+		case "default-pic-DOOR":
+			$("#"+id).contextMenu('menu_DOOR', {
+				onShowMenu: function(e, menu) {
+					this.shadow = false;//去除阴影
+					//定位菜单
+					setTimeout(function(){
+				  		onShowMenu(e.pageX,e.pageY,$($(menu[0])[0]).width(),$($(menu[0])[0]).height());
+					},1);
+					return menu;
+				},
+				bindings:{
+					'DOOR_up': function(t) {
+						rightMenuAjax("DOOR",t.id,1,"DOOR_up")  
+					},
+					'DOOR_default': function(t) {
+						rightMenuAjax("DOOR",t.id,2,"DOOR_default")
+					},
+					'DOOR_down': function(t) {
+						rightMenuAjax("DOOR",t.id,3,"DOOR_down")
+					}
+				}
+			});
+			break;
+		case "default-pic-CAM":
+			$("#"+id).contextMenu('menu_CAM', {
+				onShowMenu: function(e, menu) {
+					this.shadow = false;//去除阴影
+					//定位菜单
+					setTimeout(function(){
+				  		onShowMenu(e.pageX,e.pageY,$($(menu[0])[0]).width(),$($(menu[0])[0]).height());
+					},1);
+					return menu;
+				},
+				bindings:{
+					'CAM_open': function(t) {
+						showBigScreen(id);
+					}					
+				}
+			});
+			break;
+	}
+}
+
+//车道指示标志右键类别
+function getLSMenu(id,shape){
+	var shape=parseInt(shape);
+	switch(shape){
+		case 1:
+			$("#"+id).contextMenu('menu_LS_1', {
+				onShowMenu: function(e, menu) {
+					this.shadow = false;//去除阴影
+					//定位菜单
+					setTimeout(function(){
+				  		onShowMenu(e.pageX,e.pageY,$($(menu[0])[0]).width(),$($(menu[0])[0]).height());
+					},1);
+					return menu;
+				},
+				bindings:{
+					'LS_stop': function(t) {
+						rightMenuAjax("LS",t.id,0,"LS_stop");
+					},
+					'LS_go': function(t) {
+						rightMenuAjax("LS",t.id,1,"LS_go");
+					}
+				}
+			});
+			break;
+		case 2:
+			$("#"+id).contextMenu('menu_LS_2', {
+				onShowMenu: function(e, menu) {
+					this.shadow = false;//去除阴影
+					//定位菜单
+					setTimeout(function(){
+				  		onShowMenu(e.pageX,e.pageY,$($(menu[0])[0]).width(),$($(menu[0])[0]).height());
+					},1);
+					return menu;
+				},
+				bindings:{
+					'LS_twoway': function(t) {
+						rightMenuAjax("LS",t.id,0,"LS_twoway");
+					},
+					'LS_right': function(t) {
+						rightMenuAjax("LS",t.id,1,"LS_right");
+					}
+				}
+			});
+			break;
+		case 3:
+			$("#"+id).contextMenu('menu_LS_3', {
+				onShowMenu: function(e, menu) {
+					this.shadow = false;//去除阴影
+					//定位菜单
+					setTimeout(function(){
+				  		onShowMenu(e.pageX,e.pageY,$($(menu[0])[0]).width(),$($(menu[0])[0]).height());
+					},1);
+					return menu;
+				},
+				bindings:{
+					'LS_twoway': function(t) {
+						rightMenuAjax("LS",t.id,0,"LS_twoway");
+					},
+					'LS_right': function(t) {
+						rightMenuAjax("LS",t.id,1,"LS_right");
+					},
+					'LS_left': function(t) {
+						rightMenuAjax("LS",t.id,3,"LS_left");
+					}
+				}
+			});
+			break;
+		case 4:
+			$("#"+id).contextMenu('menu_LS_4', {
+				onShowMenu: function(e, menu) {
+					this.shadow = false;//去除阴影
+					//定位菜单
+					setTimeout(function(){
+				  		onShowMenu(e.pageX,e.pageY,$($(menu[0])[0]).width(),$($(menu[0])[0]).height());
+					},1);
+					return menu;
+				},
+				bindings:{
+					'LS_twoway': function(t) {
+						rightMenuAjax("LS",t.id,0,"LS_twoway");
+					},
+					'LS_right': function(t) {
+						rightMenuAjax("LS",t.id,1,"LS_right");
+					},
+					'LS_left': function(t) {
+						rightMenuAjax("LS",t.id,3,"LS_left");
+					},
+					'LS_turnleft': function(t) {
+						rightMenuAjax("LS",t.id,5,"LS_turnleft");
+					}
+				}
+			});
+			break;
+		case 5:
+			$("#"+id).contextMenu('menu_LS_4', {
+				onShowMenu: function(e, menu) {
+					this.shadow = false;//去除阴影
+					//定位菜单
+					setTimeout(function(){
+				  		onShowMenu(e.pageX,e.pageY,$($(menu[0])[0]).width(),$($(menu[0])[0]).height());
+					},1);
+					return menu;
+				},
+				bindings:{
+					'LS_twoway': function(t) {
+						rightMenuAjax("LS",t.id,0,"LS_twoway");
+					},
+					'LS_right': function(t) {
+						rightMenuAjax("LS",t.id,1,"LS_right");
+					},
+					'LS_left': function(t) {
+						rightMenuAjax("LS",t.id,3,"LS_left");
+					},
+					'LS_turnleft': function(t) {
+						rightMenuAjax("LS",t.id,5,"LS_turnleft");
+					}
+				}
+			});
+			break;
+		default:
+			$("#"+id).contextMenu('menu_LS_1', {
+				onShowMenu: function(e, menu) {
+					this.shadow = false;//去除阴影
+					//定位菜单
+					setTimeout(function(){
+				  		onShowMenu(e.pageX,e.pageY,$($(menu[0])[0]).width(),$($(menu[0])[0]).height());
+					},1);
+					return menu;
+				},
+				bindings:{
+					'LS_stop': function(t) {
+						rightMenuAjax("LS",t.id,0,"LS_stop");
+					},
+					'LS_go': function(t) {
+						rightMenuAjax("LS",t.id,1,"LS_go");
+					}
+				}
+			});
+			break;
+	}
+}
+
+//定位右键位置
+function onShowMenu(pageX,pageY,menuW,menuH){
+	if(pageX+menuW>W){
+		$("#jqContextMenu").css("left",W-menuW-10);
+	}
+	if(pageY+menuH>H){
+		$("#jqContextMenu").css("top",H-menuH-10);
+	}
+}
+
+//返回图片
+function returnPicurl(typevalue,state,shape,updown,i1,i2){
+	var picurl="";
+	var state=parseInt(state);
+	var shape=parseInt(shape);
+	var updown=parseInt(updown);
+	var i1=parseInt(i1);
+	var i2=parseInt(i2);
+	//正常或采集器异常
+	if(state==1||state==3){
+		switch(typevalue){
+			case "TS":
+				//交通信号灯
+				switch(i1){
+					case 0:
+						//关闭
+						picurl="../pic/roadsig5.png";
+						break;
+					case 1:
+						//红灯
+						picurl="../pic/roadsig2.png";
+						break;
+					case 2:
+						//黄灯
+						picurl="../pic/roadsig1.png";
+						break;
+					case 4:
+						//绿灯
+						picurl="../pic/roadsig0.png";
+						break;
+					case 8:
+						//左转
+						switch(updown){
+							case 1:
+								picurl="../pic/roadsig4.png";
+								break;
+							case 0:
+								picurl="../pic/roadsig3.png";
+								break;
+						}
+						break;
+					default:
+						picurl="";
+						break;
+				}
+				break;
+			case "LS":
+				//车道指示标志
+				switch(shape){
+					case 1:
+						switch(i1){
+							case 0:
+								//禁止
+								picurl="../pic/sigF.png";
+								break;
+							case 1:
+								//通行
+								picurl="../pic/sigG.png";
+								break;
+						}
+						break;
+					case 2:
+						switch(i1){
+							case 0:
+								//双向禁止
+								picurl="../pic/sigC.png";
+								break;
+							case 1:
+								//正向通行
+								switch(updown){
+									case 1:
+										//禁止
+										picurl="../pic/sigA.png";
+										break;
+									case 0:
+										//通行
+										picurl="../pic/sigB.png";
+										break;
+								}
+								break;
+						}
+						break;
+					case 3:
+						switch(i1){
+							case 0:
+								//双向禁止
+								picurl="../pic/sigC.png";
+								break;
+							case 1:
+								//正向通行
+								switch(updown){
+									case 1:
+										picurl="../pic/sigA.png";
+										break;
+									case 0:
+										picurl="../pic/sigB.png";
+										break;
+								}
+								break;
+							case 3:
+								//反向通行
+								switch(updown){
+									case 1:
+										picurl="../pic/sigB.png";
+										break;
+									case 0:
+										picurl="../pic/sigA.png";
+										break;
+								}
+								break;
+						}
+						break;
+					//4态和5态一样
+					case 4:
+						switch(i1){
+							case 0:
+								//双向禁止
+								picurl="../pic/sigC.png";
+								break;
+							case 1:
+								//正向通行
+								switch(updown){
+									case 1:
+										picurl="../pic/sigA.png";
+										break;
+									case 0:
+										picurl="../pic/sigB.png";
+										break;
+								}
+								break;
+							case 3:
+								//反向通行
+								switch(updown){
+									case 1:
+										picurl="../pic/sigB.png";
+										break;
+									case 0:
+										picurl="../pic/sigA.png";
+										break;
+								}
+								break;
+							case 5:
+								//左转通行
+								switch(updown){
+									case 1:
+										picurl="../pic/sigD.png";
+										break;
+									case 0:
+										picurl="../pic/sigE.png";
+										break;
+								}
+								break;
+						}
+						break;
+					case 5:
+						switch(i1){
+							case 0:
+								//双向禁止
+								picurl="../pic/sigC.png";
+								break;
+							case 1:
+								//正向通行
+								switch(updown){
+									case 1:
+										picurl="../pic/sigA.png";
+										break;
+									case 0:
+										picurl="../pic/sigB.png";
+										break;
+								}
+								break;
+							case 3:
+								//反向通行
+								switch(updown){
+									case 1:
+										picurl="../pic/sigB.png";
+										break;
+									case 0:
+										picurl="../pic/sigA.png";
+										break;
+								}
+								break;
+							case 5:
+								//左转通行
+								switch(updown){
+									case 1:
+										picurl="../pic/sigD.png";
+										break;
+									case 0:
+										picurl="../pic/sigE.png";
+										break;
+								}
+								break;
+						}
+						break;
+				}
+				break;
+			case "LIGHT":
+				//光强
+				picurl="../pic/ld.png";
+				break;
+			case "LED":
+				//照明
+				switch(i1){
+					case 0:
+						//关
+						switch(updown){
+							case 1:
+								picurl="../pic/light_offB.png";
+								break;
+							case 0:
+								picurl="../pic/light_offA.png";
+								break;
+						}
+						break;
+					case 1:
+						//开
+						switch(updown){
+							case 1:
+								picurl="../pic/light_onB.png";
+								break;
+							case 0:
+								picurl="../pic/light_onA.png";
+								break;
+						}
+						break;
+				}
+				break;
+			case "FAN":
+				//风机
+				switch(i1){
+					case 0:
+						//停止	
+						switch(i2){
+							case 0:
+								switch(updown){
+									case 1:
+										picurl="../pic/fan5.gif";
+										break;
+									case 0:
+										picurl="../pic/fan2.gif";
+										break;
+								}
+								break;
+							case 1:
+								switch(updown){
+									case 1:
+										picurl="../pic/falsepic/false-fan5.png";
+										break;
+									case 0:
+										picurl="../pic/falsepic/false-fan2.png";
+										break;
+								}
+								break;
+						}
+						break;
+					case 1:
+						//正转
+						switch(i2){
+							case 0:
+								switch(updown){
+									case 1:
+										picurl="../pic/fan3.gif";
+										break;
+									case 0:
+										picurl="../pic/fan1.gif";
+										break;
+								}
+								break;
+							case 1:
+								switch(updown){
+									case 1:
+										picurl="../pic/falsepic/false-fan3.png";
+										break;
+									case 0:
+										picurl="../pic/falsepic/false-fan1.png";
+										break;
+								}
+								break;
+						}
+						break;
+					case 2:
+						//反转
+						switch(i2){
+							case 0:
+								switch(updown){
+									case 1:
+										picurl="../pic/fan4.gif";
+										break;
+									case 0:
+										picurl="../pic/fan0.gif";
+										break;
+								}
+								break;
+							case 1:
+								switch(updown){
+									case 1:
+										picurl="../pic/falsepic/false-fan4.png";
+										break;
+									case 0:
+										picurl="../pic/falsepic/false-fan0.png";
+										break;
+								}
+								break;
+						}
+						break;
+				}	
+				break;
+			case "COVI":
+				//COVI
+				picurl="../pic/covi.png";
+				break;
+			case "FSFX":
+				//风速风向
+				picurl="../pic/fsfx.png";
+				break;
+			case "FB":
+				//手报
+				switch(i1){
+					case 0:
+						//正常
+						picurl="../pic/fire2.gif";
+						break;
+					case 1:
+						//火警
+						picurl="../pic/fire1.gif";
+						break;
+				}
+				break;
+			case "FGS":
+				//烟感
+				switch(i1){
+					case 0:
+						//正常
+						picurl="../pic/fire4.gif";
+						break;
+					case 1:
+						//火警
+						picurl="../pic/fire3.gif";
+						break;
+				}
+				break;
+			case "FGW":
+				//温感
+				switch(i1){
+					case 0:
+						//正常
+						picurl="../pic/fire7.gif";
+						break;
+					case 1:
+						//火警
+						picurl="../pic/fire8.gif";
+						break;
+				}
+				break;
+			case "FGR":
+				//消防箱
+				switch(i1){
+					case 0:
+						//正常
+						picurl="../pic/fire11.gif";
+						break;
+					case 1:
+						//火警
+						picurl="../pic/fire10.gif";
+						break;
+				}
+				break;
+			case "DOOR":
+				//防火门
+				switch(i1){
+					case 1:
+						//上位
+						picurl="../pic/doorC.gif";
+						break;
+					case 2:
+						//中位
+						picurl="../pic/doorB.gif";
+						break;
+					case 3:
+						//下位
+						picurl="../pic/doorA.gif";
+						break;
+				}
+				break;
+			case "CAM":
+				//摄像机
+				switch(updown){
+					case 1:
+						picurl="../pic/camer2.ico";
+						break;
+					case 0:
+						picurl="../pic/camer1.ico";
+						break;
+				}
+				break;
+		}
+	}
+	//故障
+	if(state==2){
+		switch(typevalue){
+			case "TS":
+				//交通信号灯
+				picurl="../pic/errorpic/error-roadsig.png";
+				break;
+			case "LS":
+				//车道指示标志
+				switch(shape){
+					case 1:
+						picurl="../pic/errorpic/error-sig.png";
+						break;
+					default:
+						picurl="../pic/errorpic/error-sigC.png";
+						break;
+				}
+				break;
+			case "LIGHT":
+				//光强
+				picurl="../pic/errorpic/error-ld.png";
+				break;
+			case "LED":
+				//照明
+				picurl="../pic/errorpic/error-light.png";
+				break;
+			case "FAN":
+				//风机
+				switch(updown){
+					case 0:
+						//停止
+						picurl="../pic/errorpic/error-fan.png";
+						break;
+					case 1:
+						//正转						
+						picurl="../pic/errorpic/error-fan2.png";
+						break;	
+				}	
+				break;
+			case "COVI":
+				//COVI
+				picurl="../pic/errorpic/error-covi.png";
+				break;
+			case "FSFX":
+				//风速风向
+				picurl="../pic/errorpic/error-fsfx.png";
+				break;
+			case "FB":
+				//手报
+				picurl="../pic/errorpic/error-fire2.png";
+				break;
+			case "FGS":
+				//烟感
+				picurl="../pic/errorpic/error-fire4.png";
+				break;
+			case "FGW":
+				//温感
+				picurl="../pic/errorpic/error-fire7.png";
+				break;
+			case "FGR":
+				//消防箱
+				picurl="../pic/errorpic/error-fire11.png";
+				break;
+			case "DOOR":
+				//防火门
+				picurl="../pic/errorpic/error-doorA.png";
+				break;
+			case "CAM":
+				//摄像机
+				switch(updown){
+					case 0:
+						//停止
+						picurl="../pic/errorpic/error-camer1.png";
+						break;
+					case 1:
+						//正转
+						picurl="../pic/errorpic/error-camer2.png";
+						break;	
+				}	
+				break;
+		}
+	}
+	return picurl;
+}
+
+//返回设备信息
+function returnPicinfo(spantype,title,typevalue,state,shape,updown,i1,i2,n1,n2){
+	var picinfo="";
+	var state=parseInt(state);
+	var shape=parseInt(shape);
+	var updown=parseInt(updown);
+	var i1=parseInt(i1);
+	var i2=parseInt(i2);
+	var str;
+	if(spantype==1){
+		str="&#13;";
+	}else{
+		str="\n";
+	}
+	//正常或采集器异常
+	if(state==1||state==3){
+		switch(typevalue){
+			case "TS":
+				//交通信号灯
+				switch(i1){
+					case 0:
+						//关闭
+						picinfo="关闭";
+						break;
+					case 1:
+						//红灯
+						picinfo="红灯";
+						break;
+					case 2:
+						//黄灯
+						picinfo="黄灯";
+						break;
+					case 4:
+						//绿灯
+						picinfo="绿灯";
+						break;
+					case 8:
+						//左转
+						picinfo="左转";
+						break;
+				}
+				break;
+			case "LS":
+				//车道指示标志
+				switch(shape){
+					case 1:
+						switch(i1){
+							case 0:
+								//禁止
+								picinfo="禁止";
+								break;
+							case 1:
+								//通行
+								picinfo="通行";
+								break;
+						}
+						break;
+					case 2:
+						switch(i1){
+							case 0:
+								//双向禁止
+								picinfo="双向禁止";
+								break;
+							case 1:
+								//正向通行
+								picinfo="正向通行";
+								break;
+						}
+						break;
+					case 3:
+						switch(i1){
+							case 0:
+								//双向禁止
+								picinfo="双向禁止";
+								break;
+							case 1:
+								//正向通行
+								picinfo="正向通行";
+								break;
+							case 3:
+								//反向通行
+								picinfo="反向通行";
+								break;
+						}
+						break;
+					//4态和5态一样
+					case 4:
+						switch(i1){
+							case 0:
+								//双向禁止
+								picinfo="双向禁止";
+								break;
+							case 1:
+								//正向通行
+								picinfo="正向通行";
+								break;
+							case 3:
+								//反向通行
+								picinfo="反向通行";
+								break;
+							case 5:
+								//左转通行
+								picinfo="左转通行";
+								break;
+						}
+						break;
+					case 5:
+						switch(i1){
+							case 0:
+								//双向禁止
+								picinfo="双向禁止";
+								break;
+							case 1:
+								//正向通行
+								picinfo="正向通行";
+								break;
+							case 3:
+								//反向通行
+								picinfo="反向通行";
+								break;
+							case 5:
+								//左转通行
+								picinfo="左转通行";
+								break;
+						}
+						break;
+				}			
+				break;
+			case "LIGHT":
+				//光强
+				picinfo="洞内值:"+n1+" (lux)"+str;
+				picinfo=picinfo+"洞外值:"+n2+" (cd/m2)";	
+				break;
+			case "LED":
+				//照明
+				switch(i1){
+					case 0:
+						//关
+						picinfo="关";						
+						break;
+					case 1:
+						//开
+						picinfo="开";						
+						break;
+				}				
+				break;
+			case "FAN":
+				//风机
+				switch(i1){
+					case 0:
+						//停止	
+						switch(i2){
+							case 0:
+								picinfo="停止";								
+								break;
+							case 1:
+								picinfo="停止(异常)";							
+								break;
+						}					
+						break;
+					case 1:
+						//正转
+						switch(i2){
+							case 0:
+								picinfo="正转";
+								break;
+							case 1:
+								picinfo="正转(异常)";
+								break;
+						}						
+						break;
+					case 2:
+						//反转
+						switch(i2){
+							case 0:
+								picinfo="反转";								
+								break;
+							case 1:
+								picinfo="反转(异常)";
+								break;
+						}						
+						break;
+				}				
+				break;
+			case "COVI":
+				//COVI
+				picinfo="CO:"+n1+" (ppm)"+str;
+				picinfo=picinfo+"VI:"+n2+" (km1)";				
+				break;
+			case "FSFX":
+				//风速风向
+				picinfo="风速:"+n1+" (m/s)"+str;				
+				switch(i1){
+					case 0:					
+						picinfo=picinfo+"风向：顺车行方向";
+						break;
+					case 1:
+						//火警
+						picinfo=picinfo+"风向：逆车行方向";
+						break;
+				}				
+				break;
+			case "FB":
+				//手报
+				switch(i1){
+					case 0:
+						//正常
+						picinfo="正常";
+						break;
+					case 1:
+						//火警
+						picinfo="火警";
+						break;
+				}
+				break;
+			case "FGS":
+				//烟感
+				switch(i1){
+					case 0:
+						//正常
+						picinfo="正常";
+						break;
+					case 1:
+						//火警
+						picinfo="火警";
+						break;
+				}				
+				break;
+			case "FGW":
+				//温感
+				switch(i1){
+					case 0:
+						//正常
+						picinfo="正常";
+						break;
+					case 1:
+						//火警
+						picinfo="火警";
+						break;
+				}				
+				break;
+			case "FGR":
+				//消防箱
+				switch(i1){
+					case 0:
+						//正常
+						picinfo="正常";
+						break;
+					case 1:
+						//火警
+						picinfo="火警";
+						break;
+				}				
+				break;
+			case "DOOR":
+				//防火门
+				switch(i1){
+					case 1:
+						//上位
+						picinfo="上位";
+						break;
+					case 2:
+						//中位
+						picinfo="中位";
+						break;
+					case 3:
+						//下位
+						picinfo="下位";
+						break;
+				}				
+				break;
+			case "CAM":
+				//摄像机
+				picinfo="正常";				
+				break;
+		}
+	}
+	//故障
+	if(state==2){
+		picinfo="故障";
+	}
+	return title+str+picinfo;
+}
+
+//返回状态名称
+function returnStateName(num){
+	var statename="";
+	num=parseInt(num);
+	switch(num){
+		case 1:
+			statename="正常";
+			break;
+		case 2:
+			statename="故障";
+			break;
+		case 3:
+			statename="采集器异常";
+			break;
+	}
+	return statename;
+}
+
+//返回状态对应图片
+function returnStatePic(name,num){
+	var picurl="";
+	num=parseInt(num);
+	switch(name){
+		case "covi":
+			switch(num){
+				case 1:
+					picurl="../pic/covi.png";
+					break;
+				case 2:
+					picurl="../pic/errorpic/error-covi.png";
+					break;
+				case 3:
+					picurl="../pic/covi.png";
+					break;
+			}
+			break;
+		case "fsfx":
+			switch(num){
+				case 1:
+					picurl="../pic/fsfx.png";
+					break;
+				case 2:
+					picurl="../pic/errorpic/error-fsfx.png";
+					break;
+				case 3:
+					picurl="../pic/fsfx.png";
+					break;
+			}
+			break;
+		case "light":
+			switch(num){
+				case 1:
+					picurl="../pic/ld.png";
+					break;
+				case 2:
+					picurl="../pic/errorpic/error-ld.png";
+					break;
+				case 3:
+					picurl="../pic/ld.png";
+					break;
+			}
+			break;
+	}
+	return picurl;
+}
+
+//返回情报板类型名称
+function showCmsClassName(num){
+	var classname="";
+	num=parseInt(num);
+	if(num>8&&num<14){
+		switch(num){
+			case 9:
+				classname="T型情报板";
+				break;
+			case 10:
+				classname="小型情报板";
+				break;
+			case 11:
+				classname="F型情报板";
+				break;
+			case 12:
+				classname="LED情报板";
+				break;
+			case 13:
+				classname="门架式情报板";
+				break;
+			default:
+				classname="T型情报板";
+		}
+	}
+	return classname;
+}
+
+//返回情报板宽高
+function getCmsClassWH(num){
+	//var classname="";
+	num=parseInt(num);
+	switch(num){
+		case 9://T型情报板
+			cms_showwidth="96px";
+			cms_showheight="96px";
+			break;
+		case 10://小型情报板
+			//cms_showwidth="";
+			//cms_showheight="";
+			break;
+		case 11://F型情报板
+			cms_showwidth="128px";
+			cms_showheight="64px";
+			break;
+		case 12://LED情报板
+			cms_showwidth="160px";
+			cms_showheight="120px";
+			break;
+		case 13://门架式情报板
+			cms_showwidth="400px";
+			cms_showheight="40px";
+			break;
+		//default:
+			//cms_showwidth="96px";
+			//cms_showheight="96px";
+	}
+	//return classname;
+}
+
+//返回情报板字体大小
+function getCmsFontSize(num){
+	var str="";
+	num=parseInt(num);
+	switch(num){
+		case 0:
+			str="48px";
+			break;
+		case 1:
+			str="32px";
+			break;
+		case 2:
+			str="24px";
+			break;
+		case 3:
+			str="16px";
+			break;
+		case 4:
+			str="20px";
+			break;
+		case 5:
+			str="40px";
+			break;
+		default:
+			str="48px";
+	}
+	return str
+}
+
+//返回情报板字体
+function getCmsFontFamily(num){
+	var str="";
+	num=parseInt(num);
+	switch(num){
+		case 0:
+			str="宋体";
+			break;
+		case 1:
+			str="楷体";
+			break;
+		case 2:
+			str="黑体";
+			break;
+		default:
+			str="宋体";
+	}
+	return str
+}
+
+//返回情报板字体颜色
+function getCmsFontColor(num){
+	var str="";
+	num=parseInt(num);
+	switch(num){
+		case 0:
+			str="red";
+			break;
+		case 1:
+			str="green";
+			break;
+		case 2:
+			str="yellow";
+			break;
+		default:
+			str="red";
+	}
+	return str;
+}
+
+//情报板切换停留时间
+function cmsSwitch(tnum){
+	cmsSwitchAction="";
+	
+	var cmstext=ary_cmstext.split("*");
+	var cmsstyle=ary_cmsstyle.split("*");
+	
+	console.log(cmstext[tnum]);
+	
+	var cmstextstr=ReplaceSeperator(cmstext[tnum]);
+	cmstextstr=cmstextstr.replace(/[,]/g,'<br />');
+	var cmsarr=cmsstyle[tnum].split(",");
+	
+	$("#div_seeCMS").html("<div id=\"div_seeCMS_content\">"+ cmstextstr +"</div>");
+	
+	$("#div_seeCMS_content").css("fontSize",getCmsFontSize(cmsarr[3]));
+	$("#div_seeCMS_content").css("lineHeight",getCmsFontSize(cmsarr[3]));
+	$("#div_seeCMS_content").css("fontFamily",getCmsFontFamily(cmsarr[4]));
+	$("#div_seeCMS_content").css("color",getCmsFontColor(cmsarr[5]));
+	$("#div_seeCMS_content").css("marginLeft",cmsarr[7]+"px");
+	$("#div_seeCMS_content").css("marginTop",cmsarr[8]+"px");
+	
+	//clearTimeout(paneltv);panletv=setTimeout(function(){
+	cmsSwitchAction=setTimeout(function(){
+			clearTimeout(cmsSwitchAction);
+			tnum++;
+			if(tnum>=cmstext.length){
+				tnum=0;
+			}
+			cmsSwitch(tnum);
+		},cmsarr[2]*1000
+	)
+}
+
+/*单IP摄像机start*/
+//单IP摄像机
+function getCameraHtml(sObjdownid,sObjid,sObjpanelid,ipaddr,ipport){
+	shtml="";
+	
+	shtml+="<div class=\"camera-win\">";
+	shtml+="<div id=\""+ sObjdownid +"\" class=\"tv-download\" style=\"display:none\" ><a class=\"layui-btn layui-btn-danger\" href=\"download\\webplugin.exe\" download=\"download\\webplugin.exe\">点击下载控件!</a></div>";	
+	
+	if(ietype==0){
+		shtml += "<object  id='" + sObjid + "' class=\"tv-obj\" VideoWindTextColor='9c9c9c' VideoWindBarColor='414141' classid=\"CLSID:ED1EDBF5-CCC7-4171-A559-6578BD6D3002\" data='data:application/x-oleobject;' width='635px' height='300px' hspace='0' vspace='0' align='middle' style=\"display:block\" ></object>";
+	}else{
+		shtml += "<object id='" + sObjid + "' class=\"tv-obj\" type='application/media-plugin-version-3.0.0.2' VideoWindTextColor='9c9c9c' VideoWindBarColor='414141' name='ocxdh' width='635px' height='300px' hspace='0' vspace='0' align='middle' style='display:block'/></object>";
+	}
+	
+	shtml+="<div id=\""+ sObjpanelid +"\" class=\"tv-panle\" style=\"display:block\"></div>";//遮罩
+	
+	shtml+="<div id=\"tv_control_panel\">";
+	shtml+="<div id=\"tv_control\">";
+	
+	//八方向键
+	var upnum="Up";
+	var downnum="Down";
+	var leftnum="Left";
+	var rightnum="Right";
+	
+	var leftupnum="LeftUp";
+	var leftdownnum="LeftDown";
+	var rightupnum="RightUp";
+	var rightdownnum="RightDown";
+	
+	//镜头变化
+	var zoomupnum="ZoomWide";
+	var zoomdownnum="ZoomTele";
+	
+	var focusupnnum="FocusFar";
+	var focusdownnum="FocusNear";
+	
+	var irisupnum="IrisSmall";
+	var irisdownnum="IrisLarge";
+	
+	//$(this).attr('data-direction')
+	shtml+="<div id=\"tv_upleft\" class=\"tv-control-button\" onMouseOut=\"$(this).css('background','url(../img/yt1.jpg)');\" onMouseOver=\"$(this).css('background','url(../img/yt11.jpg)');\" onMouseDown=\"PTZ_Start('"+ leftupnum +"','"+ ipaddr +"')\" onMouseUp=\"PTZ_Stop('"+ leftupnum +"','"+ ipaddr +"')\"></div>";
+	shtml+="<div id=\"tv_up\" class=\"tv-control-button\" onMouseOut=\"$(this).css('background','url(../img/yt2.jpg)');\" onMouseOver=\"$(this).css('background','url(../img/yt21.jpg)');\" onMouseDown=\"PTZ_Start('"+ upnum +"','"+ ipaddr +"')\" onMouseUp=\"PTZ_Stop('"+ upnum +"','"+ ipaddr +"')\"></div>";
+	shtml+="<div id=\"tv_upright\" class=\"tv-control-button\" onMouseOut=\"$(this).css('background','url(../img/yt3.jpg)');\" onMouseOver=\"$(this).css('background','url(../img/yt31.jpg)');\" onMouseDown=\"PTZ_Start('"+ rightupnum +"','"+ ipaddr +"')\" onMouseUp=\"PTZ_Stop('"+ rightupnum +"','"+ ipaddr +"')\"></div>";
+	shtml+="<div id=\"tv_left\" class=\"tv-control-button\" onMouseOut=\"$(this).css('background','url(../img/yt4.jpg)');\" onMouseOver=\"$(this).css('background','url(../img/yt41.jpg)');\" onMouseDown=\"PTZ_Start('"+ leftnum +"','"+ ipaddr +"')\" onMouseUp=\"PTZ_Stop('"+ leftnum +"','"+ ipaddr +"')\"></div>";
+	shtml+="<div id=\"tv_center\" class=\"tv-control-button\"></div>";
+	shtml+="<div id=\"tv_right\" class=\"tv-control-button\" onMouseOut=\"$(this).css('background','url(../img/yt6.jpg)');\" onMouseOver=\"$(this).css('background','url(../img/yt61.jpg)');\" onMouseDown=\"PTZ_Start('"+ rightnum +"','"+ ipaddr +"')\" onMouseUp=\"PTZ_Stop('"+ rightnum +"','"+ ipaddr +"')\"></div>";
+	shtml+="<div id=\"tv_downleft\" class=\"tv-control-button\" onMouseOut=\"$(this).css('background','url(../img/yt7.jpg)');\" onMouseOver=\"$(this).css('background','url(../img/yt71.jpg)');\" onMouseDown=\"PTZ_Start('"+ leftdownnum +"','"+ ipaddr +"')\" onMouseUp=\"PTZ_Stop('"+ leftdownnum +"','"+ ipaddr +"')\"></div>";
+	shtml+="<div id=\"tv_down\" class=\"tv-control-button\" onMouseOut=\"$(this).css('background','url(../img/yt8.jpg)');\" onMouseOver=\"$(this).css('background','url(../img/yt81.jpg)');\" onMouseDown=\"PTZ_Start('"+ downnum +"','"+ ipaddr +"')\" onMouseUp=\"PTZ_Stop('"+ downnum +"','"+ ipaddr +"')\"></div>";
+	shtml+="<div id=\"tv_downright\" class=\"tv-control-button\" onMouseOut=\"$(this).css('background','url(../img/yt9.jpg)');\" onMouseOver=\"$(this).css('background','url(../img/yt91.jpg)');\" onMouseDown=\"PTZ_Start('"+ rightdownnum +"','"+ ipaddr +"')\" onMouseUp=\"PTZ_Stop('"+ rightdownnum +"','"+ ipaddr +"')\"></div>";
+	shtml+="</div>";
+	shtml+="<div id=\"tv_vice_control\">";
+	shtml+="<div class=\"tv-vice-control\">";
+	shtml+="<div id=\"tv_zoomup\" class=\"tv-control-button tv-zoomup\" onMouseOut=\"$(this).css('background','url(../img/yt11.gif)');\" onMouseOver=\"$(this).css('background','url(../img/yt21.gif)');\" onMouseDown=\"PTZ_Start('"+ zoomupnum +"','"+ ipaddr +"')\" onMouseUp=\"PTZ_Stop('"+ zoomupnum +"','"+ ipaddr +"')\"></div>";
+	shtml+="<div>变倍</div>";
+	shtml+="<div id=\"tv_zoomdown\" class=\"tv-control-button tv-zoomdown\" onMouseOut=\"$(this).css('background','url(../img/yt12.gif)');\" onMouseOver=\"$(this).css('background','url(../img/yt22.gif)');\" onMouseDown=\"PTZ_Start('"+ zoomdownnum +"','"+ ipaddr +"')\" onMouseUp=\"PTZ_Stop('"+ zoomdownnum +"','"+ipaddr+"')\"></div>";
+	shtml+="</div>";
+	shtml+="<div class=\"tv-vice-control\">";
+	shtml+="<div id=\"tv_focusingup\" class=\"tv-control-button tv-zoomup\" onMouseOut=\"$(this).css('background','url(../img/yt11.gif)');\" onMouseOver=\"$(this).css('background','url(../img/yt21.gif)');\" onMouseDown=\"PTZ_Start('"+ focusupnnum +"','"+ ipaddr +"')\" onMouseUp=\"PTZ_Stop('"+ focusupnnum +"','"+ ipaddr +"')\"></div>";
+	shtml+="<div>聚焦</div>";
+	shtml+="<div id=\"tv_focusingdown\" class=\"tv-control-button tv-zoomdown\" onMouseOut=\"$(this).css('background','url(../img/yt12.gif)');\" onMouseOver=\"$(this).css('background','url(../img/yt22.gif)');\" onMouseDown=\"PTZ_Start('"+ focusdownnum +"','"+ ipaddr +"')\" onMouseUp=\"PTZ_Stop('"+ focusdownnum +"','"+ ipaddr +"')\"></div>";
+	shtml+="</div>";
+	shtml+="<div class=\"tv-vice-control\">";
+	shtml+="<div id=\"tv_apertureup\" class=\"tv-control-button tv-zoomup\" onMouseOut=\"$(this).css('background','url(../img/yt11.gif)');\" onMouseOver=\"$(this).css('background','url(../img/yt21.gif)');\" onMouseDown=\"PTZ_Start('"+ irisupnum +"','"+ ipaddr +"')\" onMouseUp=\"PTZ_Stop('"+ irisupnum +"','"+ ipaddr +"')\"></div>";
+	shtml+="<div>光圈</div>";
+	shtml+="<div id=\"tv_aperturedown\" class=\"tv-control-button tv-zoomdown\" onMouseOut=\"$(this).css('background','url(../img/yt12.gif)');\" onMouseOver=\"$(this).css('background','url(../img/yt22.gif)');\" onMouseDown=\"PTZ_Start('"+ irisdownnum +"','"+ ipaddr +"')\" onMouseUp=\"PTZ_Stop('"+ irisdownnum +"','"+ ipaddr +"')\"></div>";
+	shtml+="</div>";
+	shtml+="</div>";
+	shtml+="<div id=\"tv_vice_control_other\">";
+	//shtml+="<div class=\"layui-btn layui-btn-primary tv-layui-style\" onclick=\"PTZ_FullScreen();\"><i title=\"全屏\" class=\"glyphicon glyphicon-fullscreen\"></i></div>"
+	shtml+="</div>";
+	shtml+="</div>";
+	shtml+="</div>";
+	
+	return shtml;
+}
+
+
+function setCameraobj(sid,title,ipaddr,ipport,ipchannel){//点击摄像机事件
+	var paneltv;                         //计时
+	var sObjdownid = "ocxdown" + sid;    //下载
+	var sObjid = "ocx" + sid++;          //影片
+	var sObjpanelid="ocxpanle" + sid++;  //遮罩
+
+	if (!ipchannel||ipchannel=="") {
+		ipchannel=80;
+	}
+
+	sthml="";
+	shtml=getCameraHtml(sObjdownid,sObjid,sObjpanelid,ipaddr,ipport);
+		
+	layer.open({
+		type: 1 //此处以iframe举例
+		,title: "<i class=\"glyphicon glyphicon-facetime-video\"></i>&nbsp;&nbsp;"+title
+		,area: ['635px', '462px']
+		,shade: 0
+		,maxmin: false
+		,offset: [Ht+10]
+		,resize:false
+		,id: 'LAY_CAM' //防止重复弹出
+		,content: shtml//s2
+		//,btn: ['关闭'] //只是为了演示
+		,cancel: function(index, layero){
+			clearTimeout(paneltv);
+			document.getElementById(sObjid).style.display="none";//隐藏
+			$("#"+ sObjid +"").html("");
+			$("#ptz_objid").html("");
+		    layer.close(index);
+		  	
+			try{
+				if(bLogin == 1){
+					clearTimeout(objpanel);
+					
+					Logoutclick(ipaddr);
+					var ocx =document.getElementById(sObjid);//.object，不支持JQ					
+					ocx.DisConnectRealVideo(ipchannel);
+					ocx.LogoutDevice();			
+					
+					bLogin=0;
+				}
+			}catch(e){
+			}
+									  
+		}
+		
+		,zIndex: layer.zIndex //重点1
+		,success: function(layero){
+		    layer.setTop(layero); //重点2
+			
+		    $("#ptz_objid").html(sObjid);//objid
+			document.getElementById(sObjid).style.top="-500px";			
+			
+			panletv=setTimeout(function(){			  
+		       if(ietype==0)
+				{
+					try{
+						var obj=new ActiveXObject("WebActiveX.Plugin.3.0.0.2");				
+					}
+					catch(e){
+						document.getElementById(sObjpanelid).style.display="none";//显示,加载内存只能用JS
+						document.getElementById(sObjdownid).style.display="block";//显示
+						document.getElementById(sObjid).style.display="none";//隐藏
+					}
+					
+			   }else{
+					try{
+						navigator.plugins.refresh(false);
+						obj = navigator.mimeTypes["application/media-plugin-version-3.0.0.2"];
+						if (!(obj && obj.enabledPlugin))
+						{					
+							document.getElementById(sObjpanelid).style.display="none";//显示,加载内存只能用JS
+							document.getElementById(sObjdownid).style.display="block";//显示
+							document.getElementById(sObjid).style.display="none";//隐藏
+						}
+					}
+					catch(e){
+					}					
+			   }
+			   
+			   var ocx =document.getElementById(sObjid);//.object，不支持JQ		
+			   ocx.LoginDeviceEx(ipaddr,80,"admin","admin", 4);//其实无返回 parseInt(sPort)
+			   ocx.SetModuleMode(3);
+			   crv_value=ocx.ConnectRealVideo(0 ,2);//parseInt(ipchannel)
+			   			   
+			   if(crv_value!=0){
+				   Login1click(ipaddr);
+				   
+				   bLogin = 1;//开启正常时的关闭
+				   
+				   //正常了才显示出来
+					var objpanel=setTimeout(function(){
+						document.getElementById(sObjid).style.top="0";
+					},500)
+				   
+					
+			   }else{
+				   document.getElementById(sObjpanelid).style.display="block";//显示
+				   document.getElementById(sObjdownid).style.display="none";//隐藏
+				   document.getElementById(sObjid).style.display="none";//隐藏
+				
+				   sendScreenMSG("连接失败!");
+			   }
+			  
+		   },300)
+			
+		}
+	});
+}
+
+
+/*单IP摄像机 end*/
+
+/*16路摄像机无云台控制 start*/
+//16路摄像机
+function getCameraHtmlEx(sObjdownid,sObjid,sObjpanelid,ipaddr,ipport){
+	shtml="";
+	
+	shtml+="<div class=\"camera-win\">";
+	shtml+="<div id=\""+ sObjdownid +"\" class=\"tv-download\" style=\"display:none\" ><a class=\"layui-btn layui-btn-danger\" href=\"download\\webpluginmoni.exe\" download=\"download\\webpluginmoni.exe\">点击下载控件!</a></div>";
+	
+	if(ietype==0){
+		shtml+="<object id='" + sObjid + "' class=\"tv-obj\" classid='CLSID:7F9063B6-E081-49DB-9FEC-D72422F2727F' data='data:application/x-oleobject;' VideoWindTextColor='9c9c9c' VideoWindBarColor='414141' name='ocxdh' width='635px' height='300px' hspace='0' vspace='0' align='middle' style=\"display:block\"/></object>";
+	}else{
+		shtml+="<object id='" + sObjid + "' class=\"tv-obj\" type='application/media-plugin-version-3.1.0.2' VideoWindTextColor='9c9c9c' VideoWindBarColor='414141' name='ocxdh' width='635px' height='300px' hspace='0' vspace='0' align='middle' style='display:block;position:absolute;top: 0px;z-index:50;'/><param name=\"allowFullScreen\" value=\"true\"><param name=\"wmode\" value=\"opaque\"></object>";
+	}
+	
+	shtml+="<div id=\""+ sObjpanelid +"\" class=\"tv-panle\" style=\"display:block\"></div>";
+	
+	shtml+="</div>";
+	
+	return shtml;
+}
+
+//点击16路摄像机事件
+function setCameraobjEx(sid,title,ipaddr,ipport,ipchannel){	
+	var paneltv;                         //计时
+	var sObjdownid = "ocxdown" + sid;    //下载
+	var sObjid = "ocx" + sid++;          //影片
+	var sObjpanelid="ocxpanle" + sid++;  //遮罩
+	
+	if (!ipchannel||ipchannel=="") {
+		ipchannel=37777;
+	}
+
+	sthml="";
+	shtml=getCameraHtmlEx(sObjdownid,sObjid,sObjpanelid,ipaddr,ipport);
+	//alert(shtml)
+		
+	layer.open({
+		type: 1 //此处以iframe举例
+		,title: "<i class=\"glyphicon glyphicon-facetime-video\"></i>&nbsp;&nbsp;"+title
+		,area: ['635px', '342px']
+		,shade: 0
+		,maxmin: false
+		,offset: [Ht+10]
+		,resize:false
+		,id: 'LAY_CAM' //防止重复弹出
+		,content: shtml//s2
+		//,btn: ['关闭'] //只是为了演示
+		,cancel: function(index, layero){
+			clearTimeout(paneltv);
+			document.getElementById(sObjid).style.display="none";//隐藏
+			$("#"+ sObjid +"").html("");
+			$("#ptz_objid").html("");
+		    layer.close(index);
+		  	
+			try{
+				if(bLogin == 1){
+					clearTimeout(objpanel);
+					
+					LogoutclickEx(ipaddr);
+					var ocx =document.getElementById(sObjid);//.object，不支持JQ					
+					ocx.DisConnectRealVideo(ipchannel);
+					ocx.LogoutDevice();			
+					
+					bLogin=0;
+				}
+			}catch(e){
+			}									  
+		}		
+		,zIndex: layer.zIndex //重点1
+		,success: function(layero){
+		    layer.setTop(layero); //重点2
+		    $("#ptz_objid").html(sObjid);//objid
+			document.getElementById(sObjid).style.top="-500px";
+			
+			panletv=setTimeout(function(){
+			   
+		       if(ietype==0)
+				{
+					try{
+						var obj=new ActiveXObject("WebActiveEXE.Plugin.1");					
+					}
+					catch(e){
+						document.getElementById(sObjpanelid).style.display="none";//显示,加载内存只能用JS
+						document.getElementById(sObjdownid).style.display="block";//显示
+						document.getElementById(sObjid).style.display="none";//隐藏
+					}
+					
+			   }else{
+					try{
+						navigator.plugins.refresh(false);
+						obj = navigator.mimeTypes["application/media-plugin-version-3.1.0.2"];
+						if (!(obj && obj.enabledPlugin))
+						{					
+							document.getElementById(sObjpanelid).style.display="none";//显示,加载内存只能用JS
+							document.getElementById(sObjdownid).style.display="block";//显示
+							document.getElementById(sObjid).style.display="none";//隐藏
+						}
+					}
+					catch(e){
+					}					
+			   }
+			   		
+			   var ocx =document.getElementById(sObjid);//.object，不支持JQ		
+			   ocx.LoginDeviceEx(ipaddr,37777,"admin","admin", 0);
+			   ocx.SetModuleMode(3);
+			   ocx.SetWinBindedChannel(1, 0, 0, 0);
+			   crv_value=ocx.ConnectRealVideo(parseInt(ipchannel) ,1);
+			   			   
+			   if(crv_value!=0){
+				   Login1clickEx(ipaddr);
+				   bLogin = 1;
+				   
+				   //正常了才显示出来
+					var objpanel=setTimeout(function(){
+						document.getElementById(sObjid).style.top="0";
+					},500)
+					
+			   }else{
+					document.getElementById(sObjpanelid).style.display="block";//显示
+				    document.getElementById(sObjdownid).style.display="none";//隐藏
+				    document.getElementById(sObjid).style.display="none";//隐藏
+				
+				    sendScreenMSG("连接失败!");
+			   }
+			  
+		   },300)
+			
+		}
+	});
+}
+/*16路摄像机无云台控制end*/
+
+/*单IP摄像机登录 start*/
+function Login1click(sip){	//登录第一步
+	try{
+		//alert(sip)
+		$.ajax( {  
+			url: '/json/rpc.asp?ip=' + sip,// 跳转到 action  
+			data: JSON.stringify({"method":"global.login","params":{"userName":"admin","password":"","clientType":"Web3.0"},"id":10000}),  
+			type:'post',  
+			contentType: "application/x-www-form-urlencoded",
+			cache:false,
+			//async : false, //默认为true 异步    
+			dataType:'json',  //json
+			success:function(data, textStatus) {  
+				if (data) {
+					//alert(data.error.code + "\n" + textStatus); 
+					var a = data.error.code;
+					if (a == 401) {
+						var md5 = CalcMd5(data.params.random,data.params.realm,"admin","admin");
+						var ptz_id = 0;
+						var i = ar_Camera.push(new Array(sip,data.session,md5,ptz_id));
+						Login2click(sip,data.session,md5);
+					}	  
+				}
+			},  
+			error : function(XMLHttpRequest, textStatus, errorThrown) {
+				  //alert("异常！\n" + textStatus);  
+			}
+			
+		});
+	}catch(e){
+		sendScreenMSG("连接失败1!");
+	}
+}
+
+function Login2click(sip,sessionval,md5){  //登录第二步
+	try{
+		var a = {"method":"global.login","session":parseInt(sessionval),"params":{"userName":"admin","password":md5,"clientType":"Web3.0"},"id":10000};
+		$.ajax( {  
+			url: '/json/rpc.asp?ip=' + sip + '&id=' + sessionval,// 跳转到 action    
+			data:JSON.stringify(a),
+			type:'post',  
+			contentType: "application/x-www-form-urlencoded",
+			cache:false,
+			//async : false, //默认为true 异步    
+			dataType:'json',  //json
+			success:function(data, textStatus) {  
+				if (data) {
+					if (data.result == true){
+						intervalProcess = setInterval("KeepAlive()", 30000);
+					}
+				}
+			},  
+			error : function(XMLHttpRequest, textStatus, errorThrown) {
+				  //alert("异常！\n" + textStatus);  
+			}
+		});
+	}catch(e){
+		sendScreenMSG("连接失败2!");
+	}
+}
+
+function Logoutclick(sip){		//注销
+	try{
+		var sessionval = '';
+		for (var i=0;i<ar_Camera.length;i++){
+			if (ar_Camera[i][0] == sip){
+				sessionval = ar_Camera[i][1];
+			}
+		}
+		
+		var a = {"method" : "global.logout","params" : null,"session":parseInt(sessionval),"id" : 10001};	
+		$.ajax( {  
+			url: '/json/rpc2.asp?ip=' + sip + '&id=' + sessionval,// 跳转到 action  
+			data:JSON.stringify(a),
+			type:'post',  
+			contentType: "application/x-www-form-urlencoded",
+			cache:false,
+			//async : false, //默认为true 异步    
+			dataType:'json',  //json
+			success:function(data, textStatus) {
+			 },  
+			error : function(XMLHttpRequest, textStatus, errorThrown) {
+			 }
+		});
+		clearInterval(intervalProcess);
+	}catch(e){
+	}
+}
+
+function KeepAlive(){ 		///------------------会话保持
+	var a = '';
+	for (var i=0;i<ar_Camera.length;i++){	
+		a = {"method":"global.keepAlive","params":{"timeout": 300},"session":parseInt(ar_Camera[i][1]),"id":ar_Camera[i][3]};	
+		$.ajax( {  
+		    url: '/json/rpc2.asp?ip=' + ar_Camera[i][0] + '&id=' + ar_Camera[i][1],// 跳转到 action  
+		    data:JSON.stringify(a),
+		    type:'post',  
+		    contentType: "application/x-www-form-urlencoded",
+		    cache:false,
+		    //async : false, //默认为true 异步    
+		    dataType:'json',  //json
+		    success:function(data, textStatus) {  
+		     },  
+		    error : function(XMLHttpRequest, textStatus, errorThrown) {
+		     }
+		});	
+		ar_Camera[i][3]++;
+	}
+}
+/*单IP摄像机登录 end*/
+
+/*16路摄像机登录注销 start*/
+function Login1clickEx(sip){	//登录第一步
+	try{
+		$.ajax( {  
+			url: '/json/rpcx1.asp?ip=' +sip,// 跳转到 action  
+			//data: JSON.stringify({"method":"global.login","params":{"userName":"admin","password":"","clientType":"Web3.0"},"id":10000}), 
+			data: JSON.stringify({"method":"global.login","params":{"userName":"admin","password":"","clientType":"Dahua3.0-Web3.0"},"id":1}),  
+			type:'post',  
+			contentType: "application/x-www-form-urlencoded",
+			cache:false,
+			//async : false, //默认为true 异步    
+			dataType:'json',  //json
+			success:function(data, textStatus) {  
+				if (data) {
+					//alert(data.error.code + "\n" + textStatus); 
+					var a = data.error.code;
+					if (a == 268632079) {						
+						var md5=CalcPassMd5("admin")//"6QNMIQGe";
+						var ptz_id = 5;
+						var i = ar_CameraEx.push(new Array(sip,data.session,md5,ptz_id));
+						
+						Login2clickEx(sip,data.session,md5);
+					}	        
+			  	}
+			 },  
+			error : function(XMLHttpRequest, textStatus, errorThrown) {
+				  //alert("异常！1\n" + textStatus);  
+			 }
+		});
+	}catch(e){
+		sendScreenMSG("连接失败11!");
+	}
+}
+
+function Login2clickEx(sip,sessionval,md5){  //登录第二步
+	try{
+		var a = {"method":"global.login","params":{"userName":"admin","password":md5,"clientType":"Dahua3.0-Web3.0","authorityType":"OldDigest"},"id":2,"session":sessionval};//parseInt()
+		$.ajax( {  
+			url: '/json/rpcx1.asp?ip=' + sip + '&id=' + sessionval,// 跳转到 action    可能得改为RPC2
+			data:JSON.stringify(a),
+			type:'post',  
+			contentType: "application/x-www-form-urlencoded",
+			cache:false,
+			//async : false, //默认为true 异步    
+			dataType:'json',  //json
+			success:function(data, textStatus) {  
+				if (data) {
+					if (data.result == true){
+						intervalProcessEx = setInterval("KeepAliveEx()", 30000);
+					}else{
+						//alert('Reg failt');
+					}
+			    }
+			 },  
+			error : function(XMLHttpRequest, textStatus, errorThrown) {
+				  //alert("异常2！\n" + textStatus);  
+			 }
+		});
+	}catch(e){
+		sendScreenMSG("连接失败12!");
+	}
+}
+
+function LogoutclickEx(sip){		//注销	
+	try{	
+		var sessionval = '';
+		for (var i=0;i<ar_CameraEx.length;i++){
+			if (ar_CameraEx[i][0] == sip){
+				sessionval = ar_CameraEx[i][1];
+			}
+		}
+	
+		var a = {"method" : "global.logout","params" : null,"session":sessionval,"id" : 11};	
+		$.ajax( {  
+			url: '/json/rpcx2.asp?ip=' + sip + '&id=' + sessionval,// 跳转到 action  
+			data:JSON.stringify(a),
+			type:'post',  
+			contentType: "application/x-www-form-urlencoded",
+			cache:false,
+			//async : false, //默认为true 异步    
+			dataType:'json',  //json
+			success:function(data, textStatus) { 
+			 },  
+			error : function(XMLHttpRequest, textStatus, errorThrown) {
+				 //alert("异常3！\n" + textStatus);  
+			 }
+		});
+		clearInterval(intervalProcessEx);
+	}catch(e){
+		//sendScreenMSG("连接失败!");
+	}
+}
+
+function KeepAliveEx(){ 		///------------------会话保持
+	var a = '';
+	for (var i=0;i<ar_CameraEx.length;i++){	
+		a = {"method":"global.keepAlive","params":{"timeout": 300},"session":parseInt(ar_CameraEx[i][1]),"id":ar_CameraEx[i][3]};	
+		$.ajax( {  
+		    url: '/json/rpcx3.asp?ip=' + ar_CameraEx[i][0] + '&id=' + ar_CameraEx[i][1],// 跳转到 action  
+		    data:JSON.stringify(a),
+		    type:'post',  
+		    contentType: "application/x-www-form-urlencoded",
+		    cache:false,
+		    //async : false, //默认为true 异步    
+		    dataType:'json',  //json
+		    success:function(data, textStatus) {  
+				//alert("keep");
+		     },  
+		    error : function(XMLHttpRequest, textStatus, errorThrown) {
+		     }
+		});	
+		ar_CameraEx[i][3]++;
+	}
+}
+/*16路摄像机登录注销 end*/
+
+/*云台控制 start*/
+function PTZ_Start(x,sip){		//PTZ启动
+	var c = 4;
+	//var b = parseInt($("#sessionID").val());	
+	var cid = -1;
+	for (var i=0;i<ar_Camera.length;i++){
+		if (ar_Camera[i][0] == sip){
+			var cid = i;
+		}
+	}	
+	if (cid == -1){
+
+		return;
+	}
+		
+	var a = {"method" : "ptz.start", "session":ar_Camera[cid][1],"params" : {"channel" : 0, "code" : x,"arg1" : c,"arg2" : c,"arg3" : 0},"id" : ar_Camera[cid][3]};	//parseInt(ipchannel)
+	$.ajax( {  
+	    url: '/json/rpc2.asp?ip=' + sip + '&id=' + ar_Camera[cid][1],// 跳转到 action  
+	    data:JSON.stringify(a),
+	    type:'post',  
+	    contentType: "application/x-www-form-urlencoded",
+	    cache:false,
+	    //async : false, //默认为true 异步    
+	    dataType:'json',  //json
+	    success:function(data, textStatus) {  
+	     },  
+	    error : function(XMLHttpRequest, textStatus, errorThrown) {
+	     }
+	});
+	ar_Camera[cid][3]++;
+}
+
+function PTZ_Stop(x,sip){		//PTZ停止
+	var c = 4;
+	//var b = parseInt($("#sessionID").val());	
+	var cid = -1;
+	for (var i=0;i<ar_Camera.length;i++){
+		if (ar_Camera[i][0] == sip){
+			var cid = i;
+		}
+	}	
+	if (cid == -1){
+		return;
+	}		
+	var a = {"method" : "ptz.stop", "session":ar_Camera[cid][1],"params" : {"channel" : 0, "code" : x,"arg1" : c,"arg2" : c,"arg3" : 0},"id" : ar_Camera[cid][3]};	//parseInt(ipchannel)
+	$.ajax( {  
+	    url: '/json/rpc2.asp?ip=' + sip + '&id=' + ar_Camera[cid][1],// 跳转到 action  
+	    data:JSON.stringify(a),
+	    type:'post',  
+	    contentType: "application/x-www-form-urlencoded",
+	    cache:false,
+	    //async : false, //默认为true 异步    
+	    dataType:'json',  //json
+	    success:function(data, textStatus) {  
+	     },  
+	    error : function(XMLHttpRequest, textStatus, errorThrown) {
+	     }
+	});
+	ar_Camera[cid][3]++;
+}
+/*云台控制 end*/
+
+//加密
+//单IP
+function CalcMd5(a,b,u,p){		
+  //var a = $("#random").val();
+	//var b = $("#realm").val();
+	var f = hex_md5(u + ":" + b + ":" + p);
+	var g = hex_md5(u + ":" + a + ":" + f);
+	return g;
+}
+//16路
+function CalcPassMd5(p){		
+	var c = DH_Superencipherment(p);
+	return c;
+}
+
+function mytoInt(b, a){
+	return parseInt(b, a || 10)
+}
+
+function DH_Superencipherment(c) {
+    for (var e = "", h = [], c = hex_md5(c), f = [], a = 0; a < 16 && a < c.length / 2; a++)
+        f[a] = mytoInt(c.slice(2 * a, 2 * a + 2),16);
+    for (a = 0; a <= 7; a++)
+        h[a] = (f[2 * a] + f[2 * a + 1]) % 62,
+        h[a] += h[a] >= 0 && h[a] <= 9 ? 48 : h[a] >= 10 && h[a] <= 35 ? 55 : 61,
+        e += String.fromCharCode(h[a]);
+    return e
+}
+
+//判断设备是否加载完成
+function estimatesInit(){
+	if(TSinit[0]==true){
+		loadflag=1;
+		for(var i=0;i<loadarr.length;i++){
+			if(loadarr[i][0]==1){
+				loadstrflag=0;
+				break;				
+			}else{
+				loadstrflag=1;
+			}
+		}
+		
+		if(loadstrflag==1){
+			percentnum=parseInt(percentnum)+4;			
+			loadInAction(percentnum);
+			
+			loadarr.push([1,1]);
+		}
+	}else{
+		loadflag=0;
+		return loadflag;
+	}
+	
+	if(LSinit[0]==true){
+		loadflag=1;
+		for(var i=0;i<loadarr.length;i++){
+			if(loadarr[i][0]==2){
+				loadstrflag=0;
+				break;				
+			}else{
+				loadstrflag=1;
+			}
+		}
+		
+		if(loadstrflag==1){
+			percentnum=parseInt(percentnum)+4;
+			loadInAction(percentnum);
+			loadarr.push([2,1]);
+		}
+	}else{
+		loadflag=0;
+		return loadflag;
+	}
+	
+	if(LIGHTinit[0]==true){
+		loadflag=1;
+		for(var i=0;i<loadarr.length;i++){
+			if(loadarr[i][0]==3){
+				loadstrflag=0;
+				break;				
+			}else{
+				loadstrflag=1;
+			}
+		}
+		
+		if(loadstrflag==1){
+			percentnum=parseInt(percentnum)+4;
+			loadInAction(percentnum);
+			loadarr.push([3,1]);
+		}
+	}else{
+		loadflag=0;
+		return loadflag;
+	}
+	
+	if(LEDinit[0]==true){
+		loadflag=1;
+		for(var i=0;i<loadarr.length;i++){
+			if(loadarr[i][0]==4){
+				loadstrflag=0;
+				break;				
+			}else{
+				loadstrflag=1;
+			}
+		}
+		
+		if(loadstrflag==1){
+			percentnum=parseInt(percentnum)+4;
+			loadInAction(percentnum);
+			loadarr.push([4,1]);
+		}
+	}else{
+		loadflag=0;
+		return loadflag;
+	}
+	
+	if(FANinit[0]==true){
+		loadflag=1;
+		for(var i=0;i<loadarr.length;i++){
+			if(loadarr[i][0]==5){
+				loadstrflag=0;
+				break;				
+			}else{
+				loadstrflag=1;
+			}
+		}
+		
+		if(loadstrflag==1){
+			percentnum=parseInt(percentnum)+4;
+			loadInAction(percentnum);
+			loadarr.push([5,1]);
+		}
+	}else{
+		loadflag=0;
+		return loadflag;
+	}
+	
+	if(COVIinit[0]==true){
+		loadflag=1;
+		for(var i=0;i<loadarr.length;i++){
+			if(loadarr[i][0]==6){
+				loadstrflag=0;
+				break;				
+			}else{
+				loadstrflag=1;
+			}
+		}
+		
+		if(loadstrflag==1){
+			percentnum=parseInt(percentnum)+4;
+			loadInAction(percentnum);
+			loadarr.push([6,1]);
+		}
+	}else{
+		loadflag=0;
+		return loadflag;
+	}
+	
+	if(FSFXinit[0]==true){
+		loadflag=1;
+		for(var i=0;i<loadarr.length;i++){
+			if(loadarr[i][0]==7){
+				loadstrflag=0;
+				break;				
+			}else{
+				loadstrflag=1;
+			}
+		}
+		
+		if(loadstrflag==1){
+			percentnum=parseInt(percentnum)+4;
+			loadInAction(percentnum);
+			loadarr.push([7,1]);
+		}
+	}else{
+		loadflag=0;
+		return loadflag;
+	}
+	
+	if(FBinit[0]==true){
+		loadflag=1;
+		for(var i=0;i<loadarr.length;i++){
+			if(loadarr[i][0]==8){
+				loadstrflag=0;
+				break;				
+			}else{
+				loadstrflag=1;
+			}
+		}
+		
+		if(loadstrflag==1){
+			percentnum=parseInt(percentnum)+4;
+			loadInAction(percentnum);
+			loadarr.push([8,1]);
+		}
+	}else{
+		loadflag=0;
+		return loadflag;
+	}
+	
+	if(FGSinit[0]==true){
+		loadflag=1;
+		for(var i=0;i<loadarr.length;i++){
+			if(loadarr[i][0]==9){
+				loadstrflag=0;
+				break;				
+			}else{
+				loadstrflag=1;
+			}
+		}
+		
+		if(loadstrflag==1){
+			percentnum=parseInt(percentnum)+4;
+			loadInAction(percentnum);
+			loadarr.push([9,1]);
+		}
+	}else{
+		loadflag=0;
+		return loadflag;
+	}
+	
+	if(FGWinit[0]==true){
+		loadflag=1;
+		for(var i=0;i<loadarr.length;i++){
+			if(loadarr[i][0]==10){
+				loadstrflag=0;
+				break;				
+			}else{
+				loadstrflag=1;
+			}
+		}
+		
+		if(loadstrflag==1){
+			percentnum=parseInt(percentnum)+4;
+			loadInAction(percentnum);
+			loadarr.push([10,1]);
+		}
+	}else{
+		loadflag=0;
+		return loadflag;
+	}
+	
+	if(FGRinit[0]==true){
+		loadflag=1;
+		for(var i=0;i<loadarr.length;i++){
+			if(loadarr[i][0]==11){
+				loadstrflag=0;
+				break;				
+			}else{
+				loadstrflag=1;
+			}
+		}
+		
+		if(loadstrflag==1){
+			percentnum=parseInt(percentnum)+4;
+			loadInAction(percentnum);
+			loadarr.push([11,1]);
+		}
+	}else{
+		loadflag=0;
+		return loadflag;
+	}
+	
+	if(DOORinit[0]==true){
+		loadflag=1;
+		for(var i=0;i<loadarr.length;i++){
+			if(loadarr[i][0]==12){
+				loadstrflag=0;
+				break;				
+			}else{
+				loadstrflag=1;
+			}
+		}
+		
+		if(loadstrflag==1){
+			percentnum=parseInt(percentnum)+4;
+			loadInAction(percentnum);
+			loadarr.push([12,1]);
+		}
+	}else{
+		loadflag=0;
+		return loadflag;
+	}
+	
+	if(CMSinit[0]==true){
+		loadflag=1;
+		for(var i=0;i<loadarr.length;i++){
+			if(loadarr[i][0]==13){
+				loadstrflag=0;
+				break;				
+			}else{
+				loadstrflag=1;
+			}
+		}
+		
+		if(loadstrflag==1){
+			percentnum=parseInt(percentnum)+4;
+			loadInAction(percentnum);
+			loadarr.push([13,1]);
+		}
+	}else{
+		loadflag=0;
+		return loadflag;
+	}
+	
+	if(CAMinit[0]==true){
+		loadflag=1;
+		for(var i=0;i<loadarr.length;i++){
+			if(loadarr[i][0]==14){
+				loadstrflag=0;
+				break;				
+			}else{
+				loadstrflag=1;
+			}
+		}
+		
+		if(loadstrflag==1){
+			percentnum=parseInt(percentnum)+4;
+			loadInAction(percentnum);
+			loadarr.push([14,1]);
+		}
+	}else{
+		loadflag=0;
+		return loadflag;
+	}
+	
+	if(DECinit[0]==true){
+		loadflag=1;
+		for(var i=0;i<loadarr.length;i++){
+			if(loadarr[i][0]==15){
+				loadstrflag=0;
+				break;				
+			}else{
+				loadstrflag=1;
+			}
+		}
+		
+		if(loadstrflag==1){
+			percentnum=parseInt(percentnum)+4;
+			loadInAction(percentnum);
+			loadarr.push([15,1]);
+		}
+	}else{
+		loadflag=0;
+		return loadflag;
+	}
+	
+	if(ETinit[0]==true){
+		loadflag=1;
+		for(var i=0;i<loadarr.length;i++){
+			if(loadarr[i][0]==16){
+				loadstrflag=0;
+				break;				
+			}else{
+				loadstrflag=1;
+			}
+		}
+		
+		if(loadstrflag==1){
+			percentnum=parseInt(percentnum)+4;
+			loadInAction(percentnum);
+			loadarr.push([16,1]);
+		}
+	}else{
+		loadflag=0;
+		return loadflag;
+	}
+	
+	if(VDinit[0]==true){
+		loadflag=1;
+		for(var i=0;i<loadarr.length;i++){
+			if(loadarr[i][0]==17){
+				loadstrflag=0;
+				break;				
+			}else{
+				loadstrflag=1;
+			}
+		}
+		
+		if(loadstrflag==1){
+			percentnum=parseInt(percentnum)+4;
+			loadInAction(percentnum);
+			loadarr.push([17,1]);
+		}
+	}else{
+		loadflag=0;
+		return loadflag;
+	}
+	
+	if(PUMPinit[0]==true){
+		loadflag=1;
+		for(var i=0;i<loadarr.length;i++){
+			if(loadarr[i][0]==18){
+				loadstrflag=0;
+				break;				
+			}else{
+				loadstrflag=1;
+			}
+		}
+		
+		if(loadstrflag==1){
+			percentnum=parseInt(percentnum)+4;
+			loadInAction(percentnum);
+			loadarr.push([18,1]);
+		}
+	}else{
+		loadflag=0;
+		return loadflag;
+	}
+	
+	if(WDinit[0]==true){
+		loadflag=1;
+		for(var i=0;i<loadarr.length;i++){
+			if(loadarr[i][0]==19){
+				loadstrflag=0;
+				break;				
+			}else{
+				loadstrflag=1;
+			}
+		}
+		
+		if(loadstrflag==1){
+			percentnum=parseInt(percentnum)+4;
+			loadInAction(percentnum);
+			loadarr.push([19,1]);
+		}
+	}else{
+		loadflag=0;
+		return loadflag;
+	}
+	
+	if(PLCinit[0]==true){
+		loadflag=1;
+		for(var i=0;i<loadarr.length;i++){
+			if(loadarr[i][0]==20){
+				loadstrflag=0;
+				break;				
+			}else{
+				loadstrflag=1;
+			}
+		}
+		
+		if(loadstrflag==1){
+			percentnum=parseInt(percentnum)+4;
+			loadInAction(percentnum);
+			loadarr.push([20,1]);
+		}
+	}else{
+		loadflag=0;
+		return loadflag;
+	}
+	
+	if(TUNNELinit[0]==true){
+		loadflag=1;
+		for(var i=0;i<loadarr.length;i++){
+			if(loadarr[i][0]==21){
+				loadstrflag=0;
+				break;				
+			}else{
+				loadstrflag=1;
+			}
+		}
+		
+		if(loadstrflag==1){
+			percentnum=parseInt(percentnum)+4;
+			loadInAction(percentnum);
+			loadarr.push([21,1]);
+		}
+	}else{
+		loadflag=0;
+		return loadflag;
+	}
+	
+	if(PLANinit[0]==true){
+		loadflag=1;
+		for(var i=0;i<loadarr.length;i++){
+			if(loadarr[i][0]==22){
+				loadstrflag=0;
+				break;				
+			}else{
+				loadstrflag=1;
+			}
+		}
+		
+		if(loadstrflag==1){
+			percentnum=parseInt(percentnum)+4;
+			loadInAction(percentnum);
+			loadarr.push([22,1]);
+		}
+	}else{
+		loadflag=0;
+		return loadflag;
+	}
+	
+	if(Fireinit[0]==true){
+		loadflag=1;
+		for(var i=0;i<loadarr.length;i++){
+			if(loadarr[i][0]==23){
+				loadstrflag=0;
+				break;				
+			}else{
+				loadstrflag=1;
+			}
+		}
+		
+		if(loadstrflag==1){
+			percentnum=parseInt(percentnum)+4;
+			loadInAction(percentnum);
+			loadarr.push([23,1]);
+		}
+	}else{
+		loadflag=0;
+		return loadflag;
+	}
+	
+	if(CMSTEXTinit[0]==true){
+		loadflag=1;
+		for(var i=0;i<loadarr.length;i++){
+			if(loadarr[i][0]==24){
+				loadstrflag=0;
+				break;				
+			}else{
+				loadstrflag=1;
+			}
+		}
+		
+		if(loadstrflag==1){
+			percentnum=parseInt(percentnum)+4;
+			loadInAction(percentnum);
+			loadarr.push([24,1]);
+		}
+	}else{
+		loadflag=0;
+		return loadflag;
+	}
+	
+	if(GSCMSinit[0]==true){
+		loadflag=1;
+		for(var i=0;i<loadarr.length;i++){
+			if(loadarr[i][0]==25){
+				loadstrflag=0;
+				break;				
+			}else{
+				loadstrflag=1;
+			}
+		}
+		
+		if(loadstrflag==1){
+			percentnum=parseInt(percentnum)+4;
+			loadInAction(percentnum);
+			loadarr.push([25,1]);
+		}
+	}else{
+		loadflag=0;
+		return loadflag;
+	}
+}
+
+//切上电视墙
+function setMonitorWall(){
+	LoginBigScreen1(cid);
+}
+//关闭电视墙
+function closeMonitorWall(cid){
+	
+}
