@@ -34,8 +34,9 @@ session_start();
     <link href="jspackage/backthemes/css/plugins/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
     <!-- 自定义 -->
     <link href="css/pagestyle.css?vs=112" rel="stylesheet">
+    <link href="css/tunnel.css"  rel="stylesheet">
     <!-- <link href="css/cmstunnel.css" rel="stylesheet"> -->
-
+    <link rel="stylesheet" href="jspackage/tree/css/zTreeStyle/zTreeStyle.css" type="text/css">
     <!---------- JS ---------->
     <!-- 默认加载 -->
     <script src="jspackage/jquery/jquery-1.10.2.min.js"></script>
@@ -308,6 +309,8 @@ session_start();
 <!-- 统计图表 -->
 <script src="jspackage/highcharts/highcharts.js"></script>
 <script src="jspackage/highcharts/modules/exporting.js"></script>
+
+<!--tree-->
 
 <!-- 自定义 -->
 <script src="js/inivar.js"></script>
@@ -1114,6 +1117,7 @@ session_start();
 <div class="ch"></div>
 <!-- logAdmin End -->
 
+
 <!-- controlLED Start -->
 <div id="controlLED_panel" class="dn" style="position:absolute;top:10px;">
     <div class="layui-form">
@@ -1366,25 +1370,42 @@ session_start();
 <div class="ch"></div>
 <!-- controlFAN End -->
 
+
+
 <!-- ptz_objid start -->
 <div id="ptz_objid" class="dn" style="position:absolute;top:10px;"></div>
 <div class="ch"></div>
 <!-- ptz_objid end-->
+<!--<script src="jspackage/tree/js/jquery-1.4.4.min.js"></script>-->
+<script src="jspackage/tree/js/jquery.ztree.all.min.js"></script>
 
 <div id="cms_one"  style="position:absolute;top:10px;margin: 10px 10px;">
     <div class="cms_three">
         <div id="devcms_show"></div>
+          <div class=\"layui-upload\">
         <?php
         for($i=0;$i<count($cms);$i++){ ?>
-            <?php echo "    <div class=\"layui-upload\">";  ?>
             <?php echo "    <button type=\"button\"  style='display:none'; class=\"layui-btn\" id=\"cmsuploadimg".  $cms[$i]["id"]."\"  >播放放送</button>  ";?>
             <?php echo "    <button type=\"button\"  style='display:none'; class=\"layui-btn\" id=\"1cmsuploadimg".  $cms[$i]["id"]."\"  >播放获取</button>  ";?>
-            <!--                --><?php //echo  "<blockquote  id=\"cmsuploadtext".  $cms[$i]["id"]."\"  class=\"layui-elem-quote layui-quote-nm\" style=\"margin-top: 10px;display:none;\">";?>
-            <!--                --><?php // echo "预览图： <div class=\"layui-upload-list\" id=\"cmsuploadpic".  $cms[$i]["id"]."\"></div>";?>
-            <!--                --><?php //echo "</blockquote>";?>
         <?php }?>
+              <button id="cms_getlight" type="button" class="layui-btn layui-btn-normal layui-btn-radius">获取亮度</button>
+              <button id="cms_setlight" type="button" class="layui-btn layui-btn-warm layui-btn-radius">设置亮度</button>
+              <div class="layui-input-inline">
+                  <input type="tel" name="phone" lay-verify="required|phone" autocomplete="off" class="layui-input" style="width: 80px; height: 26px;background: #b4a4b3">
+              </div>
+          </div>
+        <div id="cmsshowlist">
+            播放列表
+        </div>
+        <div id="trees" style="position: absolute">
+<!--            <div id="trees_test1" ></div>-->
+            <ul id="ztree1" class="ztree "  >
+            </ul>
+        </div>
+        <div id="dev_cms_run" style=""></div>
     </div>
 </div>
+
 </body>
 </html>
 

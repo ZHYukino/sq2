@@ -693,7 +693,7 @@ function fanRelationFormatter(value, row, index){
 var TableInit_lstsup = function() {
 	//获取隧道+temptunnel
 	var temptunnel=$("#default_place_select").val();
-	var devjsonlstsup=getCnvertJson(0,temptunnel);
+	var devjsonlstsup=getCnvertJson(1,temptunnel);
 	devjsonlstsup=$.parseJSON(devjsonlstsup); 
 	var oTableInit = new Object();
 	//初始化Table_light
@@ -721,25 +721,25 @@ var TableInit_lstsup = function() {
 			detailView : false, //是否显示父子表
 			showHeader : true, //列头
 			columns : [
-				{
-					field : 'ename',
-					title : '编号',
-					align : 'left',
-					width : '150'
-					,formatter:'lstsupIdFormatter'
-				},
+				// {
+				// 	field : 'ename',
+				// 	title : '编号',
+				// 	align : 'left',
+				// 	width : '150'
+				// 	,formatter:'lstsupIdFormatter'
+				// },
+                {
+                    field : 'cname',
+                    title : '名称',
+                    align : 'left',
+                    width : '240'
+                },
 				{
 					field : 'operationstr',
 					title : '操作',
 					align : 'left',
-					width : '150'
+					width : '240'
 					,formatter:'lstsupOperationFormatter'
-				},
-				{
-					field : 'cname',
-					title : '名称',
-					align : 'left',
-					width : '150'
 				},
 				{
 					field: 'formatSpace',
@@ -786,7 +786,7 @@ function lstsupIdFormatter(value, row, index){
 var TableInit_lstsdown = function() {
 	//获取隧道+temptunnel
 	var temptunnel=$("#default_place_select").val();
-	var devjsonlstsdown=getCnvertJson(1,temptunnel);
+	var devjsonlstsdown=getCnvertJson(2,temptunnel);
 	devjsonlstsdown=$.parseJSON(devjsonlstsdown);
 	var oTableInit = new Object();
 	//初始化Table_light
@@ -814,25 +814,25 @@ var TableInit_lstsdown = function() {
 			detailView : false, //是否显示父子表
 			showHeader : true, //列头
 			columns : [
-				{
-					field : 'ename',
-					title : '编号',
-					align : 'left',
-					width : '150'
-					,formatter:'lstsdownIdFormatter'
-				},
+				// {
+				// 	field : 'ename',
+				// 	title : '编号',
+				// 	align : 'left',
+				// 	width : '150'
+				// 	,formatter:'lstsdownIdFormatter'
+				// },
+                {
+                    field : 'cname',
+                    title : '名称',
+                    align : 'left',
+                    width : '240'
+                },
 				{
 					field : 'operationstr',
 					title : '操作',
 					align : 'left',
-					width : '150'
+					width : '240'
 					,formatter:'lstsdownOperationFormatter'
-				},
-				{
-					field : 'cname',
-					title : '名称',
-					align : 'left',
-					width : '150'
 				},
 				{
 					field: 'formatSpace',
@@ -1869,10 +1869,10 @@ function fontUpdownFormatter(value, row, index){
 	var selectstr="";
 
 	switch(parseInt(row.equipmentupdown)){
-		case 0:
+		case 1:
 			selectstr="上行";
 			break;
-		case 1:
+		case 2:
 			selectstr="下行";
 			break;
 		default:

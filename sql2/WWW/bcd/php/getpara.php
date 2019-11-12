@@ -64,7 +64,7 @@
             $result["rows"][$k]["ipaddr"] = $v["sipaddr"];
             $result["rows"][$k]["ipport"] = $v["iipport"];
             $result["rows"][$k]["tunnel"] = $v["itunnelid"];
-            $result["rows"][$k]["updown"] = ($v["iupdown"] == 1)? 0:($v["iupdown"] == 2 ? 1:-1) ;//上下行             //-1变电所
+            $result["rows"][$k]["updown"] = $v["iupdown"]; //== 1)? 0:($v["iupdown"] == 2 ? 1:-1) ;//上下行             //-1变电所
             $result["rows"][$k]["devcode"] = $v["scode"];
             $result["rows"][$k]["devaddr"] = $v["saddr"];
             $result["rows"][$k]["devcname"] = $v["scname"];

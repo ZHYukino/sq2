@@ -719,6 +719,44 @@ function bindLeftKey(picclass,id,pointX,pointY) {
 				}
             }
             $("#" + id + "").on('dblclick', function () {
+                $(function() {
+                    var zNodes1 ;
+                    $.ajax({
+                        url:"bcd/php/setcms.php?itype=2&id=100002",
+                        type:"get",
+                        dataType:"json",
+                        async:false,
+                        data:"" ,
+                        success:function (res) {
+                            zNodes1=res;
+                        }
+                    });
+                    //创建ztree的配置对象
+                    var setting1 = {
+                        treeId: "ztree1",
+                        data: {
+                            simpleData: {
+                                enable: true, //设置使用简单数据格式
+                                idKey: "id", //id标识  可以修改为数据库对应字段
+                                pIdKey: "pid", //父级id
+                                rootPId: 0, //根节点id
+                            }
+                        },
+                        //设置点击事件
+                        callback: {
+                            onClick: function(event, treeId, treeNode, clickFlag) {
+                                console.log(treeNode.name)
+                            }
+                        },
+                        // check: {
+                        //     enable: true, //是否显示 checkbox/radio
+                        //     chkStyle: "radio", //设置显示类型 值可选：radio/checkbox
+                        // }
+                    };
+                    //初始化第一个树
+                    $.fn.zTree.init($("#ztree1"), setting1, zNodes1);
+
+                });
                 layer.open({
                     type: 1 //此处以iframe举例
                     ,title: '情报版'

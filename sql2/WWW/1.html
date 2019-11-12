@@ -1,46 +1,137 @@
-<!doctype html>
-<html lang="en">
+<!--<!DOCTYPE html>-->
+<!--<html>-->
+<!--<head>-->
+    <!--<meta charset="utf-8">-->
+    <!--<title>树组件</title>-->
+    <!--<link rel="stylesheet" href="./jspackage/layui/css/layui.css">-->
+<!--</head>-->
+<!--<body>-->
+<!--<div id="trees_test1"></div>-->
+<!--<script src="./jspackage/layui/layui.js"></script>-->
+<!--<script src="./jspackage/jquery/jquery.js"></script>-->
+<!--<script>-->
+    <!--var cmslist ;-->
+    <!--function setcms() {-->
+        <!--$.ajax({-->
+            <!--url: "bcd/php/setcms.php?itype=2",-->
+            <!--type: "GET",-->
+            <!--datatype: "json",-->
+            <!--async: false,-->
+            <!--success: function (result) {-->
+                <!--cmslist = result;-->
+                <!--// console.log(result);-->
+                <!--// console.log(result.use);-->
+                <!--// console.log(result.use.title);-->
+            <!--}-->
+        <!--});-->
+        <!--return cmslist;-->
+    <!--}-->
+    <!--layui.use('tree', function(){-->
+
+        <!--var tree = layui.tree;-->
+        <!--//渲染-->
+        <!--var inst1 = tree.render({-->
+            <!--elem: '#trees_test1'  //绑定元素-->
+            <!--,id:"tree1"-->
+            <!--// ,data: [{-->
+            <!--//     title: '江西' //一级菜单-->
+            <!--//     ,children: [{-->
+            <!--//         title: '南昌' //二级菜单-->
+            <!--//         ,children: [{-->
+            <!--//             title: '高新区' //三级菜单-->
+            <!--//             //…… //以此类推，可无限层级-->
+            <!--//         }]-->
+            <!--//     }]-->
+            <!--// },{-->
+            <!--//     title: '陕西' //一级菜单-->
+            <!--//     ,children: [{-->
+            <!--//         title: '西安' //二级菜单-->
+            <!--//     }]-->
+            <!--// }]-->
+           <!--,data: setcms()-->
+        <!--});-->
+    <!--});-->
+<!--</script>-->
+<!--</body>-->
+<!--</html>-->
+<html >
+<!DOCTYPE html>
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <meta charset="utf-8">
+    <title>树组件</title>
+    <link rel="stylesheet" href="./jspackage/layui/css/layui.css">
 </head>
 <body>
+<div id="demo" class="demo-tree-more"></div>
+<div class="layui-form-item">
+    <div class="layui-input-block" style="margin-left:0;text-align:center;">
+        <button class="layui-btn layui-btn-blue"   id="formDemo">确认选择</button>
+    </div>
+</div>
+<script src="./jspackage/layui/layui.js"></script>
+<script src="./jspackage/jquery/jquery.js"></script>
+<script>
+    layui.use(['tree'], function(){
+        $ = layui.$;var tree = layui.tree;
+        var nodes="";
+        $.ajax({
+            url:"bcd/php/setcms.php?itype=2",
+            type:"GET",
+            datatype:"json",
+            async:false,
+            success:function(result){
+                if(1==1){
+                    console.log(2132);
+                    var list = result;
 
+                    nodes=list;
+
+                }
+            }
+        });
+        tree.render({//tree.render() 方法指定一个元素，便可快速创建一个 tree 实例
+            elem: '#demo', //传入元素选择器
+            showCheckbox: true,  //是否显示复选框
+            data:nodes,//获取节点数据
+            id: 'id',//定义索引
+        });
+        $("#formDemo").click(function(){//提交
+            var checkData = tree.getChecked('id');//获得选中的节点
+            if(checkData.length==0){ //判断复选框是否被选中
+                layer.msg("请至少选择一个节点", {icon: 6});
+                return false;
+            }else{
+                var ids = [];
+                var chil=[];
+                for (var key in checkData) { //循环父节点
+                    var node = checkData[key];
+                    ids.push(node.id);//在父节点末尾添加一个或多个元素
+                    chil=node.children;//获取子节点数组
+                    for(var key in chil){ //循环子节点
+                        var children = chil[key];
+                        ids.push(children.id);//在子节点末尾添加一个或多个元素
+                    }
+                }
+                $.ajax({
+                    url:"提交路径",
+                    type:"POST",
+                    datatype:"json",
+                    async:false,
+                    data:{menuIds:ids}, //传数据给后台
+                    success:function(result) {
+                        if(result.success){
+                            layer.msg(result.msg, {icon: 6});
+                            var index = parent.layer.getFrameIndex(window.name);
+                            parent.layer.close(index);//关闭当前页
+                        }else{
+                            layer.msg(result.msg, {icon: 6});
+                        }
+                    }
+                });
+            }
+        });
+    });
+</script>
 </body>
 </html>
-<script>
-
-    function IEVersion() {
-        var userAgent = navigator.userAgent; //取得浏览器的userAgent字符串
-        var isIE = userAgent.indexOf("compatible") > -1 && userAgent.indexOf("MSIE") > -1; //判断是否IE<11浏览器
-        var isEdge = userAgent.indexOf("Edge") > -1 && !isIE; //判断是否IE的Edge浏览器
-        var isIE11 = userAgent.indexOf('Trident') > -1 && userAgent.indexOf("rv:11.0") > -1;
-        if(isIE) {
-            var reIE = new RegExp("MSIE (\\d+\\.\\d+);");
-            reIE.test(userAgent);
-            var fIEVersion = parseFloat(RegExp["$1"]);
-            if(fIEVersion == 7) {
-                return 7;
-            } else if(fIEVersion == 8) {
-                return 8;
-            } else if(fIEVersion == 9) {
-                return 9;
-            } else if(fIEVersion == 10) {
-                return 10;
-            } else {
-                return 6;//IE版本<=7
-            }
-        } else if(isEdge) {
-            return 'edge';//edge
-        } else if(isIE11) {
-            return 11; //IE11
-        }else{
-            return -1;//不是ie浏览器
-        }
-    }
-    var st = IEVersion();
-    console.log(st);
-</script>

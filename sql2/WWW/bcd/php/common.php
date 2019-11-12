@@ -1,5 +1,6 @@
 <?php
 	include_once('conn.php');//数据库
+
 	$error12 = '{"code":-1,"msg":"日期格式错误","count":0,"data":[]}';
 	$success1 = '{"code":0,"msg":"添加成功","count":0,"data":[]}';
 	$success2 = '{"code":0,"msg":"报废成功","count":0,"data":[]}';
@@ -188,4 +189,7 @@
             fclose($handle);
             return true;
         }
-
+        //设置获取id
+        $id= isset($_GET["id"])?$_GET["id"]:"";
+        $id = str_replace("10000",'',$id);
+   ?>
