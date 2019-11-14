@@ -218,9 +218,7 @@ function defaultAddImg(typevalue,selectvalue,picclass,arr_info,snum) {
 				if (thisheight != 0) {
 					thiswh += "height:" + thisheight + "px;";
 				}
-				if(typevalue == "TS"){
-                    thiswh += "width:45px";
-                }
+
 				else if (thiswidth != 0) {
 					thiswh += "width:" + thiswidth + "px;";
 				}
@@ -299,9 +297,7 @@ function defaultUpdateImg(typevalue,selectvalue,picclass,arr_info,snum){
 					if (thisheight != 0) {
 						thiswh += "height:" + thisheight + "px;";
 					}
-                    if(typevalue == "TS"){
-                        thiswh += "width:45px";
-                    }
+
                     else if (thiswidth != 0) {
                         thiswh += "width:" + thiswidth + "px;";
                     }

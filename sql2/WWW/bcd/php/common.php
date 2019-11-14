@@ -192,4 +192,5 @@
         //设置获取id
         $id= isset($_GET["id"])?$_GET["id"]:"";
         $id = str_replace("10000",'',$id);
+        $itype=isset($_GET['itype'])?$_GET['itype']:"";
    ?>

@@ -2,7 +2,11 @@
 
     require_once ("common.php");
     session_start();
-
+    $rejsondata = array(
+      "code"=>"0",
+      "data"=>"",
+      "msg"=>"未登录不可操作",
+    );
 
     //获得设备操作
     $actnum = empty($_GET["actnum"]) ? "": $_GET["actnum"] ;
@@ -29,6 +33,7 @@
                 echo $p1;
             }//获取数据
             elseif ($itype == 2) {
+
                 $path = "../localcms/" . $id . "/play.lst";
                 $play = parse_ini_file($path, true);
                 $play["playlist"]["item0"] = iconv("GBK","UTF-8", $play["playlist"]["item0"]);
@@ -51,7 +56,6 @@
                    $num = $num+1;
                 }
 
-//                print_r($data);
                 echo json_encode($data);
 
             } //取亮度
@@ -69,6 +73,8 @@
                 echo json_encode($result);
             }
         }
+    }else{
+        echo json_encode($rejsondata,true);
     }
 
 
