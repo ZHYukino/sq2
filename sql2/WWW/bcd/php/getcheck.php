@@ -1,6 +1,7 @@
 <?php
     //用cookie 获取设备
-    if($_GET['itype']==1){
+    require_once ("common.php");
+    if($itype==1){
         if(empty($_COOKIE["CheckList"])){
             $arr = array();
             $arr["CAM"]=1;
@@ -34,7 +35,7 @@
        echo json_encode($result);
     }
     $name = !empty($_GET['name']) ? $_GET['name'] : "";
-    if($_GET["itype"]==0 && $name !="") {
+    if($itype==0 && $name !="") {
         $result = unserialize($_COOKIE["CheckList"]);
         if(array_key_exists($name,$result)) {               //如果请求的设备名在 cookie 中才开始执行
             if ($result[$name] == 1) {
@@ -50,4 +51,33 @@
         $res["msg"] =1;
         $res["code"]=$name;
         echo json_encode($res);
+    }
+    //公路设备
+    $devtype = array(
+        "23"=>"cms",
+        "25"=>"tcms",
+        "17"=>"cam",
+        "19"=>"et",
+        "20"=>"vd",
+        "22"=>"wd",
+    );
+    if($itype == 2){
+        if(!isset($_COOKIE["road"])) {
+            $num = 0;
+            foreach ($devtype as $k => $v) {
+                $res[$num][$k] = 1;
+                $num = $num+1;
+            }
+            $cookies = serialize($res);
+            setcookie("road", $cookies, time() + 3600 * 24 * 30);
+        }else{
+            $res = unserialize($_COOKIE["road"]);
+        }
+        $road["data"] = $res;
+        $road["count"] = count($res);
+        $road["code"] = 1;
+       echo json_encode($road);
+    }
+    elseif($itype == 3 && $id !=""){
+
     }

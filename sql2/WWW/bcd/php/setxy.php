@@ -6,10 +6,19 @@
     include_once ('common.php');
     session_start();
     $result = array("result"=>0,"msg"=>"","type"=>"");
+    $x = checkstr($_GET["xvalue"]);
+    $y = checkstr($_GET["yvalue"]);
     if(isset($_SESSION["uid"])){
-        if($_GET["itype"] == 1){
-            $x = checkstr($_GET["xvalue"]);
-            $y = checkstr($_GET["yvalue"]);
+        //公路页面设置xy
+        if($itype == 0){
+            $query = "update DevInfo set FPointX='" . round($x, 2) . "' ,  FPointY='" . round($y, 2) . "' where FID='" . $id . "'    ";
+            $sql = sqlsrv_query($conn2, $query, array(), array("Scrollable" => 'static'));
+            if($sql){
+                $result["msg"] = "修改设备位置成功";
+            }
+        }
+        //隧道设置xy
+        else if($_GET["itype"] == 1){
             $id = $_GET["id"];
             if(empty($x) || empty($y) ) {
                 $result["msg"] = "参数异常";

@@ -12,6 +12,52 @@
     }
 
     if($itype == 2){
+        $devpathes = "DevState";
+        $devstate= CurlCalss::curl(5,'',$devpathes);
+        $devstate = json_decode($devstate,true);
+
+        //把状态插入数组中
+        foreach ($para["data"] as $k=>$v){
+            $para["data"][$k]["state"] = $devstate["data"][$k]["istate"];
+            $para["data"][$k]["ivalue"] = isset($devstate["data"][$k]["ivalue"]) ? $devstate["data"][$k]["ivalue"] :"";
+        }
+
+        //插入图片
+        foreach ($para["data"] as $k=>$v){
+            $ivalue = empty($v["ivalue"]) ? 1: $v["ivalue"];
+            //cam
+            if($v["itypeid"] == 17){
+                if( $para["data"][$k]["state"] == 0) {
+                     $para["data"][$k]["picpath"] = "cam_0_" . $v["ishape"] . "_".$v["iupdown"]."_-1.png";
+                }else{
+                     $para["data"][$k]["picpath"] = "cam_0_" . $v["ishape"] . "_".$v["iupdown"]."_".$ivalue .".png";
+                }
+            }
+            elseif ($v["itypeid"] == 18){
+                $para["data"][$k]["picpath"] ="ETHOST.png";
+            } //ET
+            elseif ($v["itypeid"] == 19){
+                if($para["data"][$k]["state"] == 0)      $para["data"][$k]["picpath"] = "ET_".$v["iupdown"]." _-1.png";
+                else         $para["data"][$k]["picpath"] = "ET_".$v["iupdown"]."_".$ivalue.".png";
+            }//VD
+            elseif ($v["itypeid"] == 20){
+                if($para["data"][$k]["state"] == 0)      $para["data"][$k]["picpath"] = "vd_".$v["iupdown"]."_-1.PNG";
+                else         $para["data"][$k]["picpath"] = "vd_".$v["iupdown"]."_".$ivalue.".PNG";
+            }//WD
+            elseif ($v["itypeid"] == 22){
+                if($para["data"][$k]["state"] == 0)      $para["data"][$k]["picpath"] = "wd_".$v["iupdown"]."_-1.PNG";
+                else         $para["data"][$k]["picpath"] = "wd_".$v["iupdown"]."_".$ivalue.".PNG";
+            }//CMS
+            elseif ($v["itypeid"] == 23){
+                if($para["data"][$k]["state"] == 0)      $para["data"][$k]["picpath"] = "cms_".$v["iupdown"]."_-1.PNG";
+                else         $para["data"][$k]["picpath"] = "cms_".$v["iupdown"]."_".$ivalue.".PNG";
+            }
+            elseif ($v["itypeid"] == 25){
+                if($para["data"][$k]["state"] == 0)      $para["data"][$k]["picpath"] = "tcms_".$v["iupdown"]."_-1.PNG";
+                else         $para["data"][$k]["picpath"] = "tcms_".$v["iupdown"]."_".$ivalue.".PNG";
+            }
+        }
+        //返回图片和状态
         $data = array(
             "code" => "1",
             "count"=>count($para["data"]),

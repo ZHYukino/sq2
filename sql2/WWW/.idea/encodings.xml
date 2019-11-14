@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Encoding">
-    <file url="file://$USER_HOME$/Documents/Tencent Files/756475872/FileRecv/监控软件/play/2/play.lst" charset="GBK" />
     <file url="file://$PROJECT_DIR$/4/play.lst" charset="GBK" />
     <file url="file://$PROJECT_DIR$/bcd/localcms/2/play.lst" charset="GBK" />
     <file url="file://$PROJECT_DIR$/bcd/php/exportlightexcel.php" charset="GBK" />
     <file url="file://$PROJECT_DIR$/bcd/php/getcheck.php" charset="GBK" />
     <file url="file://$PROJECT_DIR$/bcd/php/gettype.php" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../../../repo2/sql/WWW/bcd/json/getcheck.php" charset="GBK" />
+    <file url="file://$USER_HOME$/Documents/Tencent Files/756475872/FileRecv/监控软件/play/2/play.lst" charset="GBK" />
     <file url="PROJECT" charset="UTF-8" />
   </component>
 </project>

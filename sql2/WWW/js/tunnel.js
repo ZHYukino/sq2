@@ -5,7 +5,7 @@ function use1() {
     // expdate.setTime(expdate.getTime() + 30 * 60 * 1000);   //时间单位毫秒
     // document.cookie = name+"="+num+";expires="+expdate.toGMTString()+";path=/";
     var result1 = window.open("./tunnel.php?tunnel=1", "window1");
-    $("#1").hide();
+    $("#one1").hide();
     $("#bt1").show();
     $("#bt1").click(function () {
         if(result1.closed){
@@ -27,7 +27,7 @@ function use2() {
     // expdate.setTime(expdate.getTime() + 30 * 60 * 1000);   //时间单位毫秒
     // document.cookie = name+"="+num+";expires="+expdate.toGMTString()+";path=/";
     var result2 = window.open("./tunnel.php?tunnel=2", "window2");
-    $("#2").hide();
+    $("#one2").hide();
     $("#bt2").show();
     $("#bt2").click(function () {
         if(result2.closed){
@@ -49,7 +49,7 @@ function use3() {
     // expdate.setTime(expdate.getTime() + 30 * 60 * 1000);   //时间单位毫秒
     // document.cookie = name+"="+num+";expires="+expdate.toGMTString()+";path=/";
     var result3 = window.open("./tunnel.php?tunnel=3", "window3");
-    $("#3").hide();
+    $("#one3").hide();
     $("#bt3").show();
     $("#bt3").click(function () {
         if(result3.closed){
