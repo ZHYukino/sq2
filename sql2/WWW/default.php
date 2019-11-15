@@ -54,7 +54,6 @@ require ('./bcd/php/config.php');
             <li class="layui-nav-item">
                 <a href="javascript:;"    class="useid"></a>
                 <dl class="layui-nav-child">
-                    <dd><a href="">基本资料</a></dd>
                     <dd><a href="">安全设置</a></dd>
                     <dd><a href="">修改密码</a></dd>
                 </dl>

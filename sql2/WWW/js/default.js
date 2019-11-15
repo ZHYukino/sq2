@@ -35,17 +35,28 @@ function roadpara(){
     })
 }
 
-//点击事件
+//点击标题栏事件
 function devclick(num){
     if($("#typeimg"+num+"").width() == 50  && $("#typeimg"+num+"").height() == 50){
         $("#typeimg"+num+"").css("width","20px");
         $("#typeimg"+num+"").css("height","20px");
         $("."+num+"").hide();
+        var checknum = 0;
     }else{
         $("#typeimg"+num+"").css("width","50px");
         $("#typeimg"+num+"").css("height","50px");
         $("."+num+"").show();
+        var checknum = 1;
     }
+    $.ajax({
+        url:"bcd/php/getcheck.php?itype=3&id="+num+"&checknum="+checknum+"",
+        dataType:"json",
+        type:"get",
+        cache:false,
+        success:function (res) {
+            
+        }
+    })
 }
 
 
@@ -121,6 +132,7 @@ function devmove(id) {
 }
 
 clicktype(2);
+//页面载入
 function clicktype(num){
     var num;
     $.ajax({
@@ -129,8 +141,17 @@ function clicktype(num){
         cache:false,
         dataType: "json",
         success: function (mydata) {
-            for (var i=0;i<mydata.data;i++){
-
+            var check = mydata.data;
+            for(var key in check) {
+                 if(check[key] ==  1){
+                     $("#typeimg"+key+"").css("width","50px");
+                     $("#typeimg"+key+"").css("height","50px");
+                     $("."+key+"").show();
+                 }else if(check[key] ==  0){
+                     $("#typeimg"+key+"").css("width","20px");
+                     $("#typeimg"+key+"").css("height","20px");
+                     $("."+key+"").hide();
+                 }
             }
         }
     })

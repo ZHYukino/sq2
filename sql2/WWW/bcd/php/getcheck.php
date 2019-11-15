@@ -65,7 +65,7 @@
         if(!isset($_COOKIE["road"])) {
             $num = 0;
             foreach ($devtype as $k => $v) {
-                $res[$num][$k] = 1;
+                $res[$k] = 1;
                 $num = $num+1;
             }
             $cookies = serialize($res);
@@ -79,5 +79,13 @@
        echo json_encode($road);
     }
     elseif($itype == 3 && $id !=""){
-
+        $checknum  = $_GET["checknum"];
+        $res = unserialize($_COOKIE["road"]);
+        $res[$id] = $checknum;
+        setcookie("road",serialize($res),time()+3600*24*30);
+        $road["data"] = unserialize($_COOKIE["road"]);
+        $road["count"] = count(unserialize($_COOKIE["road"]));
+        $road["msg"]  = "修改设备成功";
+        $road["code"] = 1;
+        echo json_encode($road);
     }
