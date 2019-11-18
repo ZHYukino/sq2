@@ -78,7 +78,8 @@
     <script type="text/javascript" src="../jspackage/layui/layui.all.js"></script><!-- 
     <script type="text/javascript" src="./js/jquery.js"></script> -->
 
-    <script type = "text/javascript"   src="js/Des.js">
+    <script type = "text/javascript"   src="js/Des.js"></script>
+    <script type = "text/javascript"   src="js/login.js"></script>
 
 </script>
 </body>

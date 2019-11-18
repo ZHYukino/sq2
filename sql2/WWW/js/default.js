@@ -1,3 +1,12 @@
+
+
+
+$(document).bind("contextmenu", function () {
+    console.log("用户点击鼠标右键....." + new Date().getTime());
+    return false;
+});
+
+
 function getusedata() {
     $.ajax({
         url:"bcd/php/getusedata.php",
@@ -5,9 +14,10 @@ function getusedata() {
         type:"get",
         success:function (res) {
             if(res.code==1) {
-                var usedata = res.data.name;
+                window.usedata = res.data.name;
                 var usehead =    "<img src=\"./pic2/user.png\" class=\"layui-nav-img\"  id=\"typeimg\"> "+usedata+"";
                 $(".useid").html(usehead);
+                $("#usehead_nav").show();
             }
         }
     })
@@ -15,7 +25,7 @@ function getusedata() {
 
 getusedata();
 roadpara();
-//取得栏目图片和设备
+//加载栏目图片和设备
 function roadpara(){
     $.ajax({
         url:"bcd/php/getroadpara.php?itype=1",
@@ -55,30 +65,6 @@ function devclick(num){
         cache:false,
         success:function (res) {
             
-        }
-    })
-}
-
-
-roadpara2()
-function roadpara2(){
-    $.ajax({
-        url:"bcd/php/getroadpara.php?itype=2",
-        dataType:"json",
-        type:"get",
-        cache:false,
-        success:function (res) {
-            if(res.code==1) {
-                var bodydev = "";
-                for (var j = 0 ;j<res.count;j++){
-                    var x = (res.data[j].ipointx==0) ? 50 :res.data[j].ipointx;
-                    var hy = $(window).height();
-                    var y = (res.data[j].ipointy==0) ? 50 :res.data[j].ipointy  ;
-                     bodydev = "<div id=\""+res.data[j].iid+"\"   class=\""+res.data[j].itypeid+"\"  style=\"cursor:pointer;position:absolute;left: "+x+"%;top:"+y+"%  \"> <img src=\"pic2/"+res.data[j].picpath+"\"  style='width: 32px;height: 32px;'> </div>"
-                    $("#dev_div_body").append(bodydev);
-                    devmove(res.data[j].iid)
-                }
-            }
         }
     })
 }
@@ -131,6 +117,35 @@ function devmove(id) {
     })
 }
 
+
+//设备加载
+roadpara2()
+function roadpara2(){
+    $.ajax({
+        url:"bcd/php/getroadpara.php?itype=2",
+        dataType:"json",
+        type:"get",
+        cache:false,
+        success:function (res) {
+            if(res.code==1) {
+                var bodydev = "";
+                for (var j = 0 ;j<res.count;j++){
+                    var x = (res.data[j].ipointx==0) ? 0 :res.data[j].ipointx;
+                    var y = (res.data[j].ipointy==0) ? 20 :res.data[j].ipointy;
+                    var updown = (res.data[j].iupdown == 1) ?"上行":(res.data[j].iupdown == 2 ? "下行" :"变电所") ;
+                    bodydev = "<div id=\""+res.data[j].iid+"\"  title=\""+res.data[j].scode+"\r"+res.data[j].scname+"\r"+updown+"\"  class=\""+res.data[j].itypeid+"\"  style=\"cursor:pointer;position:absolute;left: "+x+"%;top:"+y+"%  \"> <img src=\"pic2/"+res.data[j].picpath+"\"  style='width: 32px;height: 32px;'>"
+                    if(res.data[j].itypeid == 22){
+                        bodydev += "<div id=\"vdvalue"+res.data[j].iid+"\" style='font-size: 13px'>风速："+res.data[j].fengsu+ " <br>能见度："+res.data[j].nengjiandu+ "</div>";
+                    }
+                    bodydev += " </div>";
+                    $("#dev_div_body").append(bodydev);
+                    devmove(res.data[j].iid)
+                }
+            }
+        }
+    })
+}
+
 clicktype(2);
 //页面载入
 function clicktype(num){
@@ -157,6 +172,89 @@ function clicktype(num){
     })
 }
 
+
+
+
+
+
+
+
+
+
+//修改密码
+layui.use('layer', function(){
+    $("#updatepass").click(function () {
+        layer.open({
+            type: 1
+            ,area: ['500px', '350px']
+            ,title:'密码修改'
+            ,content:"<form class=\"layui-form\" action=\"\" lay-filter=\"example\">\n" +
+                "<div class=\"layui-form-item\">\n" +
+                "    <label class=\"layui-form-label\">输入框</label>\n" +
+                "    <div class=\"layui-input-block\">\n" +
+                "   <input type=\"text\"  id='username' value=\""+usedata+"\" name=\"username\" lay-verify=\"title\" autocomplete=\"off\"  class=\"layui-input\"  style='margin-top: 15px;width: 300px'>\n" +
+                "    </div>\n" +
+                "  </div>\n" +
+                "  <div class=\"layui-form-item\">\n" +
+                "    <label class=\"layui-form-label\">旧密码</label>\n" +
+                "    <div class=\"layui-input-block\">\n" +
+                "      <input type=\"password\"  id='password'  name=\"password\" placeholder=\"请输入密码\" autocomplete=\"off\" class=\"layui-input\" style='margin-top: 15px;width: 300px'>\n" +
+                "    </div>\n" +
+                "  </div>\n" +
+                " <div class=\"layui-form-item\">\n" +
+                "    <label class=\"layui-form-label\">新密码</label>\n" +
+                "    <div class=\"layui-input-block\">\n" +
+                "      <input type=\"password\" id='newpass'  name=\"password\" placeholder=\"请输入密码\" autocomplete=\"off\" class=\"layui-input\" style='margin-top: 15px;width: 300px'>\n" +
+                "    </div>\n" +
+                "  </div>\n" +
+                 " <div class=\"layui-form-item\">\n" +
+                " <label class=\"layui-form-label\">重复新密码</label>\n" +
+                "    <div class=\"layui-input-block\">\n" +
+                "      <input type=\"password\"  id='renewpass' name=\"password\" placeholder=\"请输入密码\" autocomplete=\"off\" class=\"layui-input\" style='margin-top: 15px;width: 300px'>\n" +
+                "    </div>\n" +
+                "  </div></form>"
+            ,btn: ['提交','关闭']
+            ,btn1: function(index, layero){
+                //按钮1
+                var name = $.trim($("#username").val());
+                var pass = $.trim($("#password").val());
+                var newpass = $.trim($("#newpass").val());
+                var renewpass = $.trim($("#renewpass").val());
+                if(pass == "" || name ==""){
+                    layer.msg('账号或密码不能为空');
+                    return false;
+                }
+                if(newpass !== renewpass  ){
+                    layer.msg('两个新密码不一致');
+                    return false;
+                }
+                pass = EncryStrHex(EncryStrHex(pass,'user'),'lcrj');
+                newpass = EncryStrHex(EncryStrHex(newpass,'user'),'lcrj');
+                renewpass = EncryStrHex(EncryStrHex(renewpass,'user'),'lcrj');
+                $.ajax({
+                    type: "POST",
+                    url: "bcd/php/updatepass.php?",
+                    cache:false,
+                    dataType: "json",
+                    data:{'name':name,
+                        'pass':pass,
+                        'newpass':newpass,
+                        'renewpass':renewpass,
+                    },
+                    success:function (res) {
+                        layer.msg(res.msg);
+                        if(res.code == 1){
+                            layer.close(index);
+                        }
+                    }
+                })
+            }
+            ,btn2: function(index){
+
+            }
+        });
+    })
+})
 
 
 

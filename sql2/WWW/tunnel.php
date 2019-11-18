@@ -1,9 +1,9 @@
 ﻿<?php
 require ('./bcd/php/config.php');
 session_start();
-//if(empty($_SESSION['uid'])){
-//    header("location:login.php");
-//}
+if(!isset($_SESSION['uid'])){
+    header("location:login.php");
+}
 ?>
 <!DOCTYPE html>
 <head>

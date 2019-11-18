@@ -12,12 +12,28 @@
     }
 
     if($itype == 2){
-        $devpathes = "DevState";
-        $devstate= CurlCalss::curl(5,'',$devpathes);
+
+        $devstate= CurlCalss::curl(5,'',"DevState");
         $devstate = json_decode($devstate,true);
+
+        //取出气象状态
+        $vdstate = CurlCalss::curl(5,"","DevRealWDData");
+        $vdpara = json_decode($vdstate,true)["data"];
+        foreach ($vdpara as $k=>$v){
+            $vd[$v["iid"]]["fengsu"] = $v["fengsu"];
+            $vd[$v["iid"]]["nengjiandu"] = $v["nengjiandu"];
+        }
 
         //把状态插入数组中
         foreach ($para["data"] as $k=>$v){
+            if($v["itypeid"] == 22){
+                foreach ($vd as $key=>$value){
+                    if($v["iid"] == $key){
+                        $para["data"][$k]["fengsu"] = $value["fengsu"];
+                        $para["data"][$k]["nengjiandu"] = $value["nengjiandu"];
+                    }
+                }
+            }
             $para["data"][$k]["state"] = $devstate["data"][$k]["istate"];
             $para["data"][$k]["ivalue"] = isset($devstate["data"][$k]["ivalue"]) ? $devstate["data"][$k]["ivalue"] :"";
         }
@@ -57,6 +73,8 @@
                 else         $para["data"][$k]["picpath"] = "tcms_".$v["iupdown"]."_".$ivalue.".PNG";
             }
         }
+
+
         //返回图片和状态
         $data = array(
             "code" => "1",

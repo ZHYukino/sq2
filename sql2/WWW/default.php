@@ -1,5 +1,9 @@
 <?php
 require ('./bcd/php/config.php');
+session_start();
+if(!isset($_SESSION['uid'])){
+    header("location:login.php");
+}
 ?>
 <!doctype html>
 <html lang="en">
@@ -35,12 +39,7 @@ require ('./bcd/php/config.php');
                     <dd><a href="">角色管理</a></dd>
                 </dl>
             </li>
-            <li class="layui-nav-item">
-                <a style="cursor:pointer;">系统信息</a>
-                <dl class="layui-nav-child">
-                    <dd><a href="">系统设置</a></dd>
-                </dl>
-            </li>
+
             <li class="layui-nav-item"   id="dev-nav-1"></li>
             <li class="layui-nav-item"   id="dev-nav-2"></li>
             <li class="layui-nav-item"   id="dev-nav-3"></li>
@@ -50,12 +49,12 @@ require ('./bcd/php/config.php');
             <li class="layui-nav-item"   id="dev-nav-0"></li>
 
         </ul>
-        <ul class="layui-nav layui-layout-right">
+        <ul class="layui-nav layui-layout-right" id="usehead_nav" style="display: none">
             <li class="layui-nav-item">
                 <a href="javascript:;"    class="useid"></a>
                 <dl class="layui-nav-child">
-                    <dd><a href="">安全设置</a></dd>
-                    <dd><a href="">修改密码</a></dd>
+<!--                    <dd><a href="">安全设置</a></dd>-->
+                    <dd><a id="updatepass" style="cursor:pointer;" >修改密码</a></dd>
                 </dl>
             </li>
             <li class="layui-nav-item"><a onclick="logout()"  style="cursor:pointer;">退出</a></li>
@@ -87,6 +86,7 @@ require ('./bcd/php/config.php');
 
 <script src="jspackage/jquery-ui/jquery-ui-1.10.4.min.js"></script>
 <script src="./jspackage/layui/layui.js"></script>
+<script type = "text/javascript"   src="js/Des.js"></script>
 <script src="js/default.js"></script>
 <script src="js/tunnel.js"></script>
 <script>
@@ -95,6 +95,7 @@ require ('./bcd/php/config.php');
         var element = layui.element;
 
     });
+
 </script>
 </body>
 </html>
