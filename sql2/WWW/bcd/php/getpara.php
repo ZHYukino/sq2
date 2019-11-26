@@ -1,8 +1,8 @@
 <?php
     header("Content-type:text/html;charset=utf-8");
-    $itype=!empty($_GET['itype'])?$_GET['itype']:"";
     $q=!empty($_GET['q'])?$_GET['q']:"";
     require_once ("common.php");
+    $tunnelnum = $_GET["tunnel"];
     if($itype == 1){
         $path = "PLCDevInfo";
         $para = CurlCalss::curl(6,'Ftypeid='.$q,$path);
@@ -17,6 +17,7 @@
         $nus = 1;
         $result["results"] = count($para["data"]);
         foreach ($para["data"] as $k=>$v){
+
             $result["rows"][$k]["id"] = $v["iid"];
             $result["rows"][$k]["pointx"] = $v["ipointx"];
             $result["rows"][$k]["pointy"] = $v["ipointy"];

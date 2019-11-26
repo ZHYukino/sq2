@@ -594,7 +594,7 @@ $("#li_leftmenu_plc").on("click",function(){
 			showPlc();
 		}
 	});
-	console.log(123);
+
 })
 
 //CO/VI采集数据

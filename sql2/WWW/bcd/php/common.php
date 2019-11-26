@@ -1,7 +1,13 @@
 <?php
 	include_once('conn.php');//数据库
-
+    // 制定允许其他域名访问
+    header("Access-Control-Allow-Origin:*");
+    // 响应类型
+    header('Access-Control-Allow-Methods:POST');
+    // 响应头设置
+    header('Access-Control-Allow-Headers:x-requested-with, content-type');
 	$error12 = '{"code":-1,"msg":"日期格式错误","count":0,"data":[]}';
+	$error1 = '{"code":-1,"msg":"请求失败，请先登录","count":0,"data":[]}';
 	$success1 = '{"code":0,"msg":"添加成功","count":0,"data":[]}';
 	$success2 = '{"code":0,"msg":"报废成功","count":0,"data":[]}';
 	$success3 = '{"code":0,"msg":"删除成功","count":0,"data":[]}';
@@ -193,4 +199,7 @@
         $id= isset($_GET["id"])?$_GET["id"]:"";
         $id = str_replace("10000",'',$id);
         $itype=isset($_GET['itype'])?$_GET['itype']:"";
+
+
+
    ?>

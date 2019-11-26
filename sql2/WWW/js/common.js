@@ -248,8 +248,6 @@ function defaultAddImg(typevalue,selectvalue,picclass,arr_info,snum) {
 				window[varname] = 100;
 				varcmsbtn="cms"+id;                  //这是关闭cms的变量
 				window[varcmsbtn] = true;
-                var cmsupload="upload"+id;                  //这是防止重复cms重复的变量
-                window[cmsupload] = 92;
                 //左键事件
 				bindLeftKey(picclass, id,pointX,pointY);
 				//右键菜单
@@ -326,341 +324,6 @@ function defaultUpdateImg(typevalue,selectvalue,picclass,arr_info,snum){
 
 
 
-	//门架播放版
-	function cmssetdota(id,place,rate,check,content,speed,size,stoptime,stopplace,pic,font_color,font_style) {
-
-		var place_zh = place;                         	//上下的位置方式   1为居中 2左边  3右边
-		var rate_zh = rate;                         	//滑动频率  10-20-30   数字大速度慢
-		var check_zh = check;                          	//进入方式
-		if(check <=2){
-			$("#"+id+"test_content").append(""+content+"");   //内容
-		}
-		$("#"+id+"test_content").css("font-family",""+font_style+"");   //字体样式
-		if(pic !=0 ){
-			$("#"+id+"imgpic2").attr("src",""+pic+"");
-			$("#"+id+"imgpic").attr("src",""+pic+"");         //两张图片
-		}
-		$("#"+id+"affiche").css("color",""+font_color+"");
-		var cmsspeed_zh = speed;                       //滚动速度
-		var font_size = size;                     //字体大小
-		var cmsstoptime = stoptime;               //停止时间
-		var cmsstopplace = stopplace;               		//停止位置
-		(function () {
-			var timer = setTimeout(this.marquee, 1000);
-		}());
-		$("#"+id+"test_content").css("font-size", "" + font_size + "px");
-
-		var scrollWidth = $("#"+id+"affiche").width() ;       //div 长度
-		var textWidth = $("#"+id+"affiche_text").width() ;
-		var iwidth = scrollWidth;
-		switch (check_zh) {
-			//1为 左边入场
-			case 1:
-				$("#"+id+"affiche_text").css("left", "100%");
-				$("#"+id+"affiche_text").show();
-				$("#"+id+"nbs").append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
-				var interval = setInterval
-				(function () {
-					if (iwidth < -textWidth-100) {
-						iwidth = scrollWidth+30 ;
-					}
-					if(iwidth < -textWidth-60){
-						$("#"+id+"affiche_text").hide();
-					}
-					if(iwidth < scrollWidth+20 ){
-						$("#"+id+"affiche_text").show();
-					}
-					iwidth -=  cmsspeed_zh;
-					var font_left = (scrollWidth - textWidth  ) / 2 -(8*4) ;                 //居中数
-					switch (cmsstopplace) {
-						case 1:
-							if (iwidth >= font_left && iwidth < font_left + speed) {              //居中数减去字体速度   当值小于2个数停止
-								$("#"+id+"affiche_text").delay(stoptime);
-							}
-						break;
-						case 3:
-							//右边停止
-							if(pic !=0 ) {
-								if (iwidth >=scrollWidth-textWidth-35-(4*8)  && iwidth < scrollWidth-textWidth+speed-35-(4*8) ) {              //居中数减去字体速度   当值小于2个数停止
-									$("#"+id+"affiche_text").delay(stoptime);
-								}
-							}else{
-								if (iwidth >=scrollWidth-textWidth-35  && iwidth < scrollWidth-textWidth+speed-35 ) {              //居中数减去字体速度   当值小于2个数停止
-									$("#"+id+"affiche_text").delay(stoptime);
-								}
-							}
-						break;
-						case 2:
-							//左边停止
-							let nblength = 0
-							if(pic == 0)  nblength=-(8*4);
-							if (iwidth >=-3+nblength && iwidth <-3+speed+nblength  ) {              //居中数减去字体速度   当值小于2个数停止
-								$("#"+id+"affiche_text").delay(stoptime);
-							}
-						break;
-					}
-					$("#"+id+"affiche_text").animate({'left': iwidth + 'px'}, 10);
-				}, 10);
-				window["var"+ id +""] = false;
-				break;
-			case 2:
-				//右边入场
-				$("#"+id+"affiche_text").css("right", "200%");
-				$("#"+id+"affiche_text").show();
-				$("#"+id+"nbs").append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
-				setInterval
-				(function () {
-                    if (iwidth < -textWidth-100) {
-                        iwidth = scrollWidth+30 ;
-                    }
-                    if(iwidth < -textWidth-60){
-                        $("#"+id+"affiche_text").hide();
-                    }
-                    if(iwidth < scrollWidth+20 ){
-                        $("#"+id+"affiche_text").show();
-                    }
-					iwidth = iwidth - cmsspeed_zh;
-					var font_left = (scrollWidth - textWidth ) / 2;                 //居中数  32 是两个图片的 px值
-					switch (cmsstopplace) {
-						case 1:
-							//居中停止
-							if (iwidth >= font_left && iwidth <= font_left+speed ) {              //居中数减去字体速度   当值小于2个数停止
-								$("#"+id+"affiche_text").delay(stoptime);
-							}
-						break;
-						case 2:
-							//靠左停止
-							if(pic == 0){
-								if (iwidth >=scrollWidth-textWidth  && iwidth < scrollWidth-textWidth+speed ) {              //居中数减去字体速度   当值小于2个数停止
-									$("#"+id+"affiche_text").delay(stoptime);
-								}
-							}else{
-								if (iwidth >=scrollWidth-textWidth-(4*8)  && iwidth < scrollWidth-textWidth+speed-(4*8)) {              //居中数减去字体速度   当值小于2个数停止
-									$("#"+id+"affiche_text").delay(stoptime);
-								}
-							}
-						break;
-						case 3:
-							//靠右停止
-							if(pic == 0){
-								if (iwidth >=32-(4*8) && iwidth <32+speed-(4*8)  ) {              //居中数减去字体速度   当值小于2个数停止
-									$("#"+id+"affiche_text").delay(stoptime);
-								}
-							}else{
-								if (iwidth >=32 && iwidth <32+speed  ) {              //居中数减去字体速度   当值小于2个数停止
-									$("#"+id+"affiche_text").delay(stoptime);
-								}
-							}
-						break;
-					}
-					$("#"+id+"affiche_text").animate({'right': iwidth + 'px'}, 10);
-				}, 10);
-				window["var"+ id +""] = false;
-				break;
-			case 3:
-				//上
-				$("#"+id+"affiche_text").removeAttr('style');
-                $("#"+id+"affiche_text").css("top", "100%");
-				$("#"+id+"imgpic").removeAttr('style');
-				$("#"+id+"affiche_text").css('width','250px');
-				$("#"+id+"affiche_text").css('position','absolute');
-				$("#"+id+"affiche_text").css('line-height',""+size+"px");
-				$("#"+id+"test_content").append(""+content+"");   //内容
-				var textheight = $("#"+id+"affiche_text").height();
-				var scrollheight = $("#"+id+"affiche").height();
-				var jheight = scrollheight;            //   j高度
-				scrollWidth = $("#"+id+"affiche").width() ;       //div 长度
-				textWidth = $("#"+id+"affiche_text").width() ;
-				iwidth = scrollWidth;
-				if (place_zh === 1) {
-					//计算文字距离div距离  做出居中效果
-					var font_left = (scrollWidth - textWidth ) / 2;
-					$("#"+id+"affiche_text").css("left", "" + font_left + "px");
-				} else if (place_zh === 2) {
-					//左边效果
-					$("#"+id+"affiche_text").css("left", "0");
-				} else if (place_zh === 3) {
-					//右边效果
-					$("#"+id+"affiche_text").css("right", "32px");
-				}
-				setInterval
-				(function () {
-					jheight = jheight - cmsspeed_zh;
-					if(stopplace == 1){
-						if(jheight <= -2 && jheight > -2-speed){
-							$("#"+id+"affiche_text").delay(stoptime);
-						}
-					}
-                    if(size * 2>=40){
-                        if (jheight < -textheight-size-size) {
-                            jheight = scrollheight+8;
-                        }
-                    }else{
-                        if (jheight < -textheight-40) {
-                            jheight = scrollheight+8;
-                        }
-                    }
-					$("#"+id+"affiche_text").animate({'top': jheight + 'px'}, rate_zh);
-				}, 5);
-				window["var"+ id +""] = false;
-				break;
-			case 4:
-				//下
-				$("#"+id+"affiche_text").removeAttr('style');
-				$("#"+id+"affiche_text").css('width','280px');
-				$("#"+id+"affiche_text").css('position','absolute');
-                $("#"+id+"affiche_text").css('line-height',""+size+"px");
-				$("#"+id+"test_content").append(""+content+"");   //内容
-				$("#"+id+"imgpic").removeAttr('style');
-				$("#"+id+"imgpic2").removeAttr('style');	
-				var textheight = $("#"+id+"affiche_text").height();
-				var scrollheight = $("#"+id+"affiche").height();
-				var jheight = scrollheight;            //   j高度
-				scrollWidth = $("#"+id+"affiche").width() ;       //div 长度
-				textWidth = $("#"+id+"affiche_text").width() ;
-				iwidth = scrollWidth;
-				if (place_zh === 1) {
-					//计算文字距离div距离  做出居中效果
-					var font_left = (scrollWidth - textWidth ) / 2;
-					$("#"+id+"affiche_text").css("left", "" + font_left + "px")
-				} else if (place_zh === 2) {
-					//左边效果
-					$("#"+id+"affiche_text").css("left", "0");
-				} else if (place_zh === 3) {
-					//右边效果
-					$("#"+id+"affiche_text").css("right", "32px");
-				}
-				//下滚动
-				$("#"+id+"affiche_text").css("bottom", "100%");
-				setInterval
-				(function () {
-					jheight = jheight - cmsspeed_zh;
-					if(size * 2>=40){
-						if (jheight < -textheight-size-size) {
-							jheight = scrollheight+8;
-						}
-					}else{
-                        if (jheight < -textheight-40) {
-                            jheight = scrollheight+8;
-                        }
-					}
-					if(stopplace == 1){
-						if(jheight <= 0 && jheight > 0-speed){
-							$("#"+id+"affiche_text").delay(stoptime);
-						}
-					}
-					$("#"+id+"affiche_text").animate({'bottom': jheight + 'px'}, rate_zh);
-				}, 5);
-				window["var"+ id +""] = false;
-				break;
-		}
-	}
-
-//获得门架的数据
-function getcmsshow(id) {
-	$.ajax({
-		type: "GET",
-		url: "bcd/php/cmsshow.php?itype=1&id="+id+"",
-		dataType: "json",
-		success:function (res) {
-			cmssetdota(id,res.data.place,res.data.rate,res.data.check,res.data.content,res.data.speed,res.data.size,res.data.stoptime,res.data.stopplace,res.data.picpath,res.data.font_color,res.data.font_style);
-		}
-	})
-}
-
-
-function tcmsdota(id,checktcms,speedtcms,imgpictcms){
-            var check = checktcms;                          //进入方式
-            var cmsspeed = speedtcms;                       //滚动速度
-            imgpictcms = imgpictcms;
-     		$("#"+id+"TCMS").attr("src",""+imgpictcms+"");
-            (function () {
-             var timer = setTimeout(this.marquee, 1000);
-            }());
-                var scrollWidths = $('#'+id+'affichetcms').width() ;       //div 长度
-                var textWidths = $('#'+id+'affiche_texttcms').width() ;
-                var textheights = $('#'+id+'affiche_texttcms').height();
-                var scrollheights = $('#'+id+'affichetcms').height();
-                var j = scrollheights;            //   j高度
-                var i = scrollWidths;
-                switch (check) {
-                    //1为 右边
-                    case 1:
-                        $("#"+id+"affiche_texttcms").css("left", "100%");
-                        $("#"+id+"affiche_texttcms").show();
-                        setInterval
-                        (function () {
-                            i = i-cmsspeed;
-                            if (i < -scrollWidths) {
-                                i = scrollWidths;
-                            }
-                            $('#'+id+'affiche_texttcms').animate({'left': i + 'px'}, 10);
-                        }, 10);
-                        window["var"+ id +""] = false;
-                        break;
-                    case 2:
-                        //左
-                        $("#"+id+"affiche_texttcms").css("right", "200%");
-                        $("#"+id+"affiche_texttcms").show();
-                        setInterval
-                        (function () {
-                            i = i - cmsspeed;
-                            if (i < -scrollWidths) {
-                                i = scrollWidths;
-                            }
-                            $('#'+id+'affiche_texttcms').animate({'right': i + 'px'}, 10);
-                        }, 10);
-                        window["var"+ id +""] = false;
-                        break;
-                    case 3:
-                        //上
-                        $("#"+id+"affiche_texttcms").css("top", "100%");
-                        $("#"+id+"affiche_texttcms").show();
-                         var font_lefts = 0 ;
-                         $("#"+id+"affiche_texttcms").css("left", "" + font_lefts + "px")
-                        setInterval
-                        (function () {
-                            j = j - cmsspeed;
-                            if (j < -textheights-20) {
-                                j = scrollheights + 40;
-                            }
-                            $('#'+id+'affiche_texttcms').animate({'top': j + 'px'}, 10);
-                        }, 20);
-                        window["var"+ id +""] = false;
-                        break;
-                    case 4:
-                        //下
-                        $("#"+id+"affiche_texttcms").css("left", "" + 0 + "px");
-                        //下滚动
-                        $("#"+id+"affiche_texttcms").css("bottom", "100%");
-                        $("#"+id+"affiche_texttcms").show();
-                        setInterval
-                        (function () {
-                            j = j - cmsspeed;
-                            if (j < -textheights-10) {
-                                j = scrollheights +40;
-                            }
-                            $('#'+id+'affiche_texttcms').animate({'bottom': j + 'px'}, 20);
-                        }, 20);
-                        window["var"+ id +""] = false;
-                        break;
-                }
-}
-
-//可变速限速标志
-
-function tcms(id){
-	$.ajax({
-		type:"GET",
-		url:"bcd/php/tcms.php?itype=1&id="+id+"",
-		dataType:"json",
-		success:function(res){
-			tcmsdota(id,res.checktcms,res.speedtcms,res.imgpicname);
-		}
-	})
-}
-
-
 
 //点击事件
 function bindLeftKey(picclass,id,pointX,pointY) {
@@ -715,106 +378,26 @@ function bindLeftKey(picclass,id,pointX,pointY) {
 				}
             }
             $("#" + id + "").on('dblclick', function () {
-                $(function() {
-                    var zNodes1 ;
-                    $.ajax({
-                        url:"bcd/php/setcms.php?itype=2&id=100002",
-                        type:"get",
-                        dataType:"json",
-                        async:false,
-                        data:"" ,
-                        success:function (res) {
-                            zNodes1=res;
-                        }
-                    });
-                    //创建ztree的配置对象
-                    var setting1 = {
-                        treeId: "ztree1",
-                        data: {
-                            simpleData: {
-                                enable: true, //设置使用简单数据格式
-                                idKey: "id", //id标识  可以修改为数据库对应字段
-                                pIdKey: "pid", //父级id
-                                rootPId: 0, //根节点id
-                            }
-                        },
-                        //设置点击事件
-                        callback: {
-                            onClick: function(event, treeId, treeNode, clickFlag) {
-                                console.log(treeNode.name)
-                            }
-                        },
-                        // check: {
-                        //     enable: true, //是否显示 checkbox/radio
-                        //     chkStyle: "radio", //设置显示类型 值可选：radio/checkbox
-                        // }
-                    };
-                    //初始化第一个树
-                    $.fn.zTree.init($("#ztree1"), setting1, zNodes1);
-
-                });
-                layer.open({
-                    type: 1 //此处以iframe举例
-                    ,title: '情报版'
-                    ,area: ['1000px', '640px']
+                // trees()
+                var index=layer.open({
+                    type: 2//此处以iframe举例
+                    ,title: +id+'情报版'
+                    ,area: ['1300px', '670px']
                     ,shade: 0
                     ,maxmin: true
                     ,offset: [Ht+10]
 					, id: 'LAY_LSTSdbclick_cms' //防止重复弹出
-                     ,content: $("#cms_one")
+                     ,content: 'cms.php?cms='+id+''
                    // , content: 'html内容'
                     ,btn: ['关闭'] //只是为了演示
                     ,yes: function(index, layero){
-                        $('#cmsuploadimg'+id+'').hide();
-                        $('#1cmsuploadimg'+id+'').hide();
                         layer.close(index);
                     }
                      ,zIndex: layer.zIndex
-                    ,success: function(layero){
-                         // layer.setTop(layero);
+                    ,success: function(layero,index){
+                        // console.log($("#"+id+"affiche").html());
+                        layer.full(index);
                     }
-                });
-                $('#cmsuploadimg'+id+'').show();
-                $('#1cmsuploadimg'+id+'').show();
-                console.log( window["upload"+id+""]);
-                if(window["upload"+id+""] != "92" )  return false;
-                window["upload"+id+""] = false;
-                console.log( window["upload"+id+""]);
-                layui.use('upload', function(){
-                    var $ = layui.jquery
-                        ,upload = layui.upload;
-                    //普通图片上传
-                    upload.render({
-                        elem: '#cmsuploadimg'+id+''
-                        ,url: './bcd/php/setcms.php?itype=1&id='+id+''
-                        // ,id: 'LAY_control_panel_cms' //防止重复弹出
-                        ,accept: 'file' //普通文件
-                        ,multiple: true
-                        ,before: function(obj){
-                            //预读本地文件示例，不支持ie8
-                            $('#cmsuploadimg'+id+'').text("上传中。。");
-                            layer.load(); //上传loading
-                            // obj.preview(function(index, file, result){
-                            //     $('#cmsuploadpic'+id+'').append('<img src="'+ result +'" alt="'+ file.name +'" class="layui-upload-img" style="width: 100px;height: 100px;margin-right:10px;margin-top:10px">')
-                            // });
-                        }
-                        ,done: function(res){
-                            //上传完毕
-                            $('#cmsuploadimg'+id+'').text("播放发送");
-                            layer.closeAll('loading'); //关闭loading
-                            layer.msg(res.sinfo, {time: 2000, icon:6});
-                        }
-                        ,error: function(){
-                            //演示失败状态，并实现重传
-                            $('#cmsuploadimg'+id+'').text("播放发送");
-                            layer.closeAll('loading'); //关闭loading
-                            var demoText = $('#demoText');
-                            demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>');
-                            demoText.find('.demo-reload').on('click', function(){
-                                uploadInst.upload();
-                            });
-                        }
-                    });
                 });
             })
         })
@@ -1275,24 +858,6 @@ function bindLeftKey(picclass,id,pointX,pointY) {
                 });   $("." + picclass + "").draggable('enable');
 			}
 		})
-        // onkeyup = function (event){
-        //     if(event.keyCode == 17){
-        //         console.log(111);
-        //     }
-        // }
-
-        // $("." + picclass + "").draggable('disable');
-        // onkeydown=function (event) {
-        //     if (event.keyCode!=17) {
-        //         $("." + picclass + "").draggable('enable');
-        //     }
-        //     // $("." + picclass + "").draggable('enable');
-        // }
-        // onkeyup=function (event) {
-        //     if (event.keyCode==17) {
-        // console.log(456);
-        // $("." + picclass + "").draggable('disable');
-
 
     }
 }
@@ -1915,6 +1480,8 @@ function showPlc(){
 		var stategotime=arr_PLC[snum][5];
 		var state=arr_PLC[snum][2];
 		var runmode=arr_PLC[snum][7];
+        var tunnelnum=$("#default_place_select").val();//隧道号
+		var plctunnel = arr_PLC[snum][8];
 		var plcpicurl;
 		if(state==0){
 			plcpicurl="../pic2/plc0.gif";
@@ -1922,11 +1489,13 @@ function showPlc(){
 			plcpicurl="../pic2/plc1.gif";
 		}
 		//判断有无PLC
-		var plcmodule="<div class=\"plc-list-show\" id=\"plc_id_"+ id +"\">";
-		plcmodule=plcmodule + ""+ name +"";
-		plcmodule=plcmodule + "<span><img src=\""+ plcpicurl +"\" style='width:90px;height:40px ' /></span>";
-		plcmodule=plcmodule + "</div>";
-		$("#plc_show").append(plcmodule);
+		if(plctunnel == tunnelnum) {
+            var plcmodule = "<div class=\"plc-list-show\" id=\"plc_id_" + id + "\">";
+            plcmodule = plcmodule + "" + name + "";
+            plcmodule = plcmodule + "<span><img src=\"" + plcpicurl + "\" style='width:90px;height:40px ' /></span>";
+            plcmodule = plcmodule + "</div>";
+            $("#plc_show").append(plcmodule);
+        }
 	}
 }
 
@@ -1960,11 +1529,14 @@ function changeTab(obj,tnum){
 //照明加载亮度检测下拉框
 function controlLedAjax(){
 	$("#controlLED_select option").remove();
+    var tunnelnum=$("#default_place_select").val();//隧道号
 	//增加默认项
 	var ledoption="<option value=\"-1\" tunnel=\"-1\" selected>"+ msg_select_default +"</option>";
 	for(var i=0;i<arr_LIGHT.length;i++){
-		ledoption=ledoption+"<option value=\""+ arr_LIGHT[i][0] +"\" tunnel=\""+  arr_LIGHT[i][2] 
-			+"\" >"+  arr_LIGHT[i][13] +"</option>";
+		if(arr_LIGHT[i][2] == tunnelnum) {
+            ledoption = ledoption + "<option value=\"" + arr_LIGHT[i][0] + "\" tunnel=\"" + arr_LIGHT[i][2]
+                + "\" >" + arr_LIGHT[i][13] + "</option>";
+        }
 	}
 	$("#controlLED_select").append(ledoption);
 	layuiFormUpdate(1);

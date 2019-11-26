@@ -1,16 +1,16 @@
-#trees{
+#tree{
 	color:red;
 	background:; 
-	margin-top: 30px;
+	margin-top: 50px;
 	height:430px;
 	width:230px;
 	}
 #dev_cms_run{
     color: blue;
-    margin-left: 250px;
+    margin-left: 350px;
     background:;
-    width: 690px;
-    height: 430px;
+    width: 1150px;
+    height: 560px;
     margin-top: 30px;
     border-top-width: 30;
 }
@@ -18,4 +18,31 @@
 	position: absolute;
     	margin-top: 10px;
    	 margin-left: 10px;
+}
+#cmsshowlists{
+	    position: absolute;
+    width: 350px;
+    height: 290px;
+    margin-top: 300px;
+	background: green;
+}
+div#rMenu {
+	background-color:#555555;
+	text-align: left;
+	padding:2px;
+	width:100px;
+	position:absolute;
+	display:none;
+}
+div#rMenu ul {
+	margin:1px 0;
+	padding:0 5px;
+	cursor: pointer;
+	list-style: none outside none;
+	background-color:#DFDFDF;
+	
+}
+div#rMenu ul li {
+	margin:0;
+	padding:2px 0;
 }

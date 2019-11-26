@@ -3,7 +3,7 @@
     include_once ("common.php");
     $itype = empty($_GET['itype']) ? "":$_GET['itype'];
     session_start();
-    if(!empty($_SESSION["uid"])){
+    if(isset($_SESSION["uid"])){
         $state =$_GET['state'];
         if($itype == "1" && $state !=""){
             $arr = unserialize($_COOKIE['AutoConfig']);

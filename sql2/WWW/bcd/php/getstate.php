@@ -35,7 +35,7 @@
             foreach ($state["data"] as $k=>$v){
                 $result["rows"][$num]["state"] = $v["istate"];
                 $result["rows"][$num]["dt"] = "";
-                $result["rows"][$num]["id"] = "2.".$v["iid"];
+                $result["rows"][$num]["id"] = "10000".$v["iid"];
                 $result["rows"][$num]["Contents"] = "";
                 $result["rows"][$num]["shape"] = $v["ishape"];
                 $result["rows"][$num]["value"] = isset($v["ivalue"])? $v["ivalue"] :"";

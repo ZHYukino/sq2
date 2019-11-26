@@ -35,8 +35,10 @@ if(!isset($_SESSION['uid'])){
     <!-- 自定义 -->
     <link href="css/pagestyle.css?vs=112" rel="stylesheet">
     <link href="css/tunnel.css"  rel="stylesheet">
-    <!-- <link href="css/cmstunnel.css" rel="stylesheet"> -->
-    <link rel="stylesheet" href="jspackage/tree/css/zTreeStyle/zTreeStyle.css" type="text/css">
+    <!--    tree-->
+    <link type="text/css" rel="stylesheet" href="jspackage/rightMenu/zTreeStyle/zTreeStyle.css" />
+    <link type="text/css" rel="stylesheet" href="jspackage/rightMenu/zTreeStyle/zTreeIcons.css" />
+    <link type="text/css" rel="stylesheet" href="jspackage/rightMenu/css/trees.css" />
     <!---------- JS ---------->
     <!-- 默认加载 -->
     <script src="jspackage/jquery/jquery-1.10.2.min.js"></script>
@@ -45,6 +47,8 @@ if(!isset($_SESSION['uid'])){
     <script src="jspackage/aes/aes.js"></script>
     <script src="jspackage/backthemes/js/bootstrap.min.js"></script><!-- ?v=3.3.6 -->
     <!--[if lt IE 9]><script src="jspackage/json2/json2.js"></script><![endif]-->
+
+    <script type="text/javascript" src="jspackage/rightMenu/js/jquery-ztree-2.5.js"></script>
 
 </head>
 <body scoll=no>
@@ -311,10 +315,12 @@ if(!isset($_SESSION['uid'])){
 <script src="jspackage/highcharts/modules/exporting.js"></script>
 
 <!--tree-->
+<script type="text/javascript" src="jspackage/rightMenu/js/trees.js"></script>
 
 <!-- 自定义 -->
 <script src="js/inivar.js"></script>
 <script src="js/config.js"></script>
+<script src="js/opencms.js"></script>
 
 <script src="js/myVariable.js"></script>
 <script src="js/devinfo.js"></script>
@@ -413,143 +419,143 @@ if(!isset($_SESSION['uid'])){
 </div>
 <div class="ch"></div>
 
-<div id="openFirePlan_panel_editCMS" class="dn" style="position:absolute;top:10px;">
-    <div class="layui-form">
-        <div class="group-cms">
-            <div class="panel-cms-attribute-list">
-                <div>
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">显示内容</label>
-                        <div class="layui-input-block">
-                            <textarea id="input_cms_content_textarea" name="cms-content-textarea" placeholder="请输入显示内容" class="layui-textarea" style="margin:0;"></textarea>
-                        </div>
-                    </div>
-                    <div class="layui-form-item" style="margin:0;">
-                        <div class="layui-input-block">
-                            <div id="button_div_openCmsInfo" class="layui-btn layui-btn-normal">预留</div>
-                            <div id="button_div_addCmsInfo" class="layui-btn layui-btn-normal">新增</div>
-                            <div id="button_div_clearCmsInfo" class="layui-btn layui-btn-primary">清空</div>
-                            <div id="button_div_showCmsInfo" class="layui-btn layui-btn-primary">预览</div>
-                            <div id="div_cmsReserveInfo_id" class="dn"></div>
-                        </div>
-                    </div>
-                </div>
-                <div>
-                    <table id="tb_cmsfont"></table>
-                </div>
-            </div>
-            <div class="panel-cms-attribute-edit">
-                <blockquote class="layui-elem-quote layui-quote-nm" style="font-size:11px;">
-                    <div class="block-cms-font">
-                        <div class="line-cms-font-title">字号</div>
-                        <div class="line-cms-font-content">
-                            <select id="select_openFirePlan_fontsize" lay-filter="select_openFirePlan_fontsize">
-                                <option value="0">48*48</option>
-                                <option value="1">32*32</option>
-                                <option value="2">24*24</option>
-                                <option value="3">16*16</option>
-                                <option value="4">20*20</option>
-                                <option value="5">40*40</option>
-                            </select>
-                        </div>
-                        <div class="ch"></div>
-                    </div>
-                    <div class="block-cms-font">
-                        <div class="line-cms-font-title">字体</div>
-                        <div class="line-cms-font-content">
-                            <select id="select_openFirePlan_fontfamily" lay-filter="select_openFirePlan_fontfamily">
-                                <option value="0">宋体</option>
-                                <option value="1">楷体</option>
-                                <option value="2">黑体</option>
-                            </select>
-                        </div>
-                        <div class="ch"></div>
-                    </div>
-                    <div class="block-cms-font">
-                        <div class="line-cms-font-title">字体颜色</div>
-                        <div class="line-cms-font-content">
-                            <select id="select_openFirePlan_fontcolor" lay-filter="select_openFirePlan_fontcolor">
-                                <option value="0">红色</option>
-                                <option value="1">绿色</option>
-                                <option value="2">黄色</option>
-                            </select>
-                        </div>
-                        <div class="ch"></div>
-                    </div>
-                    <div class="block-cms-font">
-                        <div class="line-cms-font-title">出字方式</div>
-                        <div class="line-cms-font-content">
-                            <select id="select_openFirePlan_fontgo" lay-filter="select_openFirePlan_fontgo">
-                                <option value="0">直接显示</option>
-                                <option value="1">从上往下</option>
-                                <option value="2">从下往上</option>
-                                <option value="3">从左往右</option>
-                                <option value="4">从右往左</option>
-                            </select>
-                        </div>
-                        <div class="ch"></div>
-                    </div>
-                    <div class="block-cms-font">
-                        <div class="line-cms-font-title">出字速度</div>
-                        <input id="input_openFirePlan_fontspeed" type="text" class="editcms-input" value="4">
-                        (1-8)
-                    </div>
-                    <div class="block-cms-font">
-                        <div class="line-cms-font-title">停留时间</div>
-                        <input id="input_openFirePlan_fontstay" type="text" class="editcms-input" value="1">
-                        秒
-                    </div>
-                    <div class="block-cms-font">
-                        <div class="line-cms-font-title">左边距</div>
-                        <input id="input_openFirePlan_fontleft" type="text" class="editcms-input" value="0">
-                    </div>
-                    <div class="block-cms-font">
-                        <div class="line-cms-font-title">上边距</div>
-                        <input id="input_openFirePlan_fontright" type="text" class="editcms-input" value="0">
-                    </div>
-                    </fieldset>
+<!--<div id="openFirePlan_panel_editCMS" class="dn" style="position:absolute;top:10px;">-->
+<!--    <div class="layui-form">-->
+<!--        <div class="group-cms">-->
+<!--            <div class="panel-cms-attribute-list">-->
+<!--                <div>-->
+<!--                    <div class="layui-form-item">-->
+<!--                        <label class="layui-form-label">显示内容</label>-->
+<!--                        <div class="layui-input-block">-->
+<!--                            <textarea id="input_cms_content_textarea" name="cms-content-textarea" placeholder="请输入显示内容" class="layui-textarea" style="margin:0;"></textarea>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <div class="layui-form-item" style="margin:0;">-->
+<!--                        <div class="layui-input-block">-->
+<!--                            <div id="button_div_openCmsInfo" class="layui-btn layui-btn-normal">预留</div>-->
+<!--                            <div id="button_div_addCmsInfo" class="layui-btn layui-btn-normal">新增</div>-->
+<!--                            <div id="button_div_clearCmsInfo" class="layui-btn layui-btn-primary">清空</div>-->
+<!--                            <div id="button_div_showCmsInfo" class="layui-btn layui-btn-primary">预览</div>-->
+<!--                            <div id="div_cmsReserveInfo_id" class="dn"></div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div>-->
+<!--                    <table id="tb_cmsfont"></table>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div class="panel-cms-attribute-edit">-->
+<!--                <blockquote class="layui-elem-quote layui-quote-nm" style="font-size:11px;">-->
+<!--                    <div class="block-cms-font">-->
+<!--                        <div class="line-cms-font-title">字号</div>-->
+<!--                        <div class="line-cms-font-content">-->
+<!--                            <select id="select_openFirePlan_fontsize" lay-filter="select_openFirePlan_fontsize">-->
+<!--                                <option value="0">48*48</option>-->
+<!--                                <option value="1">32*32</option>-->
+<!--                                <option value="2">24*24</option>-->
+<!--                                <option value="3">16*16</option>-->
+<!--                                <option value="4">20*20</option>-->
+<!--                                <option value="5">40*40</option>-->
+<!--                            </select>-->
+<!--                        </div>-->
+<!--                        <div class="ch"></div>-->
+<!--                    </div>-->
+<!--                    <div class="block-cms-font">-->
+<!--                        <div class="line-cms-font-title">字体</div>-->
+<!--                        <div class="line-cms-font-content">-->
+<!--                            <select id="select_openFirePlan_fontfamily" lay-filter="select_openFirePlan_fontfamily">-->
+<!--                                <option value="0">宋体</option>-->
+<!--                                <option value="1">楷体</option>-->
+<!--                                <option value="2">黑体</option>-->
+<!--                            </select>-->
+<!--                        </div>-->
+<!--                        <div class="ch"></div>-->
+<!--                    </div>-->
+<!--                    <div class="block-cms-font">-->
+<!--                        <div class="line-cms-font-title">字体颜色</div>-->
+<!--                        <div class="line-cms-font-content">-->
+<!--                            <select id="select_openFirePlan_fontcolor" lay-filter="select_openFirePlan_fontcolor">-->
+<!--                                <option value="0">红色</option>-->
+<!--                                <option value="1">绿色</option>-->
+<!--                                <option value="2">黄色</option>-->
+<!--                            </select>-->
+<!--                        </div>-->
+<!--                        <div class="ch"></div>-->
+<!--                    </div>-->
+<!--                    <div class="block-cms-font">-->
+<!--                        <div class="line-cms-font-title">出字方式</div>-->
+<!--                        <div class="line-cms-font-content">-->
+<!--                            <select id="select_openFirePlan_fontgo" lay-filter="select_openFirePlan_fontgo">-->
+<!--                                <option value="0">直接显示</option>-->
+<!--                                <option value="1">从上往下</option>-->
+<!--                                <option value="2">从下往上</option>-->
+<!--                                <option value="3">从左往右</option>-->
+<!--                                <option value="4">从右往左</option>-->
+<!--                            </select>-->
+<!--                        </div>-->
+<!--                        <div class="ch"></div>-->
+<!--                    </div>-->
+<!--                    <div class="block-cms-font">-->
+<!--                        <div class="line-cms-font-title">出字速度</div>-->
+<!--                        <input id="input_openFirePlan_fontspeed" type="text" class="editcms-input" value="4">-->
+<!--                        (1-8)-->
+<!--                    </div>-->
+<!--                    <div class="block-cms-font">-->
+<!--                        <div class="line-cms-font-title">停留时间</div>-->
+<!--                        <input id="input_openFirePlan_fontstay" type="text" class="editcms-input" value="1">-->
+<!--                        秒-->
+<!--                    </div>-->
+<!--                    <div class="block-cms-font">-->
+<!--                        <div class="line-cms-font-title">左边距</div>-->
+<!--                        <input id="input_openFirePlan_fontleft" type="text" class="editcms-input" value="0">-->
+<!--                    </div>-->
+<!--                    <div class="block-cms-font">-->
+<!--                        <div class="line-cms-font-title">上边距</div>-->
+<!--                        <input id="input_openFirePlan_fontright" type="text" class="editcms-input" value="0">-->
+<!--                    </div>-->
+<!--                    </fieldset>-->
+<!---->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+<!--<div class="ch"></div>-->
+<!---->
+<!--<div id="reserveinfo_panel" class="dn" style="position:absolute;top:10px;">-->
+<!--    <div class="layui-form">-->
+<!--        <div class="group-cms">-->
+<!--            <div>-->
+<!--                <div class="layui-form-item">-->
+<!--                    <label class="layui-form-label">显示内容</label>-->
+<!--                    <div class="layui-input-block">-->
+<!--                        <textarea id="input_reserveinfo_textarea" name="input-reserveinfo-textarea" placeholder="请输入显示内容" class="layui-textarea" style="margin:0;"></textarea>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="layui-form-item" style="margin:0;">-->
+<!--                    <div class="layui-input-block">-->
+<!--                        <div id="button_div_addReserveInfo" class="layui-btn layui-btn-normal">新增</div>-->
+<!--                        <div id="button_div_editReserveInfo" class="layui-btn layui-btn-normal">编辑</div>-->
+<!--                        <div id="button_div_clearReserveInfo" class="layui-btn layui-btn-primary">清空</div>-->
+<!--                        <div id="div_editReserveInfo_id" class="dn"></div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div>-->
+<!--                <table id="tb_reserveinfo"></table>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+<!--<div class="ch"></div>-->
 
-            </div>
-        </div>
-    </div>
-</div>
-<div class="ch"></div>
-
-<div id="reserveinfo_panel" class="dn" style="position:absolute;top:10px;">
-    <div class="layui-form">
-        <div class="group-cms">
-            <div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label">显示内容</label>
-                    <div class="layui-input-block">
-                        <textarea id="input_reserveinfo_textarea" name="input-reserveinfo-textarea" placeholder="请输入显示内容" class="layui-textarea" style="margin:0;"></textarea>
-                    </div>
-                </div>
-                <div class="layui-form-item" style="margin:0;">
-                    <div class="layui-input-block">
-                        <div id="button_div_addReserveInfo" class="layui-btn layui-btn-normal">新增</div>
-                        <div id="button_div_editReserveInfo" class="layui-btn layui-btn-normal">编辑</div>
-                        <div id="button_div_clearReserveInfo" class="layui-btn layui-btn-primary">清空</div>
-                        <div id="div_editReserveInfo_id" class="dn"></div>
-                    </div>
-                </div>
-            </div>
-            <div>
-                <table id="tb_reserveinfo"></table>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="ch"></div>
-
-<div id="openFirePlan_panel_seeCMS" class="dn" style="position:absolute;top:10px;">
-    <div class="layui-form">
-        <div id="div_seeCMS_group" class="group-cms-see">
-            <div id="div_seeCMS" class="div-seeCMS"></div>
-        </div>
-    </div>
-</div>
-<div class="ch"></div>
+<!--<div id="openFirePlan_panel_seeCMS" class="dn" style="position:absolute;top:10px;">-->
+<!--    <div class="layui-form">-->
+<!--        <div id="div_seeCMS_group" class="group-cms-see">-->
+<!--            <div id="div_seeCMS" class="div-seeCMS"></div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+<!--<div class="ch"></div>-->
 
 <div id="eject_monitorwall_panel" class="dn" style="position:absolute;top:10px;">
     <div class="layui-form">
@@ -1021,7 +1027,9 @@ if(!isset($_SESSION['uid'])){
                                         $q = 4;
                                         $data = getselect($nums,$q,$path);
                                         foreach ($data["data"] as $key => $value){
-                                            echo "<option value=".$value["iid"].">".$value["scname"]."</option>>";
+                                            if($value["itunnelid"] == $_GET["tunnel"]) {
+                                                echo "<option value=" . $value["iid"] . ">" . $value["scname"] . "</option>>";
+                                            }
                                         }
                                         ?>
                                     </select>
@@ -1376,36 +1384,10 @@ if(!isset($_SESSION['uid'])){
 <div id="ptz_objid" class="dn" style="position:absolute;top:10px;"></div>
 <div class="ch"></div>
 <!-- ptz_objid end-->
-<!--<script src="jspackage/tree/js/jquery-1.4.4.min.js"></script>-->
-<script src="jspackage/tree/js/jquery.ztree.all.min.js"></script>
 
-<div id="cms_one"  style="position:absolute;top:10px;margin: 10px 10px;">
-    <div class="cms_three">
-        <div id="devcms_show"></div>
-          <div class=\"layui-upload\">
-        <?php
-        for($i=0;$i<count($cms);$i++){ ?>
-            <?php echo "    <button type=\"button\"  style='display:none'; class=\"layui-btn\" id=\"cmsuploadimg".  $cms[$i]["id"]."\"  >播放放送</button>  ";?>
-            <?php echo "    <button type=\"button\"  style='display:none'; class=\"layui-btn\" id=\"1cmsuploadimg".  $cms[$i]["id"]."\"  >播放获取</button>  ";?>
-        <?php }?>
-              <button id="cms_getlight" type="button" class="layui-btn layui-btn-normal layui-btn-radius">获取亮度</button>
-              <button id="cms_setlight" type="button" class="layui-btn layui-btn-warm layui-btn-radius">设置亮度</button>
-              <div class="layui-input-inline">
-                  <input type="tel" name="phone" lay-verify="required|phone" autocomplete="off" class="layui-input" style="width: 80px; height: 26px;background: #b4a4b3">
-              </div>
-          </div>
-        <div id="cmsshowlist">
-            播放列表
-        </div>
-        <div id="trees" style="position: absolute">
-<!--            <div id="trees_test1" ></div>-->
-            <ul id="ztree1" class="ztree "  >
-            </ul>
-        </div>
-        <div id="dev_cms_run" style=""></div>
-    </div>
-</div>
+<!--<script src="jspackage/tree/js/jquery.ztree.all.min.js"></script>-->
 
 </body>
 </html>
+<script src="js/opencms.js"></script>
 

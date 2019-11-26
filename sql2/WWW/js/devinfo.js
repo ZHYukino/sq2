@@ -108,10 +108,10 @@ function devgetpara(arr_,b,t){
 }
 
 function devgetpara2(arr_,b,t,u){
-	//if(u == 3) return false;
+    var tunnelnum=$("#default_place_select").val();//隧道号
 	$.ajax({
 		type: "GET",
-		url : "bcd/php/getpara.php?sid=" + Math.random()+ "&itype="+u+"&q=" + t,
+		url : "bcd/php/getpara.php?sid=" + Math.random()+ "&itype="+u+"&q=" + t+"&tunnel="+tunnelnum+"",
 		//data:{},
 		dataType: "text",
 		async:false,
@@ -255,6 +255,7 @@ function plcgetinfo(arr_,b){
 				   arr_[i].push("");
 				   arr_[i].push(-1);
 				   arr_[i].push(-1);
+				   arr_[i].push(jsonObject.rows[i].tunnel);
 			   }
 			}
 			b[0]=true;

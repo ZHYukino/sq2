@@ -2,19 +2,19 @@
 
     require_once ("common.php");
     session_start();
+
     $rejsondata = array(
       "code"=>"0",
       "data"=>"",
       "msg"=>"未登录不可操作",
     );
+    if (!isset($_SESSION["uid"])) {
+        echo json_encode($rejsondata);
+        die();
+    }
 
     //获得设备操作
     $actnum = empty($_GET["actnum"]) ? "": $_GET["actnum"] ;
-    if(isset($_SESSION["uid"])) {
-        $userid = $_SESSION["uid"];
-        $itype = $_GET["itype"];
-        //上传cms
-        if (isset($_SESSION["uid"])) {
             if ($itype == 1) {
                 $file_tmp = $_FILES['file']["tmp_name"];
                 $file_size = $_FILES['file']["size"];
@@ -53,6 +53,7 @@
                    $data[$num]["id"] = $num + 1;
                    $data[$num]["name"] = $k;
                    $data[$num]["pid"] = 1;
+                   $data[$num]["isParent"] = true;
                    $num = $num+1;
                 }
 
@@ -72,10 +73,9 @@
                 );
                 echo json_encode($result);
             }
-        }
-    }else{
-        echo json_encode($rejsondata,true);
-    }
+
+
+
 
 
 ?>

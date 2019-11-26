@@ -12,7 +12,7 @@
             $fj_ini[$name]["fxid"]=$_GET["fxid"];                                            //修改成前台获取的数据
             $fj_ini[$name]["fx"]=$_GET["fx"];
             for($i=0;$i<$total;$i++){
-                 $id = str_replace("10000","",$_GET["id"]);
+                 $id = str_replace("10000","",$_GET["id".$i]);
                 $fj_ini[$name]["fj".$id]=($_GET["isselect".$i] == "0") ? "":$_GET["isselect".$i];
             }
             $write = write_ini_file($fj_ini, $ini_name, true);      //改好的数据写入文件中
@@ -31,7 +31,7 @@
             $fj_ini = parse_ini_file($ini_name,true);    //获取配置文件内容
             $name = $_GET["name"].$_GET["name2"];
             for($i=0;$i<$total;$i++){
-                $id = str_replace("10000","",$_GET["id"]);
+                $id = str_replace("10000","",$_GET["id".$i]);
                 $fj_ini[$name]["zm".$id]=($_GET["isselect".$i] == "0") ? "":$_GET["isselect".$i];
                 $fj_ini[$name]["dj".$id]=($_GET["isopen".$i] == "0") ? "":$_GET["isopen".$i];
             }

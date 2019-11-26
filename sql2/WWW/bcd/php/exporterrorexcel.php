@@ -88,13 +88,13 @@
     }
     $data["rows"] = $result;
     $data["results"] = count($result);
-    //print_r($data);die();
+//    print_r($data);die();
     $xls_name = "../../uploadfile/".$_GET['tablename'].".xls";           //存入的文件名
     $file = fopen($xls_name, 'w');
     fwrite($file, iconv('UTF-8','GBK','隧道号')."\t".iconv('UTF-8','GBK','设备名称')."\t".iconv('UTF-8','GBK','设备桩号')."\t".iconv('UTF-8','GBK','设备类别')."\t\n");
     if(count($data["results"]) > 0) {
         for($i=0;$i<$data["results"];$i++){
-            fwrite($file, iconv('UTF-8','GBK',$data["rows"][$i]['tunnel'])."\t".iconv('UTF-8','GBK',$data["rows"][$i]['cname'])."\t".iconv('UTF-8','GBK',$data["rows"][$i]['devaddr'])."\t".iconv('UTF-8','GBK',$data["rows"][$i]['typename'])."\n");
+            fwrite($file, iconv('UTF-8','GBK',$data["rows"][$i]['tunnel'])."\t".iconv('UTF-8','GBK',$data["rows"][$i]['scname'])."\t".iconv('UTF-8','GBK',$data["rows"][$i]['devaddr'])."\t".iconv('UTF-8','GBK',$data["rows"][$i]['typename'])."\n");
         }
     }
     fclose($file);
