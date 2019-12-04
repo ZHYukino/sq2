@@ -1,14 +1,17 @@
 <?php
     //登录
-    $result = array("code" =>0 ,"msg"=>"") ;
+        $result = array("code" =>0 ) ;
 
-    if(isset($_SERVER["HTTP_X_REQUESTED_WITH"]) && strtolower($_SERVER["HTTP_X_REQUESTED_WITH"])=="xmlhttprequest"){
+    // if(isset($_SERVER["HTTP_X_REQUESTED_WITH"]) && strtolower($_SERVER["HTTP_X_REQUESTED_WITH"])=="xmlhttprequest"){
         // ajax 请求的处理方式
         require_once('common.php');
-        $name=trim($_POST['name']);
-        $pass=trim($_POST['pass']);
-        $name=checkstr($name);
-        $pass=checkstr($pass);
+        $name = isset($_POST['name'])?trim($_POST['name']) : "";
+        $pass = isset($_POST['pass'])?trim($_POST['pass']) : "";
+        $name = checkstr($name);
+        $pass = checkstr($pass);
+        // if(!$pass || !$name || empty($name) || empty($pass)){
+        //     die(  $error10) 
+        // }
 
         $query="select * from S_UserInfo where FEName = '".$name."' and FEnable = 1 ";
 
@@ -24,20 +27,25 @@
             while($row = sqlsrv_fetch_array($sql, SQLSRV_FETCH_ASSOC)){
                 $sql_pass = $row["FPassWord"];
                 $uid = $row["FID"];
+
             }
             if($pass == $sql_pass){
                 $result["code"] = 1;
-                $result["msg"] = "登录成功";
+                $result["data"]["msg"] = "登录成功";
                 session_start();
                 $_SESSION["uid"] = $uid;
                 $_SESSION["name"] = $name  ;
-                $_SESSION["ip"]=$_SERVER["REMOTE_ADDR"];
+                $_SESSION["ip"] = $_SERVER["REMOTE_ADDR"];
+                $result["data"]['userid'] =  $uid;
             }else{
                 $result["msg"] = "密码错误";
+                
             }
             echo json_encode($result);
         }
-
-    }
+// }
+    // }else{
+    //     echo   $error7;
+    // }
 
 ?>

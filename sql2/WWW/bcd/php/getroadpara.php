@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
     require_once ("common.php");
     $path = "DevInfo";
@@ -98,11 +98,11 @@
         $typepic = array(
             "23"=>"cms.PNG",
             "25"=>"tcms.PNG",
-            "17"=>"cam_0_1_2_1.png",
+            "17"=>"cam.png",
             "18"=>"ETHOST.png",
-            "19"=>"ET_1_5.png",
-            "20"=>"vd_1_-1.PNG",
-            "22"=>"wd_1_-1.PNG",
+            "19"=>"ET.png",
+            "20"=>"vd.PNG",
+            "22"=>"wd.PNG",
         );
         $path = "DevType";
         $type = CurlCalss::curl(5, '', $path);

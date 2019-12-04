@@ -1,61 +1,13 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <script src="jspackage/jquery/jquery-1.10.2.min.js"></script>
-    <script src="jspackage/aes/md5.js"></script>
-    <script src="jspackage/aes/rsa.js"></script>
-    <script src="jspackage/aes/aes.js"></script>
-    <script src="jspackage/backthemes/js/bootstrap.min.js"></script><!-- ?v=3.3.6 -->
-    <script src="jspackage/jquery/jquery3.2.js"></script>
-    <script src="jspackage/jquery/layer-v3.1.1/layer/layer.js"></script>
-    <title>无限滚动</title>
-    <style>
-        .xMarquee{ width:280px;overflow:hidden;height:32px;}
-        img,a{border:0px;}
-        .l{ float:left; padding:20px;}
+//门架播放版
+    function cmssetdota1(id,place,rate,check,content,speed,size,stoptime,stopplace,pic,font_color,font_style) {
 
-        #affiche {
-            color: red;
-            display: block;
-            width: 96%;
-            height: 30px;
-            margin: 0 auto;
-            position: relative;
-            overflow: hidden;
-        }
-        .affiche_text {
-            position: absolute;
-            display: none;
-            /*top: 0;*/
-            /*right: 120%;*/
-            line-height: 30px;
-            /*display: block;*/
-            word-break: keep-all;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-        #imgpic {
-            margin-top: 2px;
-        }
-    </style>
-
-    <div id="affiche"  style="background: black;width: 320px;height: 32px"><div class="affiche_text" ><img id="imgpic" style=" position: absolute;" src="pic2/000.bmp"><span id="test_content"></span> <img id="imgpic" style=" position: absolute;" src="pic2/000.bmp"></div></div>
-
-    <script type="text/javascript">
-            var place = 1;                          //上下的位置方式   1为居中 2左边  3右边
-            var rate = 20;                          //滑动频率  10-20-30   数字大速度慢
-            var check = 2;                          //进入方式
-            $("#test_content").text("情报板情报板情报板情报板s");   //内容
-            var cmsspeed = 2;                       //滚动速度
-            var font_size = 12;                     //字体大小
-            (function () {
-                var timer = setTimeout(this.marquee, 1000);
-            }());
-            $("#test_content").css("font-size", "" + font_size + "px");
-
-            function marquee() {
-                var scrollWidth = $('#affiche').width() + 60;       //div 长度
+        var place_zh = place;                           //上下的位置方式   1为居中 2左边  3右边
+        var rate_zh = rate;                             //滑动频率  10-20-30   数字大速度慢
+        var check_zh = check;                           //进入方式
+        var cmsspeed_zh = speed;                       //滚动速度
+         $("#"+id+"test_content").append("3123213123123");   //内容
+        var font_size = size;                            //字体大小
+        var scrollWidth = $('#affiche').width() + 60;       //div 长度
                 var textWidth = $('.affiche_text').width() + 60;
                 var textheight = $('.affiche_text').height();
                 var scrollheight = $('#affiche').height();
@@ -130,5 +82,6 @@
                         }, 20);
                         break;
                 }
-            }
-    </script>
+            
+
+  }

@@ -31,7 +31,7 @@
     }elseif ($itype == 3 && $date1 !=""){
         $start = $date1."-01-01";
         $finish = $date1."-12-31";
-        if( !checkday($start) ) {//检查日期
+        if( !checkday($start) ) {           //检查日期
             echo  $error12;
             die();
         }
@@ -41,7 +41,7 @@
        echo  "参数错误";
        die();
     }
-
+   
     $params = array(
         "logAccounts"=>"FEName",
         "logTime"=>"DTime",

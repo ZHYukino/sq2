@@ -6,8 +6,18 @@
     header('Access-Control-Allow-Methods:POST');
     // 响应头设置
     header('Access-Control-Allow-Headers:x-requested-with, content-type');
+
+    $error4 =  '{"code":-1,"msg":"数据库添加失败","count":0,"data":[]}';
+    $error12 = '{"code":-1,"msg":"日期格式错误","count":0,"data":[]}';
+    $error10 = '{"code":-1,"msg":"账号密码不可为空","count":0,"data":[]}';
+    $error2 = '{"code":-1,"msg":"查询数据的数目为零","count":0,"data":[]}';
+    $error3 = '{"code":-1,"msg":"参数错误","count":0,"data":[]}';
+    // $error1 = '{"code":-1,"msg":"请求失败，请先登录","count":0,"data":[]}';
+
 	$error12 = '{"code":-1,"msg":"日期格式错误","count":0,"data":[]}';
 	$error1 = '{"code":-1,"msg":"请求失败，请先登录","count":0,"data":[]}';
+    $error7 = '{"code":-1,"msg":"请求失败，需要ajax请求","count":0,"data":[]}';
+    $error6 = '{"code":-1,"msg":"密码错误","count":0,"data":[]}';
 	$success1 = '{"code":0,"msg":"添加成功","count":0,"data":[]}';
 	$success2 = '{"code":0,"msg":"报废成功","count":0,"data":[]}';
 	$success3 = '{"code":0,"msg":"删除成功","count":0,"data":[]}';
@@ -15,6 +25,7 @@
 	$success5 = '{"code":0,"msg":"修改成功","count":0,"data":[]}';
 	$success6 = '{"code":0,"msg":"生成成功","count":0,"data":[]}';
 	$success7 = '{"code":0,"msg":"批准成功","count":0,"data":[]}';
+    $success7 = '{"code":0,"msg":"日志添加成功","count":0,"data":[]}';
     //自动加载
 //    function __autoload($className){
 //        $filename = "./". $className .".php";

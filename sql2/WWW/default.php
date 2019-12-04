@@ -60,10 +60,10 @@ if(!isset($_SESSION['uid'])){
             <li class="layui-nav-item"><a onclick="logout()"  style="cursor:pointer;">退出</a></li>
         </ul>
     </div>
-
+<!-- 
     <div id="dev_div_body"   >
     </div>
-
+ -->
         <!-- 内容主体区域 -->
     <div style="padding: 15px;">
         <div      style="position: absolute;  top: 55%; left: 66%;">
@@ -82,6 +82,11 @@ if(!isset($_SESSION['uid'])){
             <div style="color: red">A隧道</div>
         </div>
         </div>
+
+
+    <div id="dev_div_body"   >
+    </div>
+
 </div>
 
 <script src="jspackage/jquery-ui/jquery-ui-1.10.4.min.js"></script>

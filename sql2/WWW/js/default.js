@@ -190,7 +190,7 @@ layui.use('layer', function(){
             ,title:'密码修改'
             ,content:"<form class=\"layui-form\" action=\"\" lay-filter=\"example\">\n" +
                 "<div class=\"layui-form-item\">\n" +
-                "    <label class=\"layui-form-label\">输入框</label>\n" +
+                "    <label class=\"layui-form-label\">账号</label>\n" +
                 "    <div class=\"layui-input-block\">\n" +
                 "   <input type=\"text\"  id='username' value=\""+usedata+"\" name=\"username\" lay-verify=\"title\" autocomplete=\"off\"  class=\"layui-input\"  style='margin-top: 15px;width: 300px'>\n" +
                 "    </div>\n" +
