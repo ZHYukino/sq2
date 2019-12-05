@@ -25,7 +25,8 @@
 	$success5 = '{"code":0,"msg":"修改成功","count":0,"data":[]}';
 	$success6 = '{"code":0,"msg":"生成成功","count":0,"data":[]}';
 	$success7 = '{"code":0,"msg":"批准成功","count":0,"data":[]}';
-    $success7 = '{"code":0,"msg":"日志添加成功","count":0,"data":[]}';
+    $success9 = '{"code":0,"msg":"上传成功","count":0,"data":[]}';
+    $success8 = '{"code":0,"msg":"日志添加成功","count":0,"data":[]}';
     //自动加载
 //    function __autoload($className){
 //        $filename = "./". $className .".php";
@@ -172,12 +173,12 @@
                     foreach ($elem as $key2 => $elem2) {
                         if (is_array($elem2)) {
                             for ($i = 0; $i < count($elem2); $i++) {
-                                $content .= $key2 . "[]=" . $elem2[$i] . "\n";
+                                $content .= $key2 . "[]=" . $elem2[$i] . "\r\n";
                             }
                         } else if ($elem2 == "")
-                            $content .= $key2 . "=\n";
+                            $content .= $key2 . "=\r\n";
                         else
-                            $content .= $key2 . "=" . $elem2 . "\n";
+                            $content .= $key2 . "=" . $elem2 . "\r\n";
                     }
                 }
             } else {

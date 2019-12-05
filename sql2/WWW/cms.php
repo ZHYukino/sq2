@@ -90,10 +90,18 @@ require ('./bcd/php/config.php');
                   <th>名称</th>
                   <th>信息</th>
                 </tr>
-              <!--   <tr>
-                  <td>sentsin</td>
-                  <td>2016-11-27</td>
-                </tr>  -->
+                 <tr>
+                  <td>动作序号</td>
+                  <td></td>
+                </tr> 
+                <tr>
+                  <td>出现方式</td>
+                  <td></td>
+                </tr> 
+                 <tr>
+                  <td>出现速度</td>
+                  <td></td>
+                </tr> 
               </thead>
             </table>
         </div>
@@ -134,7 +142,8 @@ require ('./bcd/php/config.php');
 </body>
 </html>
 <script>
-    var cmsbtn = " <button id=\"cms_upload\" type=\"button\" class=\"layui-btn layui-btn-normal\">播放发送</button>\n" +
+    var cmsbtn = "\n"+
+        " <button id=\"cms_upload\" type=\"button\" class=\"layui-btn layui-btn-normal\">播放发送</button>\n" +
         " <button id=\"cms_down\" type=\"button\" class=\"layui-btn layui-btn-normal\">播放获取</button>\n" +
         " <button id=\"cms_getlight\" type=\"button\" class=\"layui-btn layui-btn-primary\">获取亮度</button>\n" +
         "              <button id=\"cms_setlight\" type=\"button\" class=\"layui-btn layui-btn-primary\">设置亮度</button>\n" +
@@ -144,8 +153,9 @@ require ('./bcd/php/config.php');
     $(".layui-upload").append(cmsbtn);
     $("#cmsshowlist").text("播放列表");
 </script>
-
+<script type="js/timer-master/timer.js"></script>
 <script src="js/opencms.js"></script>
+
 
 <script>
      trees(<?php  echo $_GET["cms"]; ?>)
@@ -162,12 +172,13 @@ require ('./bcd/php/config.php');
             dataType: "json",
             async: false,
             success:function (res) {
-               
+               window.rescount = res.count;
                 cmssetdota(id,res,res.count,type,cid);
                
             }
         })
     }
+    
     day(<?php  echo $_GET["cms"]; ?>)
     function day(id) {
         //如果为true 就是第一次打开cms ，false 为第二点击cms ，也就是关闭
@@ -185,6 +196,172 @@ require ('./bcd/php/config.php');
         }
     }
   
+</script>
 
+<script type="text/javascript">
+
+    //上传情报板
+    $("#cms_upload").click(function(){
+        id =<?php  echo $_GET["cms"]; ?>;
+         $.ajax({
+            type: "GET",
+            url: "bcd/php/setcms.php?itype=5&id="+id+"",
+            dataType: "json",
+            success:function (res) {
+               if(res.iresult == 1){
+                 layer.msg(res.sinfo);
+               }else{
+                 layer.msg(res.sinfo);
+               }
+            }
+        })
+    })
+
+
+    //更改情报版
+   
+   function ajaxup(i,check,act,name=null){
+        id = <?php  echo $_GET["cms"]; ?>;
+         $.ajax({
+            type: "GET",
+            url: "bcd/php/cmsshow.php?itype=1&id="+id+"&item="+i+"&check="+check+"&act="+act+"&picname="+name+"",
+            dataType: "json",
+            success:function (res) {
+               if(res.code == 0 ){
+                    getcmsshow(id,i+1,name);
+               }
+            }
+        })
+   }
+
+//修改情报板参数
+
+ function updatecmsini(i,cid=null){
+    var stoptime = new Array();
+    var check = new Array();
+    var speed = new Array();
+    var picx = new Array();
+    var fontcolor = new Array();
+    var content = new Array();
+    var fontstyle = new Array();
+    var fontx = new Array();
+    var fontsize = new Array();
+
+      //上传
+    layui.use('upload', function(){
+        id = <?php  echo $_GET["cms"]; ?>;
+      var upload = layui.upload;
+      //执行实例
+      var uploadInst = upload.render({
+        elem: "#filepic"+i+"" //绑定元素
+        ,url: 'bcd/php/setcms.php?itype=1&id='+id+'&picnum='+cid+'' //上传接口
+        ,accept: 'file' //允许上传的文件类型
+        ,done: function(res){
+          //上传完毕回调
+          if(res.iresult == 1){
+            ajaxup(i,res.picname,act = 3,"图片"+cid+"");
+            layer.msg(res.sinfo);
+          }
+          if(res.code == -1){
+            layer.msg(res.msg);
+          }
+        }
+        ,error: function(){
+          //请求异常回调
+        }
+      });
+    });
+
+
+
+    //stoptime
+    stoptime[i] = $(".stoptime"+i+"").val();
+    $(".stoptime"+i+"").blur(function () {
+        //跟原值不同触发ajax请求修改后台
+        if($(this).val() != stoptime[i]){
+            ajaxup(i,$(this).val(),act = 0);
+            stoptime[i] = $(this).val();
+        }
+    })
+
+    //check
+    check[i] = $(".check"+i+"").val();
+    $(".check"+i+"").change(function(){
+        if($(this).val() != check[i]){
+            ajaxup(i,$(this).val(),act = 1);
+            check[i] = $(this).val();
+        }
+    })
+
+     //speed
+    speed[i] = $(".speed"+i+"").val();
+    $(".speed"+i+"").blur(function () {
+        //跟原值不同触发ajax请求修改后台
+        if($(this).val() != speed[i]){
+            ajaxup(i,$(this).val(),act = 2);
+            speed[i] = $(this).val();
+        }
+    })
+
+
+
+     //picx
+     picx[i] = $(".picx"+i+"").val();
+    $(".picx"+i+"").blur(function () {
+        //跟原值不同触发ajax请求修改后台
+        if($(this).val() != picx[i]){
+            ajaxup(i,$(this).val(),act = 4,"图片"+cid+"");
+            picx[i] = $(this).val();
+        }
+    })
+
+    //fontcolor
+     fontcolor[i] = $(".fontcolor"+i+"").val();
+    $(".fontcolor"+i+"").change(function () {
+        if($(this).val() != fontcolor[i]){
+            ajaxup(i,$(this).val(),act = 5,"文字");
+            fontcolor[i] = $(this).val();
+        }
+    })
+
+
+
+      //fontstyle
+   fontstyle[i] = $(".fontstyle"+i+"").val();
+    $(".fontstyle"+i+"").change(function () {
+        if($(this).val() != fontstyle[i]){
+            console.log($(this).val())
+            ajaxup(i,$(this).val(),act = 6,"文字");
+            fontstyle[i] = $(this).val();
+        }
+    })
+
+     //更改内容
+    content[i] = $(".content"+i+"").val();
+    $(".content"+i+"").blur(function () {
+        if($(this).val() != content[i]){
+            ajaxup(i,$(this).val(),act = 7,"文字");
+            content[i] = $(this).val();
+        }
+    })
+    //fontx
+    fontx[i] = $(".fontx"+i+"").val();
+    $(".fontx"+i+"").blur(function () {
+        //更改内容
+        if($(this).val() != fontx[i]){
+            ajaxup(i,$(this).val(),act = 8,"文字");
+            fontx[i] = $(this).val();
+        }
+    })
+    //fontsize
+   fontsize[i] = $(".fontsize"+i+"").val();
+    $(".fontsize"+i+"").change(function() {  
+        if($(this).val() !=  fontsize[i]){
+            ajaxup(i,$(this).val(),act = 9,"文字");
+             fontsize[i] = $(this).val();
+        }
+    }); 
+}
+   
 </script>
 

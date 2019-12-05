@@ -141,14 +141,10 @@ if(!isset($_SESSION['uid'])){
                 <?php
                 for($i=0;$i<count($cms);$i++) {
                     if(isset($cms[$i])) {
-                        echo "<div id=" . $cms[$i]["id"] . "affiche   ;  style='display: block; width: 96%; height: 30px;margin: 0 auto;position: relative;  overflow: hidden;background: #000000;   width: 320px;   height: 32px; position: absolute; display: none;border-top-left-radius: 2px;border-top-right-radius: 2px;border-bottom-left-radius: 2px;border-bottom-right-radius: 2px;'>";
-
-                        echo "<div id=" . $cms[$i]["id"] . "affiche_text  ;  style='position: absolute; line-height: 31px; display: none;   word-break: keep-all; text-overflow: ellipsis;  white-space: nowrap;' >";
-                        echo "<img id=" . $cms[$i]["id"] . "imgpic ; style='position: absolute;'><span id=".$cms[$i]['id']."nbs></span>";
-                        echo "<span id=" .$cms[$i]["id"] . "test_content  ; style='  '></span>";
-                        echo "<img id=" . $cms[$i]["id"] . "imgpic2 ; style=' position: absolute;'>";
-                        echo "</div></div>";
-                    }
+                        echo "<div id=" . $cms[$i]["id"] . "affiche   ;  style='display: block; width: 96%; height: 30px;margin: 0 auto;position: absolute;  overflow: hidden;background: #000000;   width: 320px;   height: 32px; position: absolute; display: none;border-top-left-radius: 2px;border-top-right-radius: 2px;border-bottom-left-radius: 2px;border-bottom-right-radius: 2px;'>";
+                        ?>
+                      </div>
+                 <?php  }
                 }
                 ?>
                 <?php

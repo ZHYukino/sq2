@@ -1,11 +1,25 @@
  
+//获得门架的数据
+ function getcmsshow(id,type=0,cid) {
+    $.ajax({
+         type: "GET",
+        url: "bcd/php/cmsshow.php?itype=2&id="+id+"",
+        dataType: "json",
+         async: false,
+         success:function (res) {
+            cmssetdota(id,res,res.count,type,cid);
+               
+        }
+    })
+}
 
 
-    //门架播放版
+
+//门架播放版
 function cmssetdota(id,resdata,playnum,type,cid=null) {
 
     var arr_check = new Array();
-    var check = new Array("左边进场","右边进场","上面进场","下面进场","立即出现");
+    var check = new Array("左边进场","右边进场","下移","上移","立即出现");
     var content = new Array();
     var font_style = new Array();
     var font_color = new Array();
@@ -24,13 +38,18 @@ function cmssetdota(id,resdata,playnum,type,cid=null) {
     var  picxlabel = new Array();
     var selectstr = new Array();
     var selectsize = new Array();
-    var fontsize = new Array("15","22","30");
+    var selectcolor = new Array();
+    var fontsize = new Array("15","25","30");
+
     var fontstyle = new Array();
         fontstyle[0] = "SimHei";                 //黑体
-        fontstyle[1] = "KaiTi ";                  //楷体
+        fontstyle[1] = "KaiTi";                  //楷体
         fontstyle[2] = "SimSun";                  //宋体
         fontstyle[3] = "FangSong";                //仿宋
+
     var chinse = new Array("黑体","楷体","宋体","仿宋");
+    var fontcolor = new Array("red","yellow","green","black","pink","blue");
+
     for (var i = 0; i < resdata.data.length; i++) {
         arr_check[i] =  resdata.data[i].check ;
         content[i] =  resdata.data[i].content ;
@@ -55,12 +74,12 @@ function cmssetdota(id,resdata,playnum,type,cid=null) {
             picx[i] = resdata.data[i].picx[0];
         }
 
-        idping[i] = "<div id=\""+id+"affiche_text"+i+"\"  ;  style='position: absolute;display:none; height:32;width:320px' >"+img[i]+"<span  id=\""+id+"test_content"+i+"\"  style=\" position:absolute ;margin-left:"+resdata.data[i].fontx+"px;font-size:" + font_size[i] + "px;color:"+font_color[i]+";margin-top:1px;width:300px;font-family:"+font_style[i]+"\">"+content[i]+"</span></div>"
+        idping[i] = "<div id=\""+id+"affiche_text"+i+"\"  ;  style='position: absolute;display:none; height:32;width:320px' >"+img[i]+"<span  id=\""+id+"test_content"+i+"\"  style=\" position:absolute ;margin-left:"+resdata.data[i].fontx+"px;font-size:" + font_size[i] + "px;color:"+font_color[i]+";margin-top:2px;width:280px;font-family:"+font_style[i]+";line-height:" + font_size[i] + "px;\">"+content[i]+"</span></div>"
         
         
        
         //判断是否是图片还是文字还是 父节点
-        showcontent = "<span  class=\""+id+"test_content"+i+"\"  style=\"position:absolute ;margin-left:"+resdata.data[i].fontx+"px;font-size:" + font_size[i] + "px;color:"+font_color[i]+";margin-top:1px;width:300px;font-family:"+font_style[i]+"\">"+content[i]+"</span>";
+        showcontent = "<span  class=\""+id+"test_content"+i+"\"  style=\"position:absolute ;margin-left:"+resdata.data[i].fontx+"px;font-size:" + font_size[i] + "px;color:"+font_color[i]+";margin-top:2px;width:280px;font-family:"+font_style[i]+";line-height:" + font_size[i] + "px;\">"+content[i]+"</span>";
        
         if(cid != null &&  cid.indexOf("图片") != -1){
             //去除文字
@@ -68,14 +87,14 @@ function cmssetdota(id,resdata,playnum,type,cid=null) {
             //过滤汉字图片1（只剩 1）
             var reg=/[\u4E00-\u9FA5]/g;
             var cidnum=cid.replace(reg,'');
-
             if(!isNaN(cidnum * 1)){
-                 picxlabel[i] = "<tr><th>名称</th><th>信息</th></tr><tr><td>X坐标</td><td>"+uppicx[cidnum-1]+"</td></tr><tr><td>图片</td><td>"+ uppicpath[cidnum-1] +"</td></tr>"
+                 picxlabel[i] = "<tr><th>名称</th><th>信息</th></tr><tr><td>X坐标</td><td><input type='text' value=\""+uppicx[cidnum-1]+"\"  maxlength=\"3\" class=\"picx"+i+"\"></td></tr><tr><td>当前图片</td><td>"+ uppicpath[cidnum-1] +"</td></tr><tr><td>上传并且更改图片</td><td><button type=\"button\"class=\"layui-btn-sm layui-btn-primary\" id=\"filepic"+i+"\">上传图片</button></td></tr>"
                 img[i] = showimg[cidnum-1];
             }
         }else if(cid != null && cid == "文字"){
             img[i] = "";
-            selectstr[i] = '<select name=\"fontstyle\" >';
+            //字体style
+            selectstr[i] = '<select class=\"fontstyle'+i+'\" >';
             fontstyle.forEach(function(element,index,arr){
                 if(font_style[i] == element ){
                     selectstr[i] += "<option value=\""+element+"\"  selected >"+chinse[index]+"</option>";
@@ -84,40 +103,50 @@ function cmssetdota(id,resdata,playnum,type,cid=null) {
                  }
             })
             selectstr[i] += "</select>";
-
-            selectsize[i] = '<select name=\"fontsize\" >';
+            //字体大小
+            selectsize[i] = '<select class=\"fontsize'+i+'\" >';
             fontsize.forEach(function(element,index,arr){
                 if(font_size[i] == element ){
-                    selectsize[i] += "<option value=\""+index+"\"  selected >"+element+"</option>";
+                    selectsize[i] += "<option value=\""+element+"\"  selected >"+element+"</option>";
                 }else{
-                    selectsize[i] += "<option value=\""+index+"\" >"+element+"</option>";
+                    selectsize[i] += "<option value=\""+element+"\" >"+element+"</option>";
                   }
             })
             selectsize[i] += "</select>";
+            //字体颜色
+            selectcolor[i] = '<select class=\"fontcolor'+i+'\" >';
+            fontcolor.forEach(function(element,index,arr){
+                if(font_color[i] == element ){
+                    selectcolor[i] += "<option value=\""+element+"\"  selected >"+element+"</option>";
+                }else{
+                   selectcolor[i] += "<option value=\""+element+"\" >"+element+"</option>";
+                }
+            })
+            selectcolor[i] += "</select>";
 
-            picxlabel[i] = "<tr><th>名称</th><th>信息</th></tr><tr><td>X坐标</td><td>"+pontx[i]+"</td></tr><tr><td>字体颜色</td><td>"+  font_color[i] +"</td></tr><tr><td>字体</td><td>"+  selectstr[i] +"</td></tr><tr><td>字体大小</td><td>"+ selectsize[i] +"</td></tr>"
+            picxlabel[i] = "<tr><th>名称</th><th>信息</th></tr><tr><td>X坐标</td><td><input type='text' value=\""+pontx[i]+"\"  maxlength=\"3\" class=\"fontx"+i+"\"></td></tr><tr><td>字体颜色</td><td>"+  selectcolor[i] +"</td></tr><tr><td>字体</td><td>"+  selectstr[i] +"</td></tr><tr><td>字体大小</td><td>"+ selectsize[i] +"</td></tr><tr><td>字符</td><td><textarea style='width:250px;height:60px'   class=\"content"+i+"\";>"+content[i]+"</textarea></td></tr>"
         }else if(cid == null ){
-
-            selectstr[i] = '<select name=\"check\" >';
+            //出场顺序
+            selectstr[i] = '<select class=\"check'+i+'\" >';
             check.forEach(function(element,index,arr){
                 if(arr_check[i] == index+1 ){
-                    selectstr[i] += "<option value=\""+element+"\"  selected >"+element+"</option>";
+                    selectstr[i] += "<option value=\""+(index+1)+"\"  selected >"+element+"</option>";
                 }else{
-                    selectstr[i] += "<option value=\""+element+"\" >"+element+"</option>";
+                    selectstr[i] += "<option value=\""+(index+1)+"\" >"+element+"</option>";
                  }
             })
             selectstr[i] += "</select>";
 
-            picxlabel[i] = "<tr><th>名称</th><th>信息</th></tr><tr><td>出现方式</td><td>"+selectstr[i]+"</td></tr><tr><td>出现速度</td><td><input type=\"text\" value=\""+speed[i]+" \"></td></tr>"
+            picxlabel[i] = "<tr><th>名称</th><th>信息</th></tr><tr><td>滚动序号</td><td>"+i+"</td></tr><tr><td>出现方式</td><td>"+selectstr[i]+"</td></tr><tr><td>滚动速度</td><td><input type=\"text\" value=\""+speed[i]*10*10+" \"   maxlength=\"4\"   class=\"speed"+i+"\" ></td></tr><tr><td>停留时间ms</td><td><input type=\"text\" value=\""+stoptime[i]+" \"  maxlength=\"6\" class=\"stoptime"+i+"\"></td></tr>"
         }
 
-        classping[i] = "<div class=\""+id+"affiche_text"+i+"\"  ;  style='position: absolute; height:32;width:320px' >" +img[i]+showcontent+"<div>"; 
+        classping[i] = "<div class=\""+id+"affiche_text"+i+"\";  style='position: absolute; height:32;width:320px' >" +img[i]+showcontent+"<div>"; 
        
 
         //如果为0就添加动画运动
         if(type == 0){
             $("#"+id+"affiche").append(idping[i]);
-         }
+        }
     }
 
     //不为零的 点击更换信息版，所以下面不需要再执行
@@ -126,16 +155,17 @@ function cmssetdota(id,resdata,playnum,type,cid=null) {
         $("."+id+"affiche").append(classping[type-1]);
         $("#updatecms").children().remove();
         $("#updatecms").append(picxlabel[type-1]);
-    
+        //type-1   为动作  ，cidnum 为图片 1或者2   
+        updatecmsini(type-1,cidnum);
         return false;
     }
 
     //左边或者上进场 else 右或者下边
     if( arr_check[0] == 1 ||  arr_check[0] == 2 ||  arr_check[0] == 5 ){
-         var textWidth = 320;
-         var place1 = "left";
+        var textWidth = 320;
+        var place1 = "left";
         var iwidth1 =320;
-          var scrollWidth = $("#"+id+"affiche").width() ;       //div 长度
+        var scrollWidth = $("#"+id+"affiche").width() ;       //div 长度
     }else{
         var textWidth = 32;
         var iwidth1 =32;
@@ -143,30 +173,30 @@ function cmssetdota(id,resdata,playnum,type,cid=null) {
         var scrollWidth = $("#"+id+"affiche").height() ;       //div 长度
     }
     if( arr_check[1] == 1 ||  arr_check[1] == 2 ||  arr_check[1] == 5 ){
-         var textWidth1 = 320;
-           var iwidth2=320;
-          var place2 = "left";
-           var scrollWidth = $("#"+id+"affiche").width() ;       //div 长度
+        var textWidth1 = 320;
+        var iwidth2=320;
+        var place2 = "left";
+        var scrollWidth = $("#"+id+"affiche").width() ;       //div 长度
     }else{
         var textWidth1 = 32;
         var place2 = "top";
         var iwidth2=32;
-         var scrollWidth = $("#"+id+"affiche").height() ;       //div 长度
+        var scrollWidth = $("#"+id+"affiche").height() ;       //div 长度
     }
     if( arr_check[2] == 1 ||  arr_check[2] == 2 ||  arr_check[2] == 5){
-         var textWidth2 = 320;
-         var iwidth3 = 320;
-         var place3 = "left";
-         var scrollWidth = $("#"+id+"affiche").width() ;       //div 长度
+        var textWidth2 = 320;
+        var iwidth3 = 320;
+        var place3 = "left";
+        var scrollWidth = $("#"+id+"affiche").width() ;       //div 长度
     }else{
         var textWidth2 = 32;
         var place3 = "top";
         var iwidth3 = 32;
-         var scrollWidth = $("#"+id+"affiche").height() ;       //div 长度
+        var scrollWidth = $("#"+id+"affiche").height() ;       //div 长度
     }
    
 
-   //立即停止
+   //立即出现
     if(arr_check[0] == 5 ){
          iwidth1=0;
     }
@@ -179,59 +209,90 @@ function cmssetdota(id,resdata,playnum,type,cid=null) {
      if(arr_check[2] == 5 ){
          iwidth3=0;
     }
-    stops = 1;
-    var check_zh = 1;
-    var interval = setInterval
-     (function () {
-        if( stops == 1  ){
-            iwidth1  -= speed[0];
+    var stops = new Array();
+    stops[id] = 1;
+
+    function cmsstate(){
+        if(stops[id] == 1  ){
             $("#"+id+"affiche_text2").hide();
             $("#"+id+"affiche_text0").show();
+            if(arr_check[0] == 5 && iwidth1 == 0){
+                clearInterval(interval);
+                setTimeout(statecms, stoptime[0]);
+            }
+            iwidth1  -= speed[0];
+            if(iwidth1 <=0 && iwidth1 >0-speed[0] && stoptime[1] != 0 && arr_check[0] != 5){
+                //清除  
+                clearInterval(interval);
+                //延迟执行
+                setTimeout(statecms, stoptime[0]);
+            }
         }
-        else if(stops == 2 ){
-                  
-             iwidth2 -=  speed[1];
-             $("#"+id+"affiche_text0").hide();
-                    // $("#"+id+"affiche_text1").show();
+        else if(stops[id] == 2 ){
+             if(arr_check[1] == 5 && iwidth2 == 0){
+                clearInterval(interval);
+                setTimeout(statecms, stoptime[1]);
+            }
+            iwidth2 -=  speed[1];
+
+            $("#"+id+"affiche_text0").hide();
+             if(iwidth2 <=0 && iwidth2 >0-speed[1] && stoptime[1] != 0 && arr_check[0] != 5){
+                //清除  
+                clearInterval(interval);
+                //延迟执行
+                setTimeout(statecms, stoptime[1]);
+            }
          }
-         else if( stops == 3  ){
-                    
-                iwidth3 -=  speed[2]
-                $("#"+id+"affiche_text1").hide();
+         else if( stops[id] == 3  ){   
+            if(arr_check[2] == 5 && iwidth3 == 0){
+                clearInterval(interval);
+                setTimeout(statecms, stoptime[2]);
+            }   
+            iwidth3 -=  speed[2]
+
+            $("#"+id+"affiche_text1").hide();
+             if(iwidth3 <=0 && iwidth3 >0-speed[2] && stoptime[2] != 0 && arr_check[0] != 5){
+                //清除  
+                clearInterval(interval);
+                //延迟执行
+                setTimeout(statecms, stoptime[2]);
+            }
         }
 
         if (iwidth1 <= -textWidth ) {
-                iwidth1 = scrollWidth  ; 
-              
-            if(playnum == 1){
-                      stops = 1; 
-                 }else{
-                      stops = 2;
-                 }
-                if(arr_check[1] == 5){
-                    iwidth2=0;
-                }
-                $("#"+id+"affiche_text1").show();
+            iwidth1 = scrollWidth  ; 
+          
+             if(playnum == 1){
+                  stops[id] = 1; 
+             }else{
+                  stops[id] = 2;
+             }
+            if(arr_check[1] == 5){
+                iwidth2=0;
             }
+             $("#"+id+"affiche_text0").hide();
+            $("#"+id+"affiche_text1").show();
+        }
         else if (iwidth2 <= -textWidth1 ) {
             if(playnum == 2){
-                      stops = 1;
+                      stops[id] = 1;
                 }else{
-                     stops = 3;
+                     stops[id] = 3;
                 }
                 iwidth2 = scrollWidth;
             if(arr_check[0] == 5 && playnum == 2){
                     iwidth1=0;
-                }
+            }
             if(arr_check[2] == 5 && playnum == 3){
                     iwidth3=0;
-                }
-                 $("#"+id+"affiche_text2").show();
+             }
+             $("#"+id+"affiche_text1").hide();
+            $("#"+id+"affiche_text2").show();
         }
         else if (iwidth3 <= -textWidth2 ) {
             iwidth3 = scrollWidth;
             if(playnum == 3){
-                 stops = 1; 
+                 stops[id] = 1; 
             }
             if(arr_check[0] == 5 && playnum == 3){
                  iwidth1=0;
@@ -254,25 +315,22 @@ function cmssetdota(id,resdata,playnum,type,cid=null) {
             var left3 = iwidth3;
         }
 
-
         $("#"+id+"affiche_text0").css(''+place1+'',''+left1 + 'px');
         $("#"+id+"affiche_text1").css(''+place2+'',''+left2 + 'px');
         $("#"+id+"affiche_text2").css(''+place3+'',''+left3 + 'px');
-   }, 30);
+     } 
+   
+    var interval = window.setInterval (cmsstate,100);
+    
+    function statecms(){
+         interval = window.setInterval (cmsstate,100);
+    }
+   
+   
+   
     window["var"+ id +""] = false;      
 }
 
-//获得门架的数据
-function getcmsshow(id) {
-    $.ajax({
-        type: "GET",
-        url: "bcd/php/cmsshow.php?itype=1&id="+id+"",
-        dataType: "json",
-        success:function (res) {
-            cmssetdota(id,res.data.place,res.data.rate,res.data.check,res.data.content,res.data.speed,res.data.size,res.data.stoptime,res.data.stopplace,res.data.picpath,res.data.font_color,res.data.font_style);
-        }
-    })
-}
 
 
 function tcmsdota(id,checktcms,speedtcms,imgpictcms){
@@ -353,8 +411,9 @@ function tcmsdota(id,checktcms,speedtcms,imgpictcms){
     }
 }
 
-//可变速限速标志
 
+
+ //可变速限速标志
 function tcms(id){
     $.ajax({
         type:"GET",

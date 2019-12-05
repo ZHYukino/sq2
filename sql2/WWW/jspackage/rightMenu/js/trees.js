@@ -24,11 +24,11 @@ var countryTree = (function(countryTree) {
                beforeClick: function(event, treeId, treeNode) {
                    if(treeId.pid == 1){
                         getcmsshow(id,(treeId.id-1));
-                         console.log(treeId)
+                         
                    }else if(treeId.pid >= 2 ){
                         
                         getcmsshow(id,(treeId.pid-1),treeId.name);
-                        console.log(treeId);
+                        
                        
                    }
                 },

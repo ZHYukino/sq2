@@ -369,7 +369,7 @@ function bindLeftKey(picclass,id,pointX,pointY) {
 						} else {
 							$("#" + id + "affiche").css("left", "" + pointX - 9 + "%");
 						}
-						$("#" + id + "affiche").css("top", "" + pointY - 4 + "%");
+						$("#" + id + "affiche").css("top", "" + pointY - 5 + "%");
 					}
 					getcmsshow(id);
 				} else {
@@ -842,7 +842,7 @@ function bindLeftKey(picclass,id,pointX,pointY) {
                                     } else {
                                         $("#" + id + "affiche").css("left", "" + xvalue - 9 + "%");
                                     }
-                                    $("#" + id + "affiche").css("top", "" + yvalue - 4 + "%");
+                                    $("#" + id + "affiche").css("top", "" + yvalue - 5 + "%");
                                 } else if (mydata.result && mydata.type == 25) {
                                     var tcmscheck = "tcmscheck" + id;
                                     window[tcmscheck] = false;
