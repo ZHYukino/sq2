@@ -108,9 +108,9 @@ require ('./bcd/php/config.php');
 
         <div id="rMenu" style="position: absolute">
             <li>
-                <ul id="r_addFolder"><li>增加文件夹</li></ul>
-                <ul id="r_addNode"><li>增加节点</li></ul>
-                <ul id="r_updateNode"><li>修改名称</li></ul>
+               <!--  <ul id="r_addFolder"><li>添加动作</li></ul> -->
+                <ul id="r_addNode"><li>增加图片</li></ul>
+                <!-- <ul id="r_updateNode"><li>修改名称</li></ul> -->
                 <ul id="r_deleteNode"><li>删除节点</li></ul>
             </li>
         </div>

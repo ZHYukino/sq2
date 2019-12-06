@@ -218,4 +218,21 @@
        echo json_encode($arr);
 	}
 	
+
+    //增加
+    else if($type == 3){
+        $item = $_GET["item"];
+        $act = $_GET["act"];
+        $path = "../localcms/" . $id . "/play.lst";
+        $play = parse_ini_file($path, true);
+        $item_no = explode(",",$play["playlist"]["item".$item] );
+        $str = explode("/", $item_no[3]);
+        foreach ($str as $key => $value) {
+           if(strpos($value, "f") !== false && strlen($value) === 7){
+                echo $value;
+           }
+        }
+
+    }
+
     ?>

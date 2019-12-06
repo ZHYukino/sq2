@@ -213,7 +213,7 @@ function cmssetdota(id,resdata,playnum,type,cid=null) {
     stops[id] = 1;
 
     function cmsstate(){
-        if(stops[id] == 1  ){
+        if(stops[id] == 1 ){
             $("#"+id+"affiche_text2").hide();
             $("#"+id+"affiche_text0").show();
             if(arr_check[0] == 5 && iwidth1 == 0){
@@ -297,6 +297,7 @@ function cmssetdota(id,resdata,playnum,type,cid=null) {
             if(arr_check[0] == 5 && playnum == 3){
                  iwidth1=0;
             }     
+            $("#"+id+"affiche_text2").hide();
         }
 
         if(arr_check[0] == 1 || arr_check[0] == 5 || arr_check[0] == 3){

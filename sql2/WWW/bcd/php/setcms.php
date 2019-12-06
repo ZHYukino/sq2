@@ -39,7 +39,8 @@
 
            //检查
            $ifname = explode(".", $file_name);
-           if($ifname != "bmp"){
+
+           if(end($ifname) != "bmp"){
                 die('{"code":-1,"msg":"图片格式错误","count":0,"data":[]}');
            }
            if ($file_size > 10 * 1024 * 1024) return $result["sinfo"] = "文件太大,超过10M。";

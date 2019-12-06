@@ -155,6 +155,17 @@ var countryTree = (function(countryTree) {
             if(nodeName == "") {
                 alert("操作失败！节点名称不能为空!");
             } else {
+                if(nodeName.indexOf("图片") != -1 ){
+                    var item = tree.pNode.id -2 ;
+                    $.ajax({
+                        type:"get",
+                        url:"bcd/php/cmsshow.php?itype=3&item="+item+"&act=addpic&id="+id+"",
+                        dataType:"json",
+                        success:function(res){
+
+                        }
+                    })
+                }
                 if(nodeName != null) {
                     tree.zTree.addNodes(tree.pNode, [{ //添加节点
                         id: tree.createNodeId(),
