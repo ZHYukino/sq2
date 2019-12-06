@@ -36,7 +36,7 @@
         	# code...
         	$check = explode(".", $check);
         	$upfile["3"];
-        	$update = explode("/",  $upfile["3"]);
+        	$update = explode("\\",  $upfile["3"]);
         	$practise = 1;
         	foreach ($update as $key => $value) {
         		if(strpos($value,'B') !== false && strlen($value) === 4 ){
@@ -48,11 +48,11 @@
         			$practise += 1;
         		}
         	}
-        	$upfile["3"]= implode($update, "/");
+        	$upfile["3"]= implode($update, "\\");
         }elseif ($act == 4){
         	//pic x
         	$upfile["3"];
-        	$update = explode("/",  $upfile["3"]);
+        	$update = explode("\\",  $upfile["3"]);
         	$practise = 1;
         	foreach ($update as $key => $value) {
         		if(strpos($value,'C') !== false && strlen($value) === 4 ){
@@ -68,22 +68,22 @@
         			$practise += 1;
         		}
         	}
-        	$upfile["3"]= implode($update, "/");
-
+        	$upfile["3"]= implode($update, "\\");
+          
         }elseif ($act == 5){
         	//fontcolor
         	$upfile["3"];
-        	$update = explode("/",  $upfile["3"]);
+        	$update = explode("\\",  $upfile["3"]);
         	foreach ($update as $key => $value) {
         		if(strpos($value, "f") !== false && strlen($value) === 7){
        				$update[$key-1] = $check;
         		}
         	}
-        	$upfile["3"]= implode($update, "/");
+        	$upfile["3"]= implode($update, "\\");
         }elseif ($act == 6){
         	//fontstyle
         	$upfile["3"];
-        	$update = explode("/",  $upfile["3"]);
+        	$update = explode("\\",  $upfile["3"]);
         	foreach ($update as $key => $value) {
         		if(strpos($value, "f") !== false && strlen($value) === 7){
         			$finsh = substr($value, 2,7);
@@ -92,21 +92,21 @@
         			$update[$key] = $star. $between . $finsh;
         		}
         	}
-        	$upfile["3"]= implode($update, "/");
+        	$upfile["3"]= implode($update, "\\");
         }elseif ($act == 7){
         	//内容
         	$upfile["3"];
-        	$update = explode("/",  $upfile["3"]);
+        	$update = explode("\\",  $upfile["3"]);
         	foreach ($update as $key => $value) {
         		if(strpos($value, "f") !== false && strlen($value) === 7){
         			 $update[$key+1] =  $check ;
         		}
         	}
-        	$upfile["3"]= implode($update, "/");
+        	$upfile["3"]= implode($update, "\\");
         }elseif ($act == 8){
         	//fontx
         	$upfile["3"];
-        	$update = explode("/",  $upfile["3"]);
+        	$update = explode("\\",  $upfile["3"]);
         	foreach ($update as $key => $value) {
         		if(strpos($value, "f") !== false && strlen($value) === 7){
         			 $num1 = substr($value, 0,4);
@@ -122,11 +122,11 @@
         			 }
         		}
         	}
-        	$upfile["3"]= implode($update, "/");
+        	$upfile["3"]= implode($update, "\\");
         }elseif ($act == 9){
         	//fontsize
         	$upfile["3"];
-        	$update = explode("/",  $upfile["3"]);
+        	$update = explode("\\",  $upfile["3"]);
         	foreach ($update as $key => $value) {
         		if(strpos($value, "f") !== false && strlen($value) === 7){
         			 $num1 = substr($value, 0,2);
@@ -134,7 +134,7 @@
         			 $update[$key] = $num1.$check.$num2;
         		}
         	}
-        	$upfile["3"]= implode($update, "/");
+        	$upfile["3"]= implode($update, "\\");
         }
        $upfiles = implode($upfile, ",");
        $play ["playlist"]["item".$item] = $upfiles;
@@ -161,7 +161,7 @@
         	if($key == "item_no"){
         		continue;
         	}
-        	$item = explode("/", $value);
+        	$item = explode("\\", $value);
         	
         	foreach ($item as $k => $v) {
         		if(strpos($item[$k],'C') !== false && strlen($v) === 4){
@@ -221,18 +221,87 @@
 
     //增加
     else if($type == 3){
+        //图片内容
         $item = $_GET["item"];
         $act = $_GET["act"];
         $path = "../localcms/" . $id . "/play.lst";
         $play = parse_ini_file($path, true);
-        $item_no = explode(",",$play["playlist"]["item".$item] );
-        $str = explode("/", $item_no[3]);
-        foreach ($str as $key => $value) {
-           if(strpos($value, "f") !== false && strlen($value) === 7){
-                echo $value;
-           }
+        //添加图片
+        if($act == "addpic"){
+            $picx = "C000";
+            $picname = "B000";
+
+            $item_no = explode(",",$play["playlist"]["item".$item] );
+            $str = explode("\\", $item_no[3]);
+
+            array_push($str, $picx);
+            array_push($str, $picname);
+
+            $res = implode($str, "\\");
+            $item_no[3] = $res;
+            $upfiles = implode($item_no, ",");
+            $play ["playlist"]["item".$item] = $upfiles;
+            $wres = write_ini_file($play, $path, $has_sections = true);
+        }
+        //删除图片
+        else if($act == "delpic"){
+            $picname = isset($_GET["picname"]) ? str_replace("图片", "", $_GET["picname"]) : "";
+
+            $item_no = explode(",",$play["playlist"][$item]);
+
+            $str = explode("\\", $item_no[3]);
+            $picnum = 1;
+            foreach ($str as $key => $value) {
+                if(strpos($str[$key],'C') !== false && strlen($value) === 4){
+                    if($picnum == $picname){
+                        $keyvalue = $key;
+                        unset($str[$key]);
+                    }
+                   $picnum += 1;
+                }
+            }
+            unset($str[$keyvalue+1]);
+            $res = implode($str, "\\");
+            $item_no[3] = $res;
+            $upfiles = implode($item_no, ",");
+            $play ["playlist"][$item] = $upfiles;
+            $wres = write_ini_file($play, $path, $has_sections = true);
+        }
+        if($wres){
+            echo $success5;
+        }
+    } 
+
+    //整个动作的删除或添加
+    else if($type == 4){
+
+        $item = $_GET["item"];
+
+        $path = "../localcms/" . $id . "/play.lst";
+        $play = parse_ini_file($path, true);
+
+        unset($play["playlist"][$item]);
+        $play["playlist"]["item_no"] = count($play["playlist"]) -1 ;
+        $wres = write_ini_file($play, $path, $has_sections = true);
+
+        if($wres){
+            echo $success5;
+        }
+    }
+    else if($type == 5){
+         $item = $_GET["item"];
+
+        $path = "../localcms/" . $id . "/play.lst";
+        $play = parse_ini_file($path, true);
+
+        $play["playlist"][$item] = "190,4,40,\\C000\\B002\\C100\\B003\\pink\\fk30040\\测试";
+        $play["playlist"]["item_no"] = count($play["playlist"]) -1 ;
+        $wres = write_ini_file($play, $path, $has_sections = true);
+
+        if($wres){
+            echo $success5;
         }
 
-    }
+     }
 
     ?>

@@ -78,8 +78,8 @@ require ('./bcd/php/config.php');
             <ul id='tree' class="tree" style="width: 350px;">
         </div>
 
-        <div id="cmsshowlists">
-            <table class="layui-table" lay-size="sm" style="margin-top: 45px" >
+        <div id="cmsshowlists" style="margin-top: 0px;top:450px">
+            <table class="layui-table" lay-size="sm" style="margin-top: 0px" >
               <colgroup>
                 <col width="70">
                 <col width="200">
@@ -108,10 +108,10 @@ require ('./bcd/php/config.php');
 
         <div id="rMenu" style="position: absolute">
             <li>
-               <!--  <ul id="r_addFolder"><li>添加动作</li></ul> -->
+                <ul id="r_addFolder"><li>添加动作</li></ul>
                 <ul id="r_addNode"><li>增加图片</li></ul>
                 <!-- <ul id="r_updateNode"><li>修改名称</li></ul> -->
-                <ul id="r_deleteNode"><li>删除节点</li></ul>
+                <ul id="r_deleteNode"><li>删除</li></ul>
             </li>
         </div>
         <div id="dev_cms_run" style="border: 1px solid #a5a5a5!important;padding:14px;border-radius: 16px!important;">

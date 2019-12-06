@@ -130,17 +130,28 @@ var countryTree = (function(countryTree) {
         hideItem: function(itemArray) { //隐藏某些域
             if(itemArray == undefined) { //如果为传入值，则禁用缺省的域
                 tree.hideItem(["#rMenu", "#r_addFolder", "#r_addNode", "#r_updateNode", "#r_deleteNode"]);
+                return false;
             }
             for(var i = 0; i < itemArray.length; i++) {
                 $(itemArray[i]).hide();
             }
         },
         addFolder: function() { //添加文件夹节点
-            var folderName = window.prompt("请输入文件夹的名称");
+            var folderName = window.prompt("请输入动作名称(动作最多为3种，动作名为item+数字)");
             if(folderName == "") {
                 alert("操作失败！文件夹的名称不能为空!");
             } else {
                 if(folderName != null) {
+                    $.ajax({
+                        type:"get",
+                        url:"bcd/php/cmsshow.php?itype=5&item="+ folderName+"&id="+id+"",
+                        dataType:"json",
+                        success:function(res){
+                            if(res.code === 0){
+                                trees(id);
+                            }
+                        }
+                    })
                     tree.zTree.addNodes(tree.pNode, [{ //添加节点
                         id: tree.createNodeId(),
                         pId: tree.pNode.id,
@@ -151,9 +162,9 @@ var countryTree = (function(countryTree) {
             }
         },
         addNode: function() { //添加节点
-            var nodeName = window.prompt("请输入节点名称");
+            var nodeName = window.prompt("请输入图片名称，名称为图片+数字");
             if(nodeName == "") {
-                alert("操作失败！节点名称不能为空!");
+                alert("操作失败！动作名称不能为空!");
             } else {
                 if(nodeName.indexOf("图片") != -1 ){
                     var item = tree.pNode.id -2 ;
@@ -165,11 +176,13 @@ var countryTree = (function(countryTree) {
 
                         }
                     })
+                }else if(nodeName.indexOf("文字") != -1){
+                    return false;
                 }
                 if(nodeName != null) {
                     tree.zTree.addNodes(tree.pNode, [{ //添加节点
                         id: tree.createNodeId(),
-                        pId: tree.pNode.id,
+                        pId: 1,
                         name: nodeName,
                         isParent: false
                     }]);
@@ -185,8 +198,18 @@ var countryTree = (function(countryTree) {
         },
         deleteNode: function() { //删除节点
             if(tree.pNode.isParent) { //判断该节点是否是文件夹节点，并且检查是否有子节点
-                if(window.confirm("如果删除将连同子节点一起删掉。请确认！")) {
+                if(window.confirm("如果删除将连同子图片和文字的整个动作一起删掉。请确认！！！！")) {
                     var parentNode = tree.zTree.getNodeByParam("id", tree.pNode.pid); //获取父节点对象
+                    var cnode = tree.pNode.name;
+                    $.ajax({
+                        type:"get",
+                        url:"bcd/php/cmsshow.php?itype=4&item="+ cnode+"&id="+id+"",
+                        dataType:"json",
+                        success:function(res){
+
+                        }
+                    })
+                    
                     tree.zTree.removeNode(tree.pNode); //移除节点
                     parentNode.isParent = true; //设置父节点为文件夹节点
                     tree.zTree.refresh();
@@ -194,9 +217,26 @@ var countryTree = (function(countryTree) {
             } else { //该节点为不是文件夹节点
                 if(window.confirm("确认要删除?")) {
                     var parentNode = tree.zTree.getNodeByParam("id", tree.pNode.pid);
+                    var picnode = tree.pNode.name;
+                    if(picnode.indexOf("图片") != -1 ){
+                        $.ajax({
+                            type:"get",
+                            url:"bcd/php/cmsshow.php?itype=3&item="+parentNode.name+"&act=delpic&id="+id+"&picname="+picnode+"",
+                            dataType:"json",
+                            success:function(res){
+
+                            }
+                        })
+                    }else if(picnode.indexOf("文字") != -1){
+                        alert("文字只可清空");
+                        return false;
+                    }
+
+                    
                     tree.zTree.removeNode(tree.pNode); //移除节点
                     parentNode.isParent = true; //设置父节点为文件夹节点
                     tree.zTree.refresh();
+
                 }
             }
         },

@@ -87,7 +87,7 @@
                $num = $num+1;
                $pid = $pid+1;
                $newv = explode(",",$v);
-               $shonw = explode("/", $newv[3]);
+               $shonw = explode("\\", $newv[3]);
                 // print_r($shonw);
                 $picnums = 0;
                foreach ($shonw as $key => $value) {
