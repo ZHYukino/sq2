@@ -78,8 +78,8 @@ require ('./bcd/php/config.php');
             <ul id='tree' class="tree" style="width: 350px;">
         </div>
 
-        <div id="cmsshowlists" style="margin-top: 0px;top:450px">
-            <table class="layui-table" lay-size="sm" style="margin-top: 0px" >
+        <div id="cmsshowlists">
+            <table class="layui-table" lay-size="sm"  >
               <colgroup>
                 <col width="70">
                 <col width="200">
@@ -114,7 +114,7 @@ require ('./bcd/php/config.php');
                 <ul id="r_deleteNode"><li>删除</li></ul>
             </li>
         </div>
-        <div id="dev_cms_run" style="border: 1px solid #a5a5a5!important;padding:14px;border-radius: 16px!important;">
+        <div id="dev_cms_run" >
             <div style="width: 500px;height: 100px">
                 <?php
                 echo "<div class=" . $_GET["cms"] . "affiche   ;  style=' width: 96%; height: 30px;margin: 0 auto;position: relative;  overflow: hidden;background: #000000;   width: 320px;   height: 32px; position: absolute; border-top-left-radius: 2px;border-top-right-radius: 2px;border-bottom-left-radius: 2px;border-bottom-right-radius: 2px;'>";
@@ -158,12 +158,10 @@ require ('./bcd/php/config.php');
 
 
 <script>
-     trees(<?php  echo $_GET["cms"]; ?>)
-
+    trees(<?php  echo $_GET["cms"]; ?>)
     varname="var<?php  echo $_GET["cms"]; ?>";                  //这是防止重复cms重复的变量
     window[varname] = 100;
-    varcmsbtn="cms<?php  echo $_GET["cms"]; ?>";                  //这是关闭cms的变量
-    window[varcmsbtn] = true;
+
     //获得门架的数据
     function getcmsshow(id,type=0,cid) {
         $.ajax({
@@ -174,31 +172,18 @@ require ('./bcd/php/config.php');
             success:function (res) {
                window.rescount = res.count;
                 cmssetdota(id,res,res.count,type,cid);
-               
             }
         })
     }
     
     day(<?php  echo $_GET["cms"]; ?>)
     function day(id) {
-        //如果为true 就是第一次打开cms ，false 为第二点击cms ，也就是关闭
-        if (window["cms" + id + ""]) {
-            window["cms" + id + ""] = false;
-            $("#" + id + "affiche").show();
-            //防止执行两次 运动
-            console.log(window["var" + id + ""]);
-            if (!window["var" + id + ""]) return false;
-            //如果通过setxy移动过限速标志情报板就不再修改位置
-            getcmsshow(id);
-        } else {
-            window["cms" + id + ""] = true;
-            $("#" + id + "affiche").hide();
-        }
+    //防止执行两次 运动
+       if (!window["var" + id + ""]) return false;
+        //如果通过setxy移动过限速标志情报板就不再修改位置
+        $("#" + id + "affiche").show();
+        getcmsshow(id);
     }
-  
-</script>
-
-<script type="text/javascript">
 
     //上传情报板
     $("#cms_upload").click(function(){
@@ -226,6 +211,8 @@ require ('./bcd/php/config.php');
             type: "GET",
             url: "bcd/php/cmsshow.php?itype=1&id="+id+"&item="+i+"&check="+check+"&act="+act+"&picname="+name+"",
             dataType: "json",
+            anync:false,
+            cache:false,
             success:function (res) {
                if(res.code == 0 ){
                     getcmsshow(id,i+1,name);

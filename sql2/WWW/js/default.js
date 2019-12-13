@@ -108,6 +108,7 @@ function devmove(id) {
                         //data:{},
                         dataType: "json",
                         success: function (mydata) {
+
                         }
                     })
                 }
@@ -129,6 +130,8 @@ function roadpara2(){
         success:function (res) {
             if(res.code==1) {
                 var bodydev = "";
+                var cmsnum = 0;
+                var cmsid = new Array();
                 for (var j = 0 ;j<res.count;j++){
                     var x = (res.data[j].ipointx==0) ? 0 :res.data[j].ipointx;
                     var y = (res.data[j].ipointy==0) ? 20 :res.data[j].ipointy;
@@ -136,11 +139,23 @@ function roadpara2(){
                     bodydev = "<div id=\""+res.data[j].iid+"\"  title=\""+res.data[j].scode+"\r"+res.data[j].scname+"\r"+updown+"\"  class=\""+res.data[j].itypeid+"\"  style=\"cursor:pointer;position:absolute;left: "+x+"%;top:"+y+"%  \"> <img src=\"pic2/"+res.data[j].picpath+"\"  style='width: 32px;height: 32px;'>"
                     if(res.data[j].itypeid == 22){
                         bodydev += "<div id=\"vdvalue"+res.data[j].iid+"\" style='font-size: 13px'>风速："+res.data[j].fengsu+ " <br>能见度："+res.data[j].nengjiandu+ "</div>";
+                    }else if(res.data[j].itypeid == 23 ){
+                         bodydev +="<div id=\"10000"+res.data[j].iid+"affiche\"  ; class=\"cmsplayback\"  style='display: block; width: 96%; height: 30px;top:-32px;left:-160px;margin: 0 auto;position: absolute;  overflow: hidden;background: #000000;   width: 320px;   height: 32px; position: absolute; border-top-left-radius: 2px;border-top-right-radius: 2px;border-bottom-left-radius: 2px;border-bottom-right-radius: 2px;'></div>";
+                         cmsid[cmsnum]  = "10000"+res.data[j].iid+"";
+                         cmsnum += 1; 
                     }
                     bodydev += " </div>";
                     $("#dev_div_body").append(bodydev);
-                    devmove(res.data[j].iid)
-                }
+                    devmove(res.data[j].iid);
+                }//for循环结束   
+
+                //加载cms
+                for (var i = 0; i < $(".cmsplayback").length; i++) {
+                    // console.log(cmsid[i]);
+                    getcmsshow(cmsid[i]);
+                    // cmsid[i].replace("10000",'')
+                    opencmsplay(cmsid[i])
+                }//for循环结束   
             }
         }
     })
@@ -172,9 +187,31 @@ function clicktype(num){
     })
 }
 
-
-
-
+function opencmsplay(id){
+    layui.use('layer', function(){
+        $("#" + id.replace("10000","") + "").on('dblclick', function () {
+            var index=layer.open({
+                type: 2//此处以iframe举例
+                ,title: '情报版'+id.replace("10000",'')+''
+                ,area: ['1300px', '670px']
+                ,shade: 0
+                ,maxmin: true
+                , id: 'LAY_LSTSdbclick_cms' //防止重复弹出
+                 ,content: 'cms.php?cms='+id+''
+               // , content: 'html内容'
+                ,btn: ['关闭'] //只是为了演示
+                ,yes: function(index, layero){
+                    layer.close(index);
+                }
+                 ,zIndex: layer.zIndex
+                ,success: function(layero,index){
+                    // console.log($("#"+id+"affiche").html());
+                    layer.full(index);
+                }
+            });
+         })
+    })    
+}
 
 
 

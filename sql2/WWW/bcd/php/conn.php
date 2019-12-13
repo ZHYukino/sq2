@@ -12,8 +12,10 @@
             }
             return $ini_items;
         }
-    $ini = get_ini_file();//取出ini中的配置信息
 
+    // $ini = get_ini_file();//取出ini中的配置信息
+    $ini = parse_ini_file("../NDB.ini");
+    
     $server = $ini['servername']; //服务器名称，在 sql server management studio 的登录界面查看
     $uid = $ini['username']; //数据库用户名
     $pwd = $ini['password']; //数据库密码

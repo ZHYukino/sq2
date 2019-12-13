@@ -40,16 +40,19 @@
         if(array_key_exists($name,$result)) {               //如果请求的设备名在 cookie 中才开始执行
             if ($result[$name] == 1) {
                 $result[$name] = 0;
+                $resnum =  $result[$name];
                 $result = serialize($result);
                 setcookie("CheckList", $result, time() + 3600 * 24 * 30);
             } else if ($result[$name] == 0) {
                 $result[$name] = 1;
+                $resnum =  $result[$name];
                 $result = serialize($result);
                 setcookie("CheckList", $result, time() + 3600 * 24 * 30);
             }
         }
         $res["msg"] =1;
         $res["code"]=$name;
+        $res["resmsg"] =  $resnum;
         echo json_encode($res);
     }
     //公路设备

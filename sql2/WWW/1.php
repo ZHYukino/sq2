@@ -21,28 +21,28 @@ var_dump($s);
 </html>
 
 <script>
-    function res() {
-        var name = "admin";
-        var pass = "111";
-        $.ajax({
-            type:"post",
-            url:"http://192.168.8.180:70/bcd/json/login.php?itype=fa8az2SWLoJOOXE-0IFgf6KG_vSuVPPTuNmqZGy9l1r9L5mzCiZvkGPOYJg-HENKLBPYfg",
-            dataType:"json",
-            success:function (res) {
+    // function res() {
+    //     var name = "admin";
+    //     var pass = "111";
+    //     $.ajax({
+    //         type:"post",
+    //         url:"http://192.168.8.180:70/bcd/json/login.php?itype=fa8az2SWLoJOOXE-0IFgf6KG_vSuVPPTuNmqZGy9l1r9L5mzCiZvkGPOYJg-HENKLBPYfg",
+    //         dataType:"json",
+    //         success:function (res) {
 
-            }
-        })
-    }
-    res()
+    //         }
+    //     })
+    // }
+    // res()
     function res2() {
-        var name = "test";
-        var pass = "test";
-        var usid = "1"
+        var name = "super";
+        var pass = "9047033B3B0BE0C06AE59A82E44627CC";
+        // var usid = "1"
         $.ajax({
             type:"post",
             cache:false,
-            url:"http://192.168.8.180:88/bcd/php/addlog.php",
-            data:{"usid":usid},
+            url:"http://223.82.202.203:9002/bcd/php/login.php",
+            data:{"name":name,"pass":pass,"usid":"1"},
             success:function (res) {
 
             }

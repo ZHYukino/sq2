@@ -6,13 +6,16 @@
 	width:230px;
 	}
 #dev_cms_run{
-    color: blue;
-    margin-left: 350px;
-    background:;
-    width: 1150px;
-    height: 560px;
-    margin-top: 30px;
-    border-top-width: 30;
+    	color: blue;
+    	margin-left: 350px;
+    	background:;
+   	 width: 1150px;
+   	 height: 560px;
+   	 margin-top: 30px;
+   	 border-top-width: 30;
+	border: 1px solid #a5a5a5!important;
+	padding:14px;
+	border-radius: 16px!important;
 }
 #cmsshowlist{
 	position: absolute;
@@ -20,11 +23,11 @@
    	 margin-left: 10px;
 }
 #cmsshowlists{
-	    position: absolute;
-    width: 350px;
-    height: 290px;
-    margin-top: 300px;
-	background: ;
+	position: absolute;
+    	width: 350px;
+    	height: 290px;
+    	margin-top: 0px;
+	top:420px
 }
 div#rMenu {
 	background-color:#555555;
@@ -45,4 +48,9 @@ div#rMenu ul {
 div#rMenu ul li {
 	margin:0;
 	padding:2px 0;
+}
+div#cms_bigdiv{
+	margin-top: 200px;
+	margin-left: 0px;
+	position: absolute;
 }

@@ -152,7 +152,8 @@
         $path = "../localcms/" . $id . "/play.lst";
         $play = parse_ini_file($path, true);
         // $play["playlist"]["item0"] = iconv("GBK","UTF-8", $play["playlist"]["item0"]);
-        
+        $fonf[1] = "";
+        $font_color = "";
         //动作数量
         $major = 0;  
         foreach ($play["playlist"] as $key => $value) {

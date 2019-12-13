@@ -85,22 +85,25 @@ if(!isset($_SESSION['uid'])){
 
 
     <div id="dev_div_body"   >
+
     </div>
 
 </div>
 
 <script src="jspackage/jquery-ui/jquery-ui-1.10.4.min.js"></script>
 <script src="./jspackage/layui/layui.js"></script>
+<script type="text/javascript" src="js/opencms.js"></script>
 <script type = "text/javascript"   src="js/Des.js"></script>
 <script src="js/default.js"></script>
 <script src="js/tunnel.js"></script>
+
 <script>
     // JavaScript代码区域
     layui.use('element', function(){
         var element = layui.element;
 
     });
-
+   
 </script>
 </body>
 </html>

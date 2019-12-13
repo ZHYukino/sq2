@@ -69,6 +69,7 @@ var countryTree = (function(countryTree) {
 
         loadTree: function() { //加载树
             var nodes;
+
             $.ajax({
                 url:"bcd/php/setcms.php?itype=2&id="+id+"",
                 type:"get",

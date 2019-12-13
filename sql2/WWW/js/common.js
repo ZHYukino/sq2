@@ -1,17 +1,26 @@
 ﻿//下拉框和设备选择器关闭情报版
-function closecms(dev) {
+function closecms(dev,type) {
 	switch (dev) {
         case 1:
             for (var i = 0; i < arr_CMS.length; i++) {
             	console.log(13);
                 var id = arr_CMS[i][1];
-                $("#" + id + "affiche").hide();
+                if(type == 1){
+                	 $("#" + id + "affiche").show();
+                }else{
+                	 $("#" + id + "affiche").hide();
+                }
+              
             }
             break;
         case 2:
             for (var i = 0; i < arr_TCMS.length; i++) {
                 var id = arr_TCMS[i][1];
-                $("#" + id + "affichetcms").hide();
+                 if(type == 1){
+                	$("#" + id + "affichetcms").show();
+                }else{
+                	$("#" + id + "affichetcms").hide();
+                }
             }
             break;
 		case 3:
@@ -65,10 +74,18 @@ function saveCheckbox(typevalue){
 		dataType: "json",
 		success: function(mydata){
 			if(mydata.code == "CMS"){
-				closecms(1);//隐藏情报板
+				if(mydata.resmsg === 1){
+					closecms(1,1);
+				}else{
+					 closecms(1,0);//隐藏情报板
+				}
 			}
 			if(mydata.code == "TCMS"){
-				closecms(2);
+				 if(mydata.resmsg === 1){
+					closecms(2,1);
+				}else{
+					 closecms(2,0);//隐藏情报板
+				}
 			}
 		},
 		error: function(json){}
@@ -245,9 +262,9 @@ function defaultAddImg(typevalue,selectvalue,picclass,arr_info,snum) {
 				$("#default_cover").append(picmodule);
                 //控制cms播放
 				varname="var"+id;                  //这是防止重复cms重复的变量
-				window[varname] = 100;
-				varcmsbtn="cms"+id;                  //这是关闭cms的变量
-				window[varcmsbtn] = true;
+				if(window["var"+ id +""] != false){
+					window[varname] = 100;
+				}	
                 //左键事件
 				bindLeftKey(picclass, id,pointX,pointY);
 				//右键菜单
@@ -329,59 +346,38 @@ function defaultUpdateImg(typevalue,selectvalue,picclass,arr_info,snum){
 function bindLeftKey(picclass,id,pointX,pointY) {
     //可限速标志
     if (picclass == "default-pic-TCMS") {
-        $("#" + id + "").on('mousedown', function (es) {
-            if (es.which == 3) {
-                if (window["cms" + id + ""]) {
-                    window["cms" + id + ""] = false;
-                    $("#" + id + "affichetcms").show();
-                    if (!window["var" + id + ""]) return false;   			//防止执行两次 运动
-                    if (window["tcmscheck" + id + ""] !== false) {
-                        $("#" + id + "affichetcms").css("left", "" + pointX + "%");
-                        $("#" + id + "affichetcms").css("top", "" + pointY - 8 + "%");
-                    }
-                    tcms(id);
-                } else {
-                    window["cms" + id + ""] = true;
-                    $("#" + id + "affichetcms").hide();
-                }
-            }
-        })
+        $("#" + id + "affichetcms").show();
+        if (!window["var" + id + ""]) return false;   			//防止执行两次 运动
+        if (window["tcmscheck" + id + ""] !== false) {
+            $("#" + id + "affichetcms").css("left", "" + pointX  + "%");
+            $("#" + id + "affichetcms").css("top", "" + pointY - 7	 + "%");
+        }
+        // console.log(id);
+        // tcms(id);
     }
 
     //门架标志 右击
     if (picclass == "default-pic-CMS") {
-        $("#" + id + "").on('mousedown', function (e) {
-            if(e.which == 3){
-            //如果为true 就是第一次打开cms ，false 为第二点击cms ，也就是关闭
-				if (window["cms" + id + ""]) {
-					window["cms" + id + ""] = false;
-					$("#" + id + "affiche").show();
-					//防止执行两次 运动
-					console.log(window["var" + id + ""]);
-					if (!window["var" + id + ""]) return false;
-					//如果通过setxy移动过限速标志情报板就不再修改位置
-					if (window["cmscheck" + id + ""] !== false) {
-						if (pointX < 10) {
-							//位置最左最右特殊化
-							$("#" + id + "affiche").css("left", "" + pointX - 1 + "%");
-						} else if (pointX > 90) {
-							$("#" + id + "affiche").css("left", "" + pointX - 21 + "%");
-						} else {
-							$("#" + id + "affiche").css("left", "" + pointX - 9 + "%");
-						}
-						$("#" + id + "affiche").css("top", "" + pointY - 5 + "%");
-					}
-					getcmsshow(id);
+			$("#" + id + "affiche").show();
+			//防止执行两次 运动
+			if (window["var" + id + ""]  == false) return false;
+			// //如果通过setxy移动过限速标志情报板就不再修改位置
+				if (pointX < 10) {
+					//位置最左最右特殊化
+					$("#" + id + "affiche").css("left", "" + pointX - 1 + "%");
+				} else if (pointX > 90) {
+					$("#" + id + "affiche").css("left", "" + pointX - 18 + "%");
 				} else {
-					window["cms" + id + ""] = true;
-					$("#" + id + "affiche").hide();
+					$("#" + id + "affiche").css("left", "" + pointX - 9 + "%");
 				}
-            }
+				$("#" + id + "affiche").css("top", "" + pointY - 5 + "%");
+			// }
+			getcmsshow(id);
+			window["var"+ id +""] = false;     
             $("#" + id + "").on('dblclick', function () {
-                // trees()
                 var index=layer.open({
                     type: 2//此处以iframe举例
-                    ,title: +id+'情报版'
+                    ,title: '情报版'+id.replace("10000",'')
                     ,area: ['1300px', '670px']
                     ,shade: 0
                     ,maxmin: true
@@ -400,7 +396,7 @@ function bindLeftKey(picclass,id,pointX,pointY) {
                     }
                 });
             })
-        })
+        // })
     }
 
     //信号灯双击
@@ -838,7 +834,7 @@ function bindLeftKey(picclass,id,pointX,pointY) {
                                         //位置最左最右特殊化
                                         $("#" + id + "affiche").css("left", "" + xvalue - 1 + "%");
                                     } else if (xvalue > 90) {
-                                        $("#" + id + "affiche").css("left", "" + xvalue - 21 + "%");
+                                        $("#" + id + "affiche").css("left", "" + xvalue - 18 + "%");
                                     } else {
                                         $("#" + id + "affiche").css("left", "" + xvalue - 9 + "%");
                                     }
@@ -846,8 +842,8 @@ function bindLeftKey(picclass,id,pointX,pointY) {
                                 } else if (mydata.result && mydata.type == 25) {
                                     var tcmscheck = "tcmscheck" + id;
                                     window[tcmscheck] = false;
-                                    $("#" + id + "affichetcms").css("left", "" + xvalue + "%");
-                                    $("#" + id + "affichetcms").css("top", "" + yvalue - 8 + "%");
+                                    $("#" + id + "affichetcms").css("left", "" + xvalue  + "%");
+                                    $("#" + id + "affichetcms").css("top", "" + yvalue - 7 + "%");
                                 }
                                 if (!mydata.result) {
                                     sendThisScreenMSG(mydata.msg);
