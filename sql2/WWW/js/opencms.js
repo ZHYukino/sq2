@@ -13,7 +13,20 @@
     })
 }
 
-
+ //获得限速的数据
+function gettcmsshow(id,type=0,cid) {
+    $.ajax({
+        type: "GET",
+        url: "bcd/php/cmsshow.php?itype=2&id="+id+"",
+        dataType: "json",
+        async: false,
+        success:function (res) {
+           window.rescount = res.count;
+            // cmssetdota(id,res,res.count,type,cid);
+            tcmsdota(id,res,res.count,type,cid)
+        }
+    })
+}
 
 //门架播放版
 function cmssetdota(id,resdata,playnum,type,cid=null) {

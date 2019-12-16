@@ -348,12 +348,33 @@ function bindLeftKey(picclass,id,pointX,pointY) {
     if (picclass == "default-pic-TCMS") {
         $("#" + id + "affichetcms").show();
         if (!window["var" + id + ""]) return false;   			//防止执行两次 运动
+
         if (window["tcmscheck" + id + ""] !== false) {
             $("#" + id + "affichetcms").css("left", "" + pointX  + "%");
             $("#" + id + "affichetcms").css("top", "" + pointY - 7	 + "%");
         }
-        // console.log(id);
-        // tcms(id);
+       gettcmsshow(id);
+       window["var"+ id +""] = false; 
+       $("#" + id + "").on('dblclick', function () {
+            var index=layer.open({
+                type: 2//此处以iframe举例
+                ,title: '限速标志'+id.replace("10000",'')
+                ,area: ['1300px', '670px']
+                ,shade: 0
+                ,maxmin: true
+                ,offset: [Ht+10]
+				, id: 'LAY_LSTSdbclick_tcms' //防止重复弹出
+                 ,content: 'tcms.php?tcms='+id+''
+               // , content: 'html内容'
+                ,btn: ['关闭'] //只是为了演示
+                ,yes: function(index, layero){
+                    layer.close(index);
+                }
+                ,success: function(layero,index){
+                    layer.full(index);
+                }
+            });
+        })
     }
 
     //门架标志 右击
@@ -377,21 +398,18 @@ function bindLeftKey(picclass,id,pointX,pointY) {
             $("#" + id + "").on('dblclick', function () {
                 var index=layer.open({
                     type: 2//此处以iframe举例
-                    ,title: '情报版'+id.replace("10000",'')
+                    ,title: '门架势情报版'+id.replace("10000",'')
                     ,area: ['1300px', '670px']
                     ,shade: 0
                     ,maxmin: true
                     ,offset: [Ht+10]
 					, id: 'LAY_LSTSdbclick_cms' //防止重复弹出
                      ,content: 'cms.php?cms='+id+''
-                   // , content: 'html内容'
                     ,btn: ['关闭'] //只是为了演示
                     ,yes: function(index, layero){
                         layer.close(index);
                     }
-                     ,zIndex: layer.zIndex
                     ,success: function(layero,index){
-                        // console.log($("#"+id+"affiche").html());
                         layer.full(index);
                     }
                 });

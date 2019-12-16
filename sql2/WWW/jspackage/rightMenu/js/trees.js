@@ -6,7 +6,7 @@ $(document).bind("contextmenu", function () {
     return false;
 });
 
-function trees(id){
+function trees(id,dev){
 var countryTree = (function(countryTree) {
     var tree = {
         zTree: '',
@@ -79,6 +79,12 @@ var countryTree = (function(countryTree) {
                 success:function (res) {
                     nodes=res;
                     window.treesdata = res;
+                    window.parentnum = 0 ;
+                    for(var key in res){
+                        if(res[key].isParent == true){
+                            parentnum += 1;
+                        }
+                    }
                 }
             });
             // var nodes = [{
@@ -138,14 +144,15 @@ var countryTree = (function(countryTree) {
             }
         },
         addFolder: function() { //添加文件夹节点
-            var folderName = window.prompt("请输入动作名称(动作最多为3种，动作名为item+数字)");
+            var folderName = window.prompt("请输入动作名称(动作最多为3种，动作名为item+数字)","item"+parentnum);
             if(folderName == "") {
                 alert("操作失败！文件夹的名称不能为空!");
             } else {
                 if(folderName != null) {
+                    var itypenum = (dev == "cms") ? 5 : 6; 
                     $.ajax({
                         type:"get",
-                        url:"bcd/php/cmsshow.php?itype=5&item="+ folderName+"&id="+id+"",
+                        url:"bcd/php/cmsshow.php?itype="+itypenum+"&item="+ folderName+"&id="+id+"",
                         dataType:"json",
                         success:function(res){
                             if(res.code === 0){
@@ -217,12 +224,13 @@ var countryTree = (function(countryTree) {
                 }
             } else { //该节点为不是文件夹节点
                 if(window.confirm("确认要删除?")) {
-                    var parentNode = tree.zTree.getNodeByParam("id", tree.pNode.pid);
+                    var parentNode = tree.pNode.parentNode.name;
                     var picnode = tree.pNode.name;
+                    console.log(tree.pNode.parentNode.name);
                     if(picnode.indexOf("图片") != -1 ){
                         $.ajax({
                             type:"get",
-                            url:"bcd/php/cmsshow.php?itype=3&item="+parentNode.name+"&act=delpic&id="+id+"&picname="+picnode+"",
+                            url:"bcd/php/cmsshow.php?itype=3&item="+parentNode+"&act=delpic&id="+id+"&picname="+picnode+"",
                             dataType:"json",
                             success:function(res){
 

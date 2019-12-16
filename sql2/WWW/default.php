@@ -35,7 +35,7 @@ if(!isset($_SESSION['uid'])){
             <li class="layui-nav-item">
                 <a style="cursor:pointer;" >用户管理</a>
                 <dl  class="layui-nav-child">
-                    <dd><a href="">用户管理</a></dd>
+                    <dd><a  style="cursor:pointer;"  id="adminlist">用户管理</a></dd>
                     <dd><a href="">角色管理</a></dd>
                 </dl>
             </li>
@@ -83,6 +83,9 @@ if(!isset($_SESSION['uid'])){
         </div>
         </div>
 
+    <div class="admintable" style="display: none">
+        <table class="layui-hide" id="table1"  lay-filter="admintable"></table>
+    </div>
 
     <div id="dev_div_body"   >
 
@@ -104,6 +107,11 @@ if(!isset($_SESSION['uid'])){
 
     });
    
+</script>
+<script type="text/html" id="barDemo">
+  <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>
+  <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
 </script>
 </body>
 </html>

@@ -151,6 +151,35 @@
                return $result;
             }
         }
+
+        //result  风格 
+        function re_codes($query,$params,$conn)     //$conn2 或者 $conn  直接调用
+        {
+            $result = array("msg"=>"","code" => "", "data" => "","count"=>"");
+            $sql = sqlsrv_query($conn, $query, array(), array("Scrollable" => 'static'));
+            $rowsnum = sqlsrv_num_rows($sql);//查询的数量
+            $num = 0;
+            if ($rowsnum == 0) {
+                $result = array("count" => 0,"data"=>"","code"=>-2,"msg"=>"数据为空");
+               return  $result;
+            }
+            if ($sql == true) {
+                while ($row = sqlsrv_fetch_array($sql, SQLSRV_FETCH_ASSOC)) {
+                    foreach ($params as $key => $value) {
+                        if($row[$value]===null) $row[$value]="";
+                        // if($row[$value]=="0.0") $row[$value]="0";
+                        $result['data'][$num][$key] = $row[$value];
+                    }
+                    $num = $num + 1;
+                }
+                $result["msg"] = "导出成功";
+                $result['count'] = $num;
+                $result['code'] = 0;
+               return $result;
+            }
+        } 
+
+
             function get_ini_one_file($file_name = "../../opt.ini")//获取配置文件
             {
                 $str = file_get_contents($file_name);

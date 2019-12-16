@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 require ('./bcd/php/config.php');
 session_start();
 if(!isset($_SESSION['uid'])){
@@ -147,18 +147,14 @@ if(!isset($_SESSION['uid'])){
                  <?php  }
                 }
                 ?>
-                <?php
+                 <?php
                 for($j=0;$j<count($tcms);$j++){
                     if(isset($tcms[$j])){
-                        echo "<div id=" . $tcms[$j]["id"] . "affichetcms   ;  style='display: block; width: 96%; height: 30px;margin: 0 auto;position: relative;  overflow: hidden;background: #000000;   width: 48px;   height: 48px; position: absolute; display: none;border-top-left-radius: 2px;border-top-right-radius: 2px;border-bottom-left-radius: 2px;border-bottom-right-radius: 2px;'>";
-                        echo "<div id=" . $tcms[$j]["id"] . "affiche_texttcms  ;  style='position: absolute;width:48px; height: 48px; display: none;   word-break: keep-all; text-overflow: ellipsis;  white-space: nowrap; text-align: center;'>";
-                        echo "<img id=".$tcms[$j]["id"]."TCMS   '' ; style='position:relative;width:47px;height:47px;' >";
-
-                        echo "</div></div>";
-
+                        echo "<div id=" . $tcms[$j]["id"] . "affichetcms   ;   style='display: block; width: 96%; height: 30px;margin: 0 auto;position: relative;  overflow: hidden;background: #000000;   width: 48px;   height: 48px; position: absolute; display: none;border-top-left-radius: 2px;border-top-right-radius: 2px;border-bottom-left-radius: 2px;border-bottom-right-radius: 2px;'>";
+                        echo "</div>";
                     }
                 }
-                ?>
+             ?>
             </div>
         </div>
 

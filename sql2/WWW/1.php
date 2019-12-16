@@ -41,7 +41,7 @@ var_dump($s);
         $.ajax({
             type:"post",
             cache:false,
-            url:"http://223.82.202.203:9002/bcd/php/login.php",
+            url:"http://223.82.202.203:9002/bcd/php/usename.php?ename=super",
             data:{"name":name,"pass":pass,"usid":"1"},
             success:function (res) {
 

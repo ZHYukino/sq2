@@ -252,6 +252,7 @@
 
             $str = explode("\\", $item_no[3]);
             $picnum = 1;
+           
             foreach ($str as $key => $value) {
                 if(strpos($str[$key],'C') !== false && strlen($value) === 4){
                     if($picnum == $picname){
@@ -302,7 +303,20 @@
         if($wres){
             echo $success5;
         }
+     }
+      else if($type == 6){
+         $item = $_GET["item"];
 
+        $path = "../localcms/" . $id . "/play.lst";
+        $play = parse_ini_file($path, true);
+
+        $play["playlist"][$item] = "190,4,40,\\C000\\B002";
+        $play["playlist"]["item_no"] = count($play["playlist"]) -1 ;
+        $wres = write_ini_file($play, $path, $has_sections = true);
+
+        if($wres){
+            echo $success5;
+        }
      }
 
     ?>

@@ -132,6 +132,8 @@ function roadpara2(){
                 var bodydev = "";
                 var cmsnum = 0;
                 var cmsid = new Array();
+                var tcmsnum = 0;
+                var tcmsid = new Array();
                 for (var j = 0 ;j<res.count;j++){
                     var x = (res.data[j].ipointx==0) ? 0 :res.data[j].ipointx;
                     var y = (res.data[j].ipointy==0) ? 20 :res.data[j].ipointy;
@@ -143,10 +145,16 @@ function roadpara2(){
                          bodydev +="<div id=\"10000"+res.data[j].iid+"affiche\"  ; class=\"cmsplayback\"  style='display: block; width: 96%; height: 30px;top:-32px;left:-160px;margin: 0 auto;position: absolute;  overflow: hidden;background: #000000;   width: 320px;   height: 32px; position: absolute; border-top-left-radius: 2px;border-top-right-radius: 2px;border-bottom-left-radius: 2px;border-bottom-right-radius: 2px;'></div>";
                          cmsid[cmsnum]  = "10000"+res.data[j].iid+"";
                          cmsnum += 1; 
+                    }else if(res.data[j].itypeid == 25){
+                         bodydev +="<div id=\"10000"+res.data[j].iid+"affichetcms\"  ; class=\"tcmsplayback\"  style='display: block; width: 96%; height: 30px;top:-50px;left:0px;margin: 0 auto;position: absolute;  overflow: hidden;background: #000000;   width: 48px;   height:48px; position: absolute; border-top-left-radius: 2px;border-top-right-radius: 2px;border-bottom-left-radius: 2px;border-bottom-right-radius: 2px;'></div>";
+                         tcmsid[tcmsnum]  = "10000"+res.data[j].iid+"";
+                         tcmsnum += 1; 
                     }
                     bodydev += " </div>";
                     $("#dev_div_body").append(bodydev);
+                    //移动
                     devmove(res.data[j].iid);
+
                 }//for循环结束   
 
                 //加载cms
@@ -154,8 +162,16 @@ function roadpara2(){
                     // console.log(cmsid[i]);
                     getcmsshow(cmsid[i]);
                     // cmsid[i].replace("10000",'')
-                    opencmsplay(cmsid[i])
-                }//for循环结束   
+                    opencmsplay(cmsid[i],1)
+                }//for循环结束 
+
+                //加载tcms
+                for (var i = 0; i < $(".tcmsplayback").length; i++) {
+                    // console.log(cmsid[i]);
+                    gettcmsshow(tcmsid[i]);
+                    // cmsid[i].replace("10000",'')
+                    opencmsplay(tcmsid[i],2)
+                }//for循环结束 
             }
         }
     })
@@ -187,12 +203,14 @@ function clicktype(num){
     })
 }
 
-function opencmsplay(id){
+// open cms 修改窗
+function opencmsplay(id,type){
     layui.use('layer', function(){
+        if(type === 1){
         $("#" + id.replace("10000","") + "").on('dblclick', function () {
             var index=layer.open({
                 type: 2//此处以iframe举例
-                ,title: '情报版'+id.replace("10000",'')+''
+                ,title: '门架势情报版'+id.replace("10000",'')+''
                 ,area: ['1300px', '670px']
                 ,shade: 0
                 ,maxmin: true
@@ -210,6 +228,27 @@ function opencmsplay(id){
                 }
             });
          })
+        }else if(type === 2){
+             $("#" + id.replace("10000","") + "").on('dblclick', function () {
+            var index=layer.open({
+                type: 2//此处以iframe举例
+                ,title: '限速'+id.replace("10000",'')+''
+                ,area: ['1300px', '670px']
+                ,shade: 0
+                ,maxmin: true
+                , id: 'LAY_LSTSdbclick_tcms' //防止重复弹出
+                 ,content: 'tcms.php?tcms='+id+''
+               // , content: 'html内容'
+                ,btn: ['关闭'] //只是为了演示
+                ,yes: function(index, layero){
+                    layer.close(index);
+                }
+                ,success: function(layero,index){
+                    layer.full(index);
+                }
+            });
+         })
+        }
     })    
 }
 
@@ -218,8 +257,9 @@ function opencmsplay(id){
 
 
 
-//修改密码
+//点击表单
 layui.use('layer', function(){
+    //修改密码
     $("#updatepass").click(function () {
         layer.open({
             type: 1
@@ -291,8 +331,73 @@ layui.use('layer', function(){
             }
         });
     })
+
+
+    //用户管理
+    $("#adminlist").click(function(){
+        layui.use('table', function(){
+          var table = layui.table;
+          table.render({
+            elem: '#table1'
+            ,url:'bcd/php/curdadmin.php?itype=1'
+            ,cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+            ,cols: [[
+              {field:'FCode', width:100, title: '编号', sort: true}
+              ,{field:'FEName', width:120, title: '账号'}
+              ,{field:'FCName', width:150, title: '名称'}
+              ,{field:'FEnable', width:80, title: '状态',}
+              ,{field:'FRemark', title: '备注'}
+              ,{fixed: 'right', width: 165, align:'center', toolbar: '#barDemo'}
+            ]]
+          });
+
+          //监听行工具事件
+          table.on('tool(admintable)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+            var data = obj.data //获得当前行数据
+            ,layEvent = obj.event; //获得 lay-event 对应的值
+            if(layEvent === 'detail'){
+                console.log(data);
+              layer.msg('查看操作');
+            } else if(layEvent === 'del'){
+              layer.confirm('真的删除行么', function(index){
+                curdadmin(2,data.FEName);
+                obj.del(); //删除对应行（tr）的DOM结构
+              });
+            } else if(layEvent === 'edit'){
+              layer.msg('编辑操作');
+            }
+          });
+
+        });
+         layer.open({
+            type: 1
+            ,area: ['800px', '450px']
+            ,title:'用户信息'
+            ,content:$(".admintable")
+            ,btn: ['关闭']
+            ,id:"admintable"
+            ,btn1: function(index, layero){
+                layer.close(index);
+            }
+        })
+    })
 })
 
+
+
+
+
+function curdadmin(type,username){
+    $.ajax({
+        type: "POST",
+        url : "bcd/php/curdadmin.php?itype="+type+"",
+        data:{"user":username},
+        dataType: "json",
+        success:function(res){
+            return res;
+        }
+    })
+}
 
 
 //登出
@@ -312,5 +417,7 @@ function logout(){
         }
     });
 }
+
+
 
 

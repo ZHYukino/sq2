@@ -158,7 +158,7 @@ require ('./bcd/php/config.php');
 
 
 <script>
-    trees(<?php  echo $_GET["cms"]; ?>)
+    trees(<?php  echo $_GET["cms"]; ?>,"cms")
     varname="var<?php  echo $_GET["cms"]; ?>";                  //这是防止重复cms重复的变量
     window[varname] = 100;
 

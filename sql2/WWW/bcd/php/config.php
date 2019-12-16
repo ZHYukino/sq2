@@ -71,13 +71,13 @@
     $paras = json_decode($paras, true);
     $num = 0;
     foreach ($paras["data"] as $k => $v) {           //消除ienable 不为 1的数组
-        if ($v["ienable"] != 1) {
-            unset($paras["data"][$k]);
-        }else{
+        // if ($v["ienable"] != 1) {
+        //     unset($paras["data"][$k]);
+        // }else{
             $cms[$num]["id"] = "10000" . $v["iid"];
             $cms[$num]["name"] =  $v["scname"];
             $num +=1;
-        }
+        // }
     }
     unset($paras);
 
@@ -88,16 +88,16 @@
     $paras = json_decode($paras, true);
     $num = 0;
     foreach ($paras["data"] as $k => $v) {           //消除ienable 不为 1的数组
-        if ($v["ienable"] != 1) {
-            unset($paras["data"][$k]);
-        }
-        elseif($v["itunnelid"] <1 || $v["itunnelid"] >3 ){
-            unset($paras["data"][$k]);
-        }else{
+        // if ($v["ienable"] != 1) {
+        //     unset($paras["data"][$k]);
+        // }
+        // elseif($v["itunnelid"] <1 || $v["itunnelid"] >3 ){
+        //     unset($paras["data"][$k]);
+        // }else{
             $tcms[$num]["id"] = "10000" . $v["iid"];
             $tcms[$num]["name"] =  $v["scname"];
             $num += 1;
-        }
+        // }
     }
     unset($paras);
 ?>
