@@ -13,19 +13,17 @@
         die();
     }
 
+    $marknum = time().round(0,9);
+
     //发送文件方法
-     function upcmsfile($filename,$id,$result){
-        $userid = "012345";
+     function upcmsfile($filename,$id,$marknum){
+        $userid = $_SESSION["uid"];
         //上传播放动作
         $file_name = $filename;
         $furl = "@" . dirname(dirname(__FILE__)) . "\localcms\/" . $id . "\/" . $file_name . "";
-        $url = "http://127.0.0.1:8855/CMSOperation0.html?FID=" . $id . "&FUserID=" . $userid . "&FMark=012345";
+        $url = "http://127.0.0.1:8855/CMSOperation0.html?FID=" . $id . "&FUserID=" . $userid . "&FMark=".$marknum."";
         $p1 = CurlCalss::usecmsupload($furl, $url);
-        if($result){
-            echo $p1;
-         }else{
-            return json_decode($p1,true);
-         }
+        return json_decode($p1,true);
     }
 
     //获得设备操作
@@ -53,7 +51,7 @@
             $file = move_uploaded_file($file_tmp, '../localcms/' . $id . '/' . $file_name . '');
             if($file){
                 //直接发送
-                $result = upcmsfile($file_name,$id,false);
+                $result = upcmsfile($file_name,$id, $marknum);
                 $result["picname"] = $file_name;
                 echo json_encode($result);
             }
@@ -123,7 +121,21 @@
         }
         // 发送情报板
         elseif ($itype == 5) {
-            upcmsfile("play.lst",$id,true);
+          
+            $result = upcmsfile("play.lst",$id, $marknum);
+
+            // $url = "http://127.0.0.1:8855/CMSHow0.html?FID=" . $id . "&FMark=".$marknum."";
+          
+            // $curdpost = CurlCalss::curl(1,1,1,$url);
+            
+          if($result["iresult"] === 1){
+              echo json_encode($result);
+          }
+        }
+
+        // 情报板获取
+        elseif ($itype == 6) {
+
         }
 
 

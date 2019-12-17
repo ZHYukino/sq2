@@ -87,6 +87,45 @@ if(!isset($_SESSION['uid'])){
         <table class="layui-hide" id="table1"  lay-filter="admintable"></table>
     </div>
 
+    <div class="updateadmin" style="display: none;">
+        <form class="layui-form" action="">
+            <div class="layui-form-item"  style="margin-top: 10px;width: 480px">
+                <label class="layui-form-label">编号</label>
+                <div class="layui-input-block">
+                  <input type="text" name="FCode" id="FCode" required  lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item"  style="margin-top: 10px;width: 480px">
+                <label class="layui-form-label">账号</label>
+                <div class="layui-input-block">
+                  <input type="text" name="FEName" id="FEName" required  lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item"  style="margin-top: 10px;width: 480px">
+                <label class="layui-form-label">名称</label>
+                <div class="layui-input-block">
+                  <input type="text" name="FCName" id="FCName" required  lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+           <div id="radio1"  style="margin-left: 120px;margin-bottom: 15px;display: none">
+            <input type="checkbox" id="enable"  name="" title="是否启用" lay-skin="primary" checked >
+            <input type="checkbox" id="remarkpass" name=""  title="重置密码" lay-skin="primary"> 
+           </div>
+
+           <div id="radio2" style="margin-left: 120px;margin-bottom: 15px;display: none">
+            <input type="checkbox" id="newenable"  name="" title="是否启用" lay-skin="primary" checked >
+           </div>
+
+          <div class="layui-form-item layui-form-text" style="width: 480px">
+            <label class="layui-form-label">备注</label>
+            <div class="layui-input-block">
+              <textarea name="FRemark" id="FRemark" placeholder="请输入内容" class="layui-textarea"></textarea>
+            </div>
+          </div>
+        </form>
+    </div>
+
     <div id="dev_div_body"   >
 
     </div>
@@ -109,9 +148,14 @@ if(!isset($_SESSION['uid'])){
    
 </script>
 <script type="text/html" id="barDemo">
-  <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>
-  <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+<!--   <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a> -->
+   {{#  if(d.FCode != "00000" ){ }}
+  <a class="layui-btn layui-btn-xs" lay-event="edit">修改</a>
   <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+    {{#  } }} 
+    {{#  if(d.FCode == "00000" ){ }}  
+  <a  class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">添加用户</a>
+     {{#  } }} 
 </script>
 </body>
 </html>

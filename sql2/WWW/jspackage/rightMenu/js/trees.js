@@ -78,6 +78,7 @@ var countryTree = (function(countryTree) {
                 data:"" ,
                 success:function (res) {
                     nodes=res;
+                    window.res = res;
                     window.treesdata = res;
                     window.parentnum = 0 ;
                     for(var key in res){
@@ -170,12 +171,24 @@ var countryTree = (function(countryTree) {
             }
         },
         addNode: function() { //添加节点
-            var nodeName = window.prompt("请输入图片名称，名称为图片+数字");
+            //选择的父节点
+            var item = tree.pNode.id -2 ;
+             //选择的父节点的id
+            var parantid = tree.pNode.id;
+            var num = 1;
+            for(var key in res){
+               if(res[key].pid == parantid && res[key].name.indexOf("图片") != -1){
+                    num += 1;
+               }
+            }
+            var picusename = "图片";
+            var nodeName = window.prompt("请输入图片名称，名称为图片+数字",picusename+num);
             if(nodeName == "") {
                 alert("操作失败！动作名称不能为空!");
-            } else {
+            } 
+
+            if(nodeName != "") {
                 if(nodeName.indexOf("图片") != -1 ){
-                    var item = tree.pNode.id -2 ;
                     $.ajax({
                         type:"get",
                         url:"bcd/php/cmsshow.php?itype=3&item="+item+"&act=addpic&id="+id+"",

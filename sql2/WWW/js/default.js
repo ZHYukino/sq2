@@ -6,7 +6,7 @@ $(document).bind("contextmenu", function () {
     return false;
 });
 
-
+//登陆者信息
 function getusedata() {
     $.ajax({
         url:"bcd/php/getusedata.php",
@@ -37,7 +37,7 @@ function roadpara(){
                 var devpic = res.data;
                 for(var i= 0;i<res.count;i++){
                     var typeid = res.data[i].iid;
-                    var usehead = "<a style=\"cursor:pointer;\"  onclick=\"devclick("+typeid+")\" id=\"dev_iphone"+i+"\" ><img  id=\"typeimg"+typeid+"\" src=\""+devpic[i].pic+"\"  style=\"width: 20px;height: 20px;\"   \"></a>";
+                    var usehead = "<a style=\"cursor:pointer;\"  onclick=\"devclick("+typeid+")\" id=\"dev_iphone"+i+"\" ><img  id=\"typeimg"+typeid+"\" src=\""+devpic[i].pic+"\"  style=\"width:30px;height:30px;\"   \"></a>";
                     $("#dev-nav-"+i+"").html(usehead);
                 }
             }
@@ -48,8 +48,8 @@ function roadpara(){
 //点击标题栏事件
 function devclick(num){
     if($("#typeimg"+num+"").width() == 50  && $("#typeimg"+num+"").height() == 50){
-        $("#typeimg"+num+"").css("width","20px");
-        $("#typeimg"+num+"").css("height","20px");
+        $("#typeimg"+num+"").css("width","30px");
+        $("#typeimg"+num+"").css("height","30px");
         $("."+num+"").hide();
         var checknum = 0;
     }else{
@@ -68,6 +68,10 @@ function devclick(num){
         }
     })
 }
+
+
+
+
 //托动
 function devmove(id) {
     $(document).keyup(function (event){
@@ -146,7 +150,7 @@ function roadpara2(){
                          cmsid[cmsnum]  = "10000"+res.data[j].iid+"";
                          cmsnum += 1; 
                     }else if(res.data[j].itypeid == 25){
-                         bodydev +="<div id=\"10000"+res.data[j].iid+"affichetcms\"  ; class=\"tcmsplayback\"  style='display: block; width: 96%; height: 30px;top:-50px;left:0px;margin: 0 auto;position: absolute;  overflow: hidden;background: #000000;   width: 48px;   height:48px; position: absolute; border-top-left-radius: 2px;border-top-right-radius: 2px;border-bottom-left-radius: 2px;border-bottom-right-radius: 2px;'></div>";
+                         bodydev +="<div id=\"10000"+res.data[j].iid+"affichetcms\"  ; class=\"tcmsplayback\"  style='display: block; width: 96%; height: 30px;top:-50px;left:-8px;margin: 0 auto;position: absolute;  overflow: hidden;background: #000000;   width: 48px;   height:48px; position: absolute; border-top-left-radius: 2px;border-top-right-radius: 2px;border-bottom-left-radius: 2px;border-bottom-right-radius: 2px;'></div>";
                          tcmsid[tcmsnum]  = "10000"+res.data[j].iid+"";
                          tcmsnum += 1; 
                     }
@@ -177,31 +181,7 @@ function roadpara2(){
     })
 }
 
-clicktype(2);
-//页面载入
-function clicktype(num){
-    var num;
-    $.ajax({
-        type: "GET",
-        url: "bcd/php/getcheck.php?itype="+num+"",
-        cache:false,
-        dataType: "json",
-        success: function (mydata) {
-            var check = mydata.data;
-            for(var key in check) {
-                 if(check[key] ==  1){
-                     $("#typeimg"+key+"").css("width","50px");
-                     $("#typeimg"+key+"").css("height","50px");
-                     $("."+key+"").show();
-                 }else if(check[key] ==  0){
-                     $("#typeimg"+key+"").css("width","20px");
-                     $("#typeimg"+key+"").css("height","20px");
-                     $("."+key+"").hide();
-                 }
-            }
-        }
-    })
-}
+
 
 // open cms 修改窗
 function opencmsplay(id,type){
@@ -253,6 +233,31 @@ function opencmsplay(id,type){
 }
 
 
+clicktype(2);
+//页面载入
+function clicktype(num){
+    var num;
+    $.ajax({
+        type: "GET",
+        url: "bcd/php/getcheck.php?itype="+num+"",
+        cache:false,
+        dataType: "json",
+        success: function (mydata) {
+            var check = mydata.data;
+            for(var key in check) {
+                 if(check[key] ==  1){
+                     $("#typeimg"+key+"").css("width","50px");
+                     $("#typeimg"+key+"").css("height","50px");
+                     $("."+key+"").show();
+                 }else if(check[key] ==  0){
+                     $("#typeimg"+key+"").css("width","30px");
+                     $("#typeimg"+key+"").css("height","30px");
+                     $("."+key+"").hide();
+                 }
+            }
+        }
+    })
+}
 
 
 
@@ -339,32 +344,117 @@ layui.use('layer', function(){
           var table = layui.table;
           table.render({
             elem: '#table1'
+            ,id:"fid"
             ,url:'bcd/php/curdadmin.php?itype=1'
             ,cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
             ,cols: [[
-              {field:'FCode', width:100, title: '编号', sort: true}
-              ,{field:'FEName', width:120, title: '账号'}
-              ,{field:'FCName', width:150, title: '名称'}
-              ,{field:'FEnable', width:80, title: '状态',}
-              ,{field:'FRemark', title: '备注'}
-              ,{fixed: 'right', width: 165, align:'center', toolbar: '#barDemo'}
+              {field:'FCode', width:100, title: '编号',align:'center' , sort: true}
+              ,{field:'FEName', width:120, title: '账号',align:'center'}
+              ,{field:'FCName', width:150, title: '名称',align:'center'}
+              ,{field:'FEnable', width:80, title: '状态',align:'center'}
+              ,{field:'FRemark',width:175, title: '备注',align:'center'}
+              ,{fixed: 'right', width: 165, title: '操作',align:'center', toolbar: '#barDemo'}
             ]]
           });
 
+          
           //监听行工具事件
           table.on('tool(admintable)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
             var data = obj.data //获得当前行数据
             ,layEvent = obj.event; //获得 lay-event 对应的值
+            //输入框的值
+             var code =  $("#FCode").val();
+             var ename = $("#FEName").val();
+             var cname = $("#FCName").val();
+             var remark = $("#FRemark").val();
             if(layEvent === 'detail'){
-                console.log(data);
+                $("#radio1").hide();
+                $("#radio2").show();
+                $("#FCode").val("");
+                $("#FEName").val("");
+                $("#FCName").val("");
+                $("#FRemark").val("");
+                var enable = $("#newenable").is(':checked') ? 1 : 0;
+                layer.open({
+                    type: 1
+                    ,area: ['600px', '450px']
+                    ,title:'用户添加'
+                    ,content:$(".updateadmin")
+                    ,btn: ['提交','关闭']
+                    ,id:"addadmin"
+                    ,btn1: function(index, layero){
+                         var code =  $("#FCode").val();
+                         var ename = $("#FEName").val();
+                         var cname = $("#FCName").val();
+                         var remark = $("#FRemark").val();
+                        $.ajax({
+                            type: "POST",
+                            url : "bcd/php/curdadmin.php?itype=4",
+                            data:{"code":code,"ename":ename,"cname":cname,"remark":remark},
+                            dataType: "json",
+                            success:function(res){
+                                console.log(res);
+                            }
+                        })
+                    },btn2: function(index, layero){
+                        layer.close(index);
+                    }
+                })
               layer.msg('查看操作');
             } else if(layEvent === 'del'){
-              layer.confirm('真的删除行么', function(index){
+              layer.confirm('真的删除此用户么', function(index){
+                // if(data.FEName == "super") return false;
                 curdadmin(2,data.FEName);
                 obj.del(); //删除对应行（tr）的DOM结构
+                layer.close(index);
               });
             } else if(layEvent === 'edit'){
-              layer.msg('编辑操作');
+                //赋值给表单
+                $("#radio2").hide();
+                $("#radio1").show();
+                $("#FCode").val(data.FCode);
+                $("#FEName").val(data.FEName);
+                $("#FCName").val(data.FCName);
+                $("#FRemark").val(data.FRemark);
+                  layer.open({
+                    type: 1
+                    ,area: ['600px', '450px']
+                    ,title:'用户信息修改----'+data.FCName+''
+                    ,content:$(".updateadmin")
+                    ,btn: ['提交','关闭']
+                    ,id:"updateadmin"
+                    ,btn1: function(index, layero){
+                        var fid = data.fid;
+                        var enable = $("#enable").is(':checked') ? 1 : 0;
+                        var remarkpass = $("#remarkpass").is(':checked') ? 1 : 0;
+                        var enableuse = (enable==1) ? "启用" : "禁用";
+                        $.ajax({
+                            type: "POST",
+                            url : "bcd/php/curdadmin.php?itype=3",
+                            data:{"code":code,"ename":ename,"cname":cname,"remark":remark,"enable":enable,"remarkpass":remarkpass,"fid":fid},
+                            dataType: "json",
+                            success:function(res){
+                               if(res.code === 0){
+                                    layer.msg(res.msg, {icon: 1});
+                                    layer.close(index);
+                                    //修改
+                                    obj.update({
+                                        FCode: code,
+                                        FEName: ename,
+                                        FCName: cname,
+                                        FEnable : enableuse,
+                                        FRemark : remark
+                                    });
+                               }else{
+                                    layer.msg(res.msg, {icon: 2});  
+                               }
+                            }
+                        })
+                    },btn2: function(index, layero){
+                        layer.close(index);
+                    }
+                })
+               // layer.msg('编辑操作');
             }
           });
 

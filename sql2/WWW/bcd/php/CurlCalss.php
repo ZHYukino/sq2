@@ -2,6 +2,8 @@
 
     //远程调用类
     class CurlCalss{
+
+
          public function __construct()
         {
 
@@ -92,6 +94,7 @@
             $res = self::cmsupload($furl, $url,$arr_header);
             return $res;
         }
+
     }
 
     /**使用方法
