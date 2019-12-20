@@ -424,10 +424,10 @@ $(document).on("click", "#control_LED_plan_save", function() {
 		urlstr=urlstr+"hint4="+ye_hint;	
 		urlstr=urlstr+"&";
 		urlstr=urlstr+"zmintal="+input_zmintal;
-		
+        var tunnelnum=$("#default_place_select").val();//隧道号
 		$.ajax({
 			type: "GET",
-			url : "bcd/php/setauto.php?itype=2&name="+ $("#controlLED_select").find("option:selected").text() +"&"+ urlstr +"&dc=" + new Date().getTime() + "",
+			url : "bcd/php/setauto.php?tunnel="+tunnelnum+"&itype=2&name="+ $("#controlLED_select").find("option:selected").text() +"&"+ urlstr +"&dc=" + new Date().getTime() + "",
 			//data:{},
 			dataType: "json",
 			success: function(mydata){	
@@ -511,9 +511,10 @@ $(document).on("click", "#control_LED_relation_save", function() {
 			})
 			var sname=$("#controlLED_select").find("option:selected").text();
 			var sname2=$("#led_plan_select").find("option:selected").text();
+            var tunnelnum=$("#default_place_select").val();//隧道号
 			$.ajax({
 				type: "GET",
-				url : "bcd/php/setlink.php?itype=2&name="+ sname +"&name2="+ sname2 +"&total="+ plan_total +"&"+ temp_planid +"&"+ temp_isopen +"&"+ temp_isselect +"&dc=" + new Date().getTime() + "",
+				url : "bcd/php/setlink.php?tunnel="+tunnelnum+"&itype=2&name="+ sname +"&name2="+ sname2 +"&total="+ plan_total +"&"+ temp_planid +"&"+ temp_isopen +"&"+ temp_isselect +"&dc=" + new Date().getTime() + "",
 				//data:{},
 				dataType: "json",
 				success: function(mydata){
@@ -611,9 +612,10 @@ $(document).on("click", "#control_FAN_plan_save", function() {
 		urlstr=urlstr+"c3vmax="+input_c3vmax;
 		urlstr=urlstr+"&";
 		urlstr=urlstr+"fjintal="+input_fjintal;
+        var tunnelnum=$("#default_place_select").val();//隧道号
 		$.ajax({
 			type: "GET",
-			url : "bcd/php/setauto.php?itype=1&name="+ $("#controlFAN_select").find("option:selected").text() +"&"+ urlstr +"&dc=" + new Date().getTime() + "",
+			url : "bcd/php/setauto.php?tunnel="+tunnelnum+"&itype=1&name="+ $("#controlFAN_select").find("option:selected").text() +"&"+ urlstr +"&dc=" + new Date().getTime() + "",
 			//data:{},
 			dataType: "json",
 			success: function(mydata){	
@@ -680,7 +682,7 @@ $(document).on("click", "#control_FAN_relation_save", function() {
 			var fxid=$("#fan_plan_select").find("option:selected").val();
 			$.ajax({
 				type: "GET",
-				url : "bcd/php/setlink.php?itype=1&name="+ sname +"&fx="+ fxname +"&fxid="+ fxid +"&total="+ plan_total +"&"+ temp_planid +"&"+ temp_isselect +"&dc=" + new Date().getTime() + "",
+				url : "bcd/php/setlink.php?tunnel="+tunnelnum+"&itype=1&name="+ sname +"&fx="+ fxname +"&fxid="+ fxid +"&total="+ plan_total +"&"+ temp_planid +"&"+ temp_isselect +"&dc=" + new Date().getTime() + "",
 				//data:{},
 				dataType: "json",
 				success: function(mydata){
@@ -778,7 +780,7 @@ $(document).on("click", "#control_LED_time_save", function() {
 			})
 			$.ajax({
 				type: "GET",
-				url : "bcd/php/setlink.php?itype=3&name="+ timename +"&use="+ ledtime_use +"&hint="+ ledtime_hint +"&time="+ timestr +"&total="+ plan_total +"&"+ temp_planid +"&"+ temp_isopen +"&dc=" + new Date().getTime() + "",
+				url : "bcd/php/setlink.php?tunnel="+tunnelnum+"&itype=3&name="+ timename +"&use="+ ledtime_use +"&hint="+ ledtime_hint +"&time="+ timestr +"&total="+ plan_total +"&"+ temp_planid +"&"+ temp_isopen +"&dc=" + new Date().getTime() + "",
 				//data:{},
 				dataType: "json",
 				success: function(mydata){

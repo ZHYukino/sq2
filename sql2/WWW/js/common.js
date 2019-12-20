@@ -23,16 +23,6 @@ function closecms(dev,type) {
                 }
             }
             break;
-		case 3:
-            for (var i = 0; i < arr_TCMS.length; i++) {
-                var id = arr_TCMS[i][1];
-                $("#" + id + "affichetcms").hide();
-            }
-            for (var i = 0; i < arr_CMS.length; i++) {
-                var id = arr_CMS[i][1];
-                $("#" + id + "affiche").hide();
-            }
-        break;
     }
 }
 //下拉框

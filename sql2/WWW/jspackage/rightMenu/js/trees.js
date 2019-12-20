@@ -81,9 +81,18 @@ var countryTree = (function(countryTree) {
                     window.res = res;
                     window.treesdata = res;
                     window.parentnum = 0 ;
+                    alerpicnum =  Array();
                     for(var key in res){
                         if(res[key].isParent == true){
                             parentnum += 1;
+                        }
+                    }
+                    for(var i=0;i<res.length;i++){
+                        if(res[i].pid == 1){
+                            alerpicnum[res[i].id] = 0;
+                        }
+                        if(res[i].name.indexOf("图片") != "-1"){
+                            alerpicnum[res[i].pid]  += 1;
                         }
                     }
                 }
@@ -145,12 +154,13 @@ var countryTree = (function(countryTree) {
             }
         },
         addFolder: function() { //添加文件夹节点
-            var folderName = window.prompt("请输入动作名称(动作最多为3种，动作名为item+数字)","item"+parentnum);
+            var url = window.location.pathname; /* 获取文件路径（文件地址） */
+            var folderName = window.prompt("请输入动作名称(动作名为item+数字)","item"+parentnum);
             if(folderName == "") {
                 alert("操作失败！文件夹的名称不能为空!");
             } else {
                 if(folderName != null) {
-                    var itypenum = (dev == "cms") ? 5 : 6; 
+                    var itypenum = ( url == "/cms.php") ? 5 : 6;
                     $.ajax({
                         type:"get",
                         url:"bcd/php/cmsshow.php?itype="+itypenum+"&item="+ folderName+"&id="+id+"",
@@ -174,19 +184,16 @@ var countryTree = (function(countryTree) {
             //选择的父节点
             var item = tree.pNode.id -2 ;
              //选择的父节点的id
-            var parantid = tree.pNode.id;
-            var num = 1;
-            for(var key in res){
-               if(res[key].pid == parantid && res[key].name.indexOf("图片") != -1){
-                    num += 1;
-               }
-            }
+            parantid = tree.pNode.id;
             var picusename = "图片";
-            var nodeName = window.prompt("请输入图片名称，名称为图片+数字",picusename+num);
+            var nodeName = window.prompt("请输入图片名称，名称为图片+数字",picusename+(alerpicnum[parantid]+1));
             if(nodeName == "") {
                 alert("操作失败！动作名称不能为空!");
-            } 
-
+                return false;
+            }
+            if(nodeName == null){
+                return false;
+            }
             if(nodeName != "") {
                 if(nodeName.indexOf("图片") != -1 ){
                     $.ajax({
@@ -194,7 +201,9 @@ var countryTree = (function(countryTree) {
                         url:"bcd/php/cmsshow.php?itype=3&item="+item+"&act=addpic&id="+id+"",
                         dataType:"json",
                         success:function(res){
-
+                            if(res.code === 0){
+                                alerpicnum[parantid] += 1;
+                            }
                         }
                     })
                 }else if(nodeName.indexOf("文字") != -1){
@@ -227,10 +236,10 @@ var countryTree = (function(countryTree) {
                         url:"bcd/php/cmsshow.php?itype=4&item="+ cnode+"&id="+id+"",
                         dataType:"json",
                         success:function(res){
-
+                            parentnum -=1;
                         }
                     })
-                    
+
                     tree.zTree.removeNode(tree.pNode); //移除节点
                     parentNode.isParent = true; //设置父节点为文件夹节点
                     tree.zTree.refresh();
@@ -246,7 +255,9 @@ var countryTree = (function(countryTree) {
                             url:"bcd/php/cmsshow.php?itype=3&item="+parentNode+"&act=delpic&id="+id+"&picname="+picnode+"",
                             dataType:"json",
                             success:function(res){
-
+                                if(res.code === 0){
+                                    alerpicnum[parantid] -= 1;
+                                }
                             }
                         })
                     }else if(picnode.indexOf("文字") != -1){

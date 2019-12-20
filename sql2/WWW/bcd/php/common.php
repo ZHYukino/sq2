@@ -43,6 +43,18 @@
     spl_autoload_register( 'loadprint');
 
 
+    function success($res,$num,$msg="请求成功"){
+        $data = array(
+            "code"=>0,
+            "msg"=>$msg,
+            "count"=>$num,
+            "data"=>$res,
+            "success"=>true
+        );
+        $data =  json_encode($data,JSON_UNESCAPED_UNICODE);
+        echo $data;
+    }
+
     function checkint($id){
             return filter_var($id,FILTER_VALIDATE_INT,array('options'=>array('min_range'=>1)));
         }

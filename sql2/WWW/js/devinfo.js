@@ -819,8 +819,8 @@ function getDevValue(){
 }
 
 getDevValue();
-
-var autourl1="bcd/php/getauto.php?sid=" + Math.random()+ "&itype=" ;
+var tunnelnum=$("#default_place_select").val();//隧道号
+var autourl1="bcd/php/getauto.php?tunnel="+tunnelnum+"&sid=" + Math.random()+ "&itype=" ;
 function getFJAuto1(devindex,devid,devname){
 	$.ajax({
 		type: "GET",
@@ -917,8 +917,8 @@ function getZMAuto1(devindex,devid,devname){
 		error: function(mydata){}
 	});
 }
-
-var autourl2="bcd/php/getlink.php?sid=" + Math.random()+ "&itype=" ;
+var tunnelnum=$("#default_place_select").val();//隧道号
+var autourl2="bcd/php/getlink.php?tunnel="+tunnelnum+"&sid=" + Math.random()+ "&itype=" ;
 function getFJAuto2(devindex,devid,devname,devupdown){
 	var totalnum=0;
 	var tmpurl="";
@@ -931,7 +931,6 @@ function getFJAuto2(devindex,devid,devname,devupdown){
 	$.ajax({
 		type: "GET",
 		url : autourl2+1+"&name="+devname+"&total="+totalnum+tmpurl,
-		//data:{},
 		dataType: "json",
 		cache:false,
 		async:false,
@@ -987,9 +986,12 @@ function getZMAuto2(devindex,devid,devname,devupdown){
 function getZMAuto3(){
 	var totalnum=0;
 	var tmpurl="";
+    var tunnelnum=$("#default_place_select").val();//隧道号
 	for (var i=0;i<arr_LED.length;i++){
-		tmpurl+="&id"+totalnum+"="+arr_LED[i][1];
-		totalnum++;
+        if(arr_LED[i][2] == tunnelnum) {
+            tmpurl += "&id" + totalnum + "=" + arr_LED[i][1];
+            totalnum++;
+        }
 	}
 	$.ajax({
 		type: "GET",

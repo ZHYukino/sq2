@@ -306,7 +306,7 @@ layui.use('layer', function(){
                     layer.msg('账号或密码不能为空');
                     return false;
                 }
-                if(newpass !== renewpass  ){
+                if( newpass !== renewpass  ){
                     layer.msg('两个新密码不一致');
                     return false;
                 }
@@ -340,9 +340,24 @@ layui.use('layer', function(){
 
     //用户管理
     $("#adminlist").click(function(){
+        opentableadmin();
+         layer.open({
+            type: 1
+            ,area: ['800px', '450px']
+            ,title:'用户信息'
+            ,content:$(".admintable")
+            ,btn: ['关闭']
+            ,id:"admintable"
+            ,btn1: function(index, layero){
+                layer.close(index);
+            }
+        })
+    })
+    //表格
+    function opentableadmin(){    
         layui.use('table', function(){
-          var table = layui.table;
-          table.render({
+          var tableIns = layui.table;
+          tableIns.render({
             elem: '#table1'
             ,id:"fid"
             ,url:'bcd/php/curdadmin.php?itype=1'
@@ -355,22 +370,22 @@ layui.use('layer', function(){
               ,{field:'FRemark',width:175, title: '备注',align:'center'}
               ,{fixed: 'right', width: 165, title: '操作',align:'center', toolbar: '#barDemo'}
             ]]
+            , done: function (res) {
+                //如果是异步请求数据方式，res即为你接口返回的信息。
+                //如果是直接赋值的方式，res即为：{data: [], count: 99} data为当前页数据、count为数据总长度
+                console.log(res);
+                window.newcode = "0000"+res.count;
+            }
           });
 
-          
           //监听行工具事件
-          table.on('tool(admintable)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+          tableIns.on('tool(admintable)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
             var data = obj.data //获得当前行数据
             ,layEvent = obj.event; //获得 lay-event 对应的值
-            //输入框的值
-             var code =  $("#FCode").val();
-             var ename = $("#FEName").val();
-             var cname = $("#FCName").val();
-             var remark = $("#FRemark").val();
             if(layEvent === 'detail'){
                 $("#radio1").hide();
                 $("#radio2").show();
-                $("#FCode").val("");
+                $("#FCode").val(newcode);
                 $("#FEName").val("");
                 $("#FCName").val("");
                 $("#FRemark").val("");
@@ -387,20 +402,26 @@ layui.use('layer', function(){
                          var ename = $("#FEName").val();
                          var cname = $("#FCName").val();
                          var remark = $("#FRemark").val();
+                         if(code.length == 0||remark.length == 0||cname.length == 0||ename.length == 0 ){
+                            layer.msg('所有表单不可为空');
+                            return false;
+                         }
                         $.ajax({
                             type: "POST",
                             url : "bcd/php/curdadmin.php?itype=4",
-                            data:{"code":code,"ename":ename,"cname":cname,"remark":remark},
+                            data:{"code":code,"ename":ename,"cname":cname,"remark":remark,"enable":enable},
                             dataType: "json",
                             success:function(res){
-                                console.log(res);
+                                layer.msg(res.msg, {icon: 1});
+                                layer.close(index);
+                                opentableadmin();
                             }
                         })
                     },btn2: function(index, layero){
                         layer.close(index);
                     }
                 })
-              layer.msg('查看操作');
+              // layer.msg('查看操作');
             } else if(layEvent === 'del'){
               layer.confirm('真的删除此用户么', function(index){
                 // if(data.FEName == "super") return false;
@@ -425,6 +446,10 @@ layui.use('layer', function(){
                     ,id:"updateadmin"
                     ,btn1: function(index, layero){
                         var fid = data.fid;
+                        var code =  $("#FCode").val();
+                        var ename = $("#FEName").val();
+                        var cname = $("#FCName").val();
+                        var remark = $("#FRemark").val();
                         var enable = $("#enable").is(':checked') ? 1 : 0;
                         var remarkpass = $("#remarkpass").is(':checked') ? 1 : 0;
                         var enableuse = (enable==1) ? "启用" : "禁用";
@@ -459,18 +484,7 @@ layui.use('layer', function(){
           });
 
         });
-         layer.open({
-            type: 1
-            ,area: ['800px', '450px']
-            ,title:'用户信息'
-            ,content:$(".admintable")
-            ,btn: ['关闭']
-            ,id:"admintable"
-            ,btn1: function(index, layero){
-                layer.close(index);
-            }
-        })
-    })
+    }
 })
 
 

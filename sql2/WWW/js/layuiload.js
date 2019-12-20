@@ -1233,7 +1233,7 @@ $(document).on("click", "#control_led_parameter", function() {
 			controlLedAjax();
 			
 			//根据隧道号获取JSON
-			var tunnelnum=-1;
+			var tunnelnum=$("#default_place_select").val();//隧道号
 			var devjsonledtime=getdevjson("LED",tunnelnum);
 			devjsonledtime=$.parseJSON(devjsonledtime); //转为JSON 
 			$("#tb_ledtime").bootstrapTable('refreshOptions',{'data':devjsonledtime.rows});	  

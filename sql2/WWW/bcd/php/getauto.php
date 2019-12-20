@@ -3,6 +3,7 @@
     include_once ('common.php');
     $itype=isset($_GET['itype'])?$_GET['itype']:"";
     $name=isset($_GET['name'])?$_GET['name']:"";   //$name 为COVI1 或COVI2    或洞内
+    $tunnel = empty($_GET["tunnel"]) ? "" : $_GET["tunnel"];
     if($itype == 1 && !empty($name) ){
         $file=parse_ini_file("../../FJ.ini",true);
         if(isset($file[$name]))          //如果配置文件中含有这个控制
@@ -23,7 +24,7 @@
     }
     //系统参数——————照明控制参数
     if($itype == 2 && !empty($name)){
-        $file=parse_ini_file("../../ZM1.ini",true);
+        $file=parse_ini_file("../../ZM".$tunnel.".ini",true);
         $result = array();
         foreach ($file[$name] as $key => $value ){
             if($value == "") $result[strtolower($key)] = "0";

@@ -13,7 +13,6 @@ require ('./bcd/php/config.php');
     <meta name="renderer" content="ie-comp">
 
     <title id="title_name"></title>
-
     <meta name="renderer" content="ie-comp">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -42,7 +41,6 @@ require ('./bcd/php/config.php');
     <script src="jspackage/aes/aes.js"></script>
     <script src="jspackage/backthemes/js/bootstrap.min.js"></script><!-- ?v=3.3.6 -->
     <!--[if lt IE 9]><script src="jspackage/json2/json2.js"></script><![endif]-->
-
     <script type="text/javascript" src="jspackage/rightMenu/js/jquery-ztree-2.5.js"></script>
 
 </head>
@@ -71,11 +69,13 @@ require ('./bcd/php/config.php');
         <div class="layui-upload" style="width: 1500px;height: 38px">
 
         </div>
-        <div id="cmsshowlist" >
+        <div id="cmsshowlist" style="margin-bottom: 10px">
 
         </div>
-        <div  style="position:absolute;width: 350px; ">
-            <ul id='tree' class="tree" style="width: 350px;">
+        <div  style="position:absolute; ">
+            <div style="overflow:scroll;height:240px;">
+            <ul id='tree' class="tree" style="width: 330px;height: 600px">
+            </div>
         </div>
 
         <div id="cmsshowlists">
@@ -93,18 +93,23 @@ require ('./bcd/php/config.php');
                  <tr>
                   <td>动作序号</td>
                   <td></td>
-                </tr> 
+                </tr>
                 <tr>
                   <td>出现方式</td>
                   <td></td>
-                </tr> 
+                </tr>
                  <tr>
                   <td>出现速度</td>
                   <td></td>
-                </tr> 
+                </tr>
               </thead>
             </table>
         </div>
+
+        <div id="allpicture" style="display: none;margin-top: 10px">
+
+        </div>
+
 
         <div id="rMenu" style="position: absolute">
             <li>
@@ -124,7 +129,7 @@ require ('./bcd/php/config.php');
                 echo "</div>";
                 ?>
             </div>
-            <div id="cms_bigdiv" style="margin-top: 200px;margin-left: 0px;position: absolute;">
+            <div id="cms_bigdiv" style="margin-top: 150px;margin-left: 0px;position: absolute;">
             <?php
             for($i=0;$i<count($cms);$i++) {
                 if(isset($cms[$i])) {
@@ -221,6 +226,19 @@ require ('./bcd/php/config.php');
         })
    }
 
+checkpicid = "";
+    //选中的图片方法
+function checkthispic(id){
+    console.log(id);
+    $("#"+checkpicid+"").css('border',"");
+    $("#"+checkpicid+"i").children().remove();
+    checkpicid = id;
+    $("#"+id+"").css('border',"2.5px solid #e4393c");
+    var redpic = "<img src='pic2/sys_item_selected.gif'  style='position:absolute;margin-top: 50px;' >"
+    $("#"+id+"i").append(redpic)
+}
+
+
 //修改情报板参数
 
  function updatecmsini(i,cid=null){
@@ -302,6 +320,44 @@ require ('./bcd/php/config.php');
         }
     })
 
+
+     //picx
+     $("#selectpic"+i+"").click(function () {
+         //  console.log(cid);//图片 1 2
+         //  console.log(i);//动作id
+         $.ajax({
+             type:"get",
+             url:"bcd/php/cmsshow.php?itype=7&id="+id+"&item="+i+"&cid="+cid+"",
+             dataType:"json",
+             success(res){
+                 var img ="<ul>";
+                 for (var key in res.data){
+                     console.log(res.data[key]);
+                     img += "<a  href=\"javascript:;\"  style='margin-left: 30px;margin-top: 10px;width: 60px;height: 60px;' ><img id=\"allpic"+key+"\" src=\""+res.data[key]+"\"  onclick='checkthispic(this.id);'  style='margin-left: 30px;margin-top: 10px;width: 40px;height: 40px;'><i id=\"allpic"+key+"i\"></i></a>"
+
+                 }
+                 img +="</ur>"
+                 $("#allpicture").append(img);
+             }
+         })
+         layer.open({
+             type: 1
+             ,area: ['700px', '280px']
+             ,title:'图片选择'
+             ,content:$("#allpicture")
+             ,btn: ['提交','关闭']
+             ,id:"selectpic"
+             ,btn1: function(index, layero){
+                 $("#allpicture").children().remove();
+                 layer.close(index);
+             },btn2: function(index, layero){
+                 $("#allpicture").children().remove();
+                 layer.close(index);
+             }
+         })
+     })
+
+
     //fontcolor
      fontcolor[i] = $(".fontcolor"+i+"").val();
     $(".fontcolor"+i+"").change(function () {
@@ -349,6 +405,4 @@ require ('./bcd/php/config.php');
         }
     }); 
 }
-   
 </script>
-

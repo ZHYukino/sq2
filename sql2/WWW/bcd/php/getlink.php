@@ -5,6 +5,7 @@
     $itype = empty($_GET['itype'])?"":$_GET['itype'];   //前台数据
     $name = empty($_GET['name'])?"" :$_GET['name'];
     $total = empty($_GET['total']) ? "":$_GET['total'];
+    $tunnel = empty($_GET["tunnel"]) ? "" : $_GET["tunnel"];
     if($itype == 1 && $name !="" ){
         $FJ = parse_ini_file("../../FJ.ini",true);
         $fx = isset($FJ[$name]['fx'])?$FJ[$name]['fx']:"";
@@ -29,7 +30,7 @@
     }
 
     if($itype == 2 && $name != ""){
-        $zm=parse_ini_file("../../ZM1.ini",true);
+        $zm=parse_ini_file("../../ZM".$tunnel.".ini",true);
         $name2 = array( "晴天","阴天","晚上","夜间");
         $result = array();
         for ($i=0;$i<count($name2);$i++){        // $i<count($name2)
@@ -47,7 +48,7 @@
     }
 
     if($itype == 3){
-        $zm=parse_ini_file("../../ZM1.ini",true);
+        $zm=parse_ini_file("../../ZM".$tunnel.".ini",true);
         $result = array();
         for($i=0;$i<8;$i++){           //ZM.ini文件中八个时间取出来放在$time   循环8次
             $time[$i]="时间".($i+1);

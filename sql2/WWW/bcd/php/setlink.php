@@ -1,8 +1,8 @@
 <?php
 //  系统信息  ————————  设置
     include_once ("common.php");
-    $itype = empty($_GET['itype']) ? "":$_GET['itype'];
     $total = empty($_GET['total']) ? "" :$_GET['total'];
+    $tunnel = empty($_GET["tunnel"]) ? "" : $_GET["tunnel"];
     session_start();
     if(isset($_SESSION["uid"])){
         if($itype == "1" && $total >0 ){                                //-----  设置风机控制参数
@@ -27,7 +27,7 @@
         }
         //照明控制参数----环境----设备关系---设置
         elseif($itype == 2 && $total > 0){                              //照明控制参数修改
-            $ini_name = "../../ZM1.ini";                                 //配置文件
+            $ini_name = "../../ZM".$tunnel.".ini";                                 //配置文件
             $fj_ini = parse_ini_file($ini_name,true);    //获取配置文件内容
             $name = $_GET["name"].$_GET["name2"];
             for($i=0;$i<$total;$i++){
@@ -45,7 +45,7 @@
             }
         }
         elseif($itype == 3 && $total > 0){                               //时间控制参数修改
-            $ini_name = "../../ZM1.ini";                                 //配置文件
+            $ini_name = "../../ZM".$tunnel.".ini";                                 //配置文件
             $fj_ini = parse_ini_file($ini_name,true);    //获取配置文件内容
             $name = $_GET["name"];
             $fj_ini[$name]["StartTime"] = $_GET['time'];

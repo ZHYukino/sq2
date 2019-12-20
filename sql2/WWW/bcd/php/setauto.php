@@ -3,6 +3,7 @@
     include_once ("common.php");
     $itype = empty($_GET["itype"]) ? "":$_GET["itype"];
     session_start();
+    $tunnel = empty($_GET["tunnel"]) ? "" : $_GET["tunnel"];
     $result = array("result"=>0 ,"msg"=>"");
     if(isset($_SESSION["uid"] )){
         if($itype == 1){                        //1 风机   2 光照
@@ -22,7 +23,7 @@
 
         }elseif ($itype == 2){                 //2 光照
 
-           $path = "../../ZM1.ini";
+           $path = "../../ZM".$tunnel.".ini";
            $fj = parse_ini_file($path,true);                 //把配置文件读取出来 放入$fj
            $name = $_GET["name"];
            foreach ($fj["光强1"] as  $key => $value){                         //单独更改 $fj[name] 里的数据

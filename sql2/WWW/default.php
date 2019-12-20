@@ -115,6 +115,7 @@ if(!isset($_SESSION['uid'])){
 
            <div id="radio2" style="margin-left: 120px;margin-bottom: 15px;display: none">
             <input type="checkbox" id="newenable"  name="" title="是否启用" lay-skin="primary" checked >
+            <label style="margin-left: 90px;font-size: 18px;font-family: KaiTi;color: red;">初始密码为:123456</label>
            </div>
 
           <div class="layui-form-item layui-form-text" style="width: 480px">
@@ -155,7 +156,7 @@ if(!isset($_SESSION['uid'])){
     {{#  } }} 
     {{#  if(d.FCode == "00000" ){ }}  
   <a  class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">添加用户</a>
-     {{#  } }} 
+    {{#  } }} 
 </script>
 </body>
 </html>

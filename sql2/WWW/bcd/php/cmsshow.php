@@ -318,5 +318,21 @@
             echo $success5;
         }
      }
+     //选择图片
+    else if($type == 7){
+         $item = $_GET["item"];
+         $cid = $_GET["cid"];
+         $path = "../localcms/" . $id . "/";
+            $num = 0;
+         for ($i=0;$i<30;$i++){
+             $numbi =  substr("00".$i,(strlen("00".$i)-3));
+             $picname = $numbi.".bmp";
+             if(file_exists($path.$picname)){
+                 $result[$num] = "bcd/localcms/".$id."/".$picname;
+                 $num += 1;
+             }
+         }
+        success($result,$num);
+    }
 
     ?>

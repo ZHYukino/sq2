@@ -101,7 +101,7 @@ function cmssetdota(id,resdata,playnum,type,cid=null) {
             var reg=/[\u4E00-\u9FA5]/g;
             var cidnum=cid.replace(reg,'');
             if(!isNaN(cidnum * 1)){
-                 picxlabel[i] = "<tr><th>名称</th><th>信息</th></tr><tr><td>X坐标</td><td><input type='text' value=\""+uppicx[cidnum-1]+"\"  maxlength=\"3\" class=\"picx"+i+"\"></td></tr><tr><td>当前图片</td><td>"+ uppicpath[cidnum-1] +"</td></tr><tr><td>上传并且更改图片</td><td><button type=\"button\"class=\"layui-btn-sm layui-btn-primary\" id=\"filepic"+i+"\">上传图片</button></td></tr>"
+                 picxlabel[i] = "<tr><th>名称</th><th>信息</th></tr><tr><td>X坐标</td><td><input type='text' value=\""+uppicx[cidnum-1]+"\"  maxlength=\"3\" class=\"picx"+i+"\"></td></tr><tr><td>当前图片</td><td>"+ uppicpath[cidnum-1] +"<button id=\"selectpic"+i+"\"  style='margin-left: 35px' class=\"layui-btn layui-btn-xs\">更改图片</button></td></tr><tr><td>上传并且更改图片</td><td><button type=\"button\"class=\"layui-btn-sm layui-btn-primary\" id=\"filepic"+i+"\">上传图片</button></td></tr>"
                 img[i] = showimg[cidnum-1];
             }
         }else if(cid != null && cid == "文字"){
@@ -174,166 +174,84 @@ function cmssetdota(id,resdata,playnum,type,cid=null) {
     }
     $("."+id+"affiche").append(classping[0]);
     //左边或者上进场 else 右或者下边
-    if( arr_check[0] == 1 ||  arr_check[0] == 2 ||  arr_check[0] == 5 ){
-        var textWidth = 320;
-        var place1 = "left";
-        var iwidth1 =320;
-        var scrollWidth1 = $("#"+id+"affiche").width() ;       //div 长度
-    }else{
-        var textWidth = 32;
-        var iwidth1 =32;
-        var place1 = "top";
-        var scrollWidth1 = $("#"+id+"affiche").height() ;       //div 长度
-    }
-    if( arr_check[1] == 1 ||  arr_check[1] == 2 ||  arr_check[1] == 5 ){
-        var textWidth1 = 320;
-        var iwidth2=320;
-        var place2 = "left";
-        var scrollWidth2 = $("#"+id+"affiche").width() ;       //div 长度
-    }else{
-        var textWidth1 = 32;
-        var place2 = "top";
-        var iwidth2=32;
-        var scrollWidth2 = $("#"+id+"affiche").height() ;       //div 长度
-    }
-    if( arr_check[2] == 1 ||  arr_check[2] == 2 ||  arr_check[2] == 5){
-        var textWidth2 = 320;
-        var iwidth3 = 320;
-        var place3 = "left";
-        var scrollWidth3 = $("#"+id+"affiche").width() ;       //div 长度
-    }else{
-        var textWidth2 = 32;
-        var place3 = "top";
-        var iwidth3 = 32;
-        var scrollWidth3 = $("#"+id+"affiche").height() ;       //div 长度
-    }
-   
+    var textWidth = new Array();
+    var iwidth = new Array();
+    var left = new Array();
+    var scrollWidth = new Array();
+    var placese = new Array();
 
-   //立即出现
-    if(arr_check[0] == 5 ){
-         iwidth1=0;
+    for (var j=0;j<playnum;j++){
+        if( arr_check[j] == 1 ||  arr_check[j] == 2 ||  arr_check[j] == 5 ){
+            textWidth[j] = 320;
+            placese[j] = "left";
+            iwidth[j] =320;
+            scrollWidth[j] = $("#"+id+"affiche").width() ;       //div 长度
+        }else{
+            textWidth[j] = 32;
+            iwidth[j] =32;
+            placese[j] = "top";
+            scrollWidth[j] = $("#"+id+"affiche").height() ;       //div 长度
+        }
+        if(arr_check[j] == 5 ){
+            iwidth[j]=0;
+        }
     }
-    if(arr_check[0] == 5 ){
-         iwidth1=0;
-    }
-     if(arr_check[1] == 5 ){
-         iwidth2=0;
-    }
-     if(arr_check[2] == 5 ){
-         iwidth3=0;
-    }
+
+
     var stops = new Array();
-    stops[id] = 1;
+    stops[id] = 0;
 
     function cmsstate(){
-        if(stops[id] == 1 ){
-            $("#"+id+"affiche_text2").hide();
-            $("#"+id+"affiche_text0").show();
-            if(arr_check[0] == 5 && iwidth1 == 0){
-                clearInterval(interval);
-                setTimeout(statecms, stoptime[0]);
-            }
-            iwidth1  -= speed[0];
-            if(iwidth1 <=0 && iwidth1 >0-speed[0] && stoptime[1] != 0 && arr_check[0] != 5){
-                //清除  
-                clearInterval(interval);
-                //延迟执行
-                setTimeout(statecms, stoptime[0]);
-            }
-        }
-        else if(stops[id] == 2 ){
-             if(arr_check[1] == 5 && iwidth2 == 0){
-                clearInterval(interval);
-                setTimeout(statecms, stoptime[1]);
-            }
-            iwidth2 -=  speed[1];
-
-            $("#"+id+"affiche_text0").hide();
-             if(iwidth2 <=0 && iwidth2 >0-speed[1] && stoptime[1] != 0 && arr_check[0] != 5){
-                //清除  
-                clearInterval(interval);
-                //延迟执行
-                setTimeout(statecms, stoptime[1]);
-            }
-         }
-         else if( stops[id] == 3  ){   
-            if(arr_check[2] == 5 && iwidth3 == 0){
-                clearInterval(interval);
-                setTimeout(statecms, stoptime[2]);
-            }   
-            iwidth3 -=  speed[2]
-
-            $("#"+id+"affiche_text1").hide();
-             if(iwidth3 <=0 && iwidth3 >0-speed[2] && stoptime[2] != 0 && arr_check[0] != 5){
-                //清除  
-                clearInterval(interval);
-                //延迟执行
-                setTimeout(statecms, stoptime[2]);
-            }
-        }
-
-        if (iwidth1 <= -textWidth ) {
-            iwidth1 = scrollWidth1  ; 
-          
-             if(playnum == 1){
-                  stops[id] = 1; 
-             }else{
-                  stops[id] = 2;
-             }
-            if(arr_check[1] == 5){
-                iwidth2=0;
-            }
-             $("#"+id+"affiche_text0").hide();
-            $("#"+id+"affiche_text1").show();
-        }
-        else if (iwidth2 <= -textWidth1 ) {
-            if(playnum == 2){
-                      stops[id] = 1;
-                }else{
-                     stops[id] = 3;
+        for (var x=0;x<playnum;x++){
+            var xs = x+1;
+            var playes = playnum-1;
+            if(stops[id] == x ) {
+                $("#" + id + "affiche_text" + playes + "").hide();
+                $("#" + id + "affiche_text" + x + "").show();
+                if (arr_check[x] == 5 && iwidth[x] == 0) {
+                    clearInterval(interval);
+                    setTimeout(statecms, stoptime[x]);
                 }
-                iwidth2 = scrollWidth2;
-            if(arr_check[0] == 5 && playnum == 2){
-                    iwidth1=0;
+                iwidth[x] -= speed[x];
+                if (iwidth[x] <= 0 && iwidth[x] > 0 - speed[x] && stoptime[x] != 0 && arr_check[x] != 5) {
+                    //清除
+                    clearInterval(interval);
+                    //延迟执行
+                    setTimeout(statecms, stoptime[x]);
+                }
             }
-            if(arr_check[2] == 5 && playnum == 3){
-                    iwidth3=0;
-             }
-             $("#"+id+"affiche_text1").hide();
-            $("#"+id+"affiche_text2").show();
-        }
-        else if (iwidth3 <= -textWidth2 ) {
-            iwidth3 = scrollWidth3;
-            if(playnum == 3){
-                 stops[id] = 1; 
-            }
-            if(arr_check[0] == 5 && playnum == 3){
-                 iwidth1=0;
-            }     
-            $("#"+id+"affiche_text2").hide();
         }
 
-        if(arr_check[0] == 1 || arr_check[0] == 5 || arr_check[0] == 3){
-            var left1 = -iwidth1;
-        }else if(arr_check[0]  == 2 || arr_check[0]  == 4){
-            var left1 = iwidth1;
-        } 
-        if(arr_check[1]  == 1 || arr_check[1] == 5 || arr_check[1] == 3){
-             var left2 = -iwidth2;
-        }else if(arr_check[1]  == 2 || arr_check[1]  == 4){
-             var left2 = iwidth2;
-        }
-         if(arr_check[2] == 1 || arr_check[2] == 5 || arr_check[2] == 3){
-            var left3 = -iwidth3;
-        }else if(arr_check[2]  == 2 || arr_check[2]  == 4){
-            var left3 = iwidth3;
+        for (var x=0;x<playnum;x++){
+            var xs = x+1;
+            if (iwidth[x] <= -textWidth[x] ) {
+                iwidth[x] = scrollWidth[x]  ;
+                if(playnum == xs){
+                    stops[id] = 0;
+                }else{
+                    stops[id] = xs;
+                }
+                if(arr_check[x+1] == 5){
+                    iwidth[x+1]=0;
+                }
+                $("#"+id+"affiche_text"+x+"").hide();
+                if(playnum == xs) {
+                    $("#"+id+"affiche_text0").show();
+                }else{
+                    $("#"+id+"affiche_text"+xs+"").show();
+                }
+            }
         }
 
-        $("#"+id+"affiche_text0").css(''+place1+'',''+left1 + 'px');
-        $("#"+id+"affiche_text1").css(''+place2+'',''+left2 + 'px');
-        $("#"+id+"affiche_text2").css(''+place3+'',''+left3 + 'px');
-     } 
-   
+        for (var j=0;j<playnum;j++){
+            if(arr_check[j] == 1 || arr_check[j] == 5 || arr_check[j] == 3){
+                left[j] = -iwidth[j];
+            }else if(arr_check[j]  == 2 || arr_check[j]  == 4){
+                left[j] = iwidth[j];
+            }
+            $("#"+id+"affiche_text"+j+"").css(''+placese[j]+'',''+left[j] + 'px');
+        }
+     }
     var interval = window.setInterval (cmsstate,100);
     
     function statecms(){
@@ -488,165 +406,84 @@ function tcmsdota(id,resdata,playnum,type,cid=null){
     }
     $("."+id+"affiche").append(classping[0]);
     //左边或者上进场 else 右或者下边
-    if( arr_check[0] == 1 ||  arr_check[0] == 2 ||  arr_check[0] == 5 ){
-        var textWidth = 48;
-        var place1 = "left";
-        var iwidth1 =48;
-        var scrollWidth1 = $("#"+id+"affichetcms").width() ;       //div 长度
-    }else{
-        var textWidth = 48;
-        var iwidth1 =48;
-        var place1 = "top";
-        var scrollWidth1 = $("#"+id+"affichetcms").height() ;       //div 长度
-    }
-    if( arr_check[1] == 1 ||  arr_check[1] == 2 ||  arr_check[1] == 5 ){
-        var textWidth1 = 48;
-        var iwidth2=48;
-        var place2 = "left";
-        var scrollWidth2 = $("#"+id+"affichetcms").width() ;       //div 长度
-    }else{
-        var textWidth1 = 48;
-        var place2 = "top";
-        var iwidth2=48;
-        var scrollWidth2 = $("#"+id+"affichetcms").height() ;       //div 长度
-    }
-    if( arr_check[2] == 1 ||  arr_check[2] == 2 ||  arr_check[2] == 5){
-        var textWidth2 = 48;
-        var iwidth3 = 48;
-        var place3 = "left";
-        var scrollWidth3 = $("#"+id+"affichetcms").width() ;       //div 长度
-    }else{
-        var textWidth2 = 48;
-        var place3 = "top";
-        var iwidth3 = 48;
-        var scrollWidth3 = $("#"+id+"affichetcms").height() ;       //div 长度
-    }
-   
+    var textWidth = new Array();
+    var iwidth = new Array();
+    var left = new Array();
+    var scrollWidth = new Array();
+    var placese = new Array();
 
-   //立即出现
-    if(arr_check[0] == 5 ){
-         iwidth1=0;
+    for (var j=0;j<playnum;j++){
+        if( arr_check[j] == 1 ||  arr_check[j] == 2 ||  arr_check[j] == 5 ){
+            textWidth[j] = 48;
+            placese[j] = "left";
+            iwidth[j] =48;
+            scrollWidth[j] = $("#"+id+"affichetcms").width() ;       //div 长度
+        }else{
+            textWidth[j] = 48;
+            iwidth[j] =48;
+            placese[j] = "top";
+            scrollWidth[j] = $("#"+id+"affichetcms").height() ;       //div 长度
+        }
+        if(arr_check[j] == 5 ){
+            iwidth[j]=0;
+        }
     }
-    if(arr_check[0] == 5 ){
-         iwidth1=0;
-    }
-     if(arr_check[1] == 5 ){
-         iwidth2=0;
-    }
-     if(arr_check[2] == 5 ){
-         iwidth3=0;
-    }
+
+
     var stops = new Array();
-    stops[id] = 1;
+    stops[id] = 0;
 
     function cmsstate(){
-        if(stops[id] == 1 ){
-            $("#"+id+"affiche_text2").hide();
-            $("#"+id+"affiche_text0").show();
-            if(arr_check[0] == 5 && iwidth1 == 0){
-                clearInterval(interval);
-                setTimeout(statecms, stoptime[0]);
-            }
-            iwidth1  -= speed[0];
-            if(iwidth1 <=0 && iwidth1 >0-speed[0] && stoptime[1] != 0 && arr_check[0] != 5){
-                //清除  
-                clearInterval(interval);
-                //延迟执行
-                setTimeout(statecms, stoptime[0]);
-            }
-        }
-        else if(stops[id] == 2 ){
-             if(arr_check[1] == 5 && iwidth2 == 0){
-                clearInterval(interval);
-                setTimeout(statecms, stoptime[1]);
-            }
-            iwidth2 -=  speed[1];
-
-            $("#"+id+"affiche_text0").hide();
-             if(iwidth2 <=0 && iwidth2 >0-speed[1] && stoptime[1] != 0 && arr_check[0] != 5){
-                //清除  
-                clearInterval(interval);
-                //延迟执行
-                setTimeout(statecms, stoptime[1]);
-            }
-         }
-         else if( stops[id] == 3  ){   
-            if(arr_check[2] == 5 && iwidth3 == 0){
-                clearInterval(interval);
-                setTimeout(statecms, stoptime[2]);
-            }   
-            iwidth3 -=  speed[2]
-
-            $("#"+id+"affiche_text1").hide();
-             if(iwidth3 <=0 && iwidth3 >0-speed[2] && stoptime[2] != 0 && arr_check[0] != 5){
-                //清除  
-                clearInterval(interval);
-                //延迟执行
-                setTimeout(statecms, stoptime[2]);
-            }
-        }
-
-        if (iwidth1 <= -textWidth ) {
-            iwidth1 = scrollWidth1  ; 
-          
-             if(playnum == 1){
-                  stops[id] = 1; 
-             }else{
-                  stops[id] = 2;
-             }
-            if(arr_check[1] == 5){
-                iwidth2=0;
-            }
-             $("#"+id+"affiche_text0").hide();
-            $("#"+id+"affiche_text1").show();
-        }
-        else if (iwidth2 <= -textWidth1 ) {
-            if(playnum == 2){
-                      stops[id] = 1;
-                }else{
-                     stops[id] = 3;
+        for (var x=0;x<playnum;x++){
+            var xs = x+1;
+            var playes = playnum-1;
+            if(stops[id] == x ) {
+                $("#" + id + "affiche_text" + playes + "").hide();
+                $("#" + id + "affiche_text" + x + "").show();
+                if (arr_check[x] == 5 && iwidth[x] == 0) {
+                    clearInterval(interval);
+                    setTimeout(statecms, stoptime[x]);
                 }
-                iwidth2 = scrollWidth2;
-            if(arr_check[0] == 5 && playnum == 2){
-                    iwidth1=0;
+                iwidth[x] -= speed[x];
+                if (iwidth[x] <= 0 && iwidth[x] > 0 - speed[x] && stoptime[x] != 0 && arr_check[x] != 5) {
+                    //清除
+                    clearInterval(interval);
+                    //延迟执行
+                    setTimeout(statecms, stoptime[x]);
+                }
             }
-            if(arr_check[2] == 5 && playnum == 3){
-                    iwidth3=0;
-             }
-             $("#"+id+"affiche_text1").hide();
-            $("#"+id+"affiche_text2").show();
-        }
-        else if (iwidth3 <= -textWidth2 ) {
-            iwidth3 = scrollWidth3;
-            if(playnum == 3){
-                 stops[id] = 1; 
-            }
-            if(arr_check[0] == 5 && playnum == 3){
-                 iwidth1=0;
-            }     
-            $("#"+id+"affiche_text2").hide();
         }
 
-        if(arr_check[0] == 1 || arr_check[0] == 5 || arr_check[0] == 3){
-            var left1 = -iwidth1;
-        }else if(arr_check[0]  == 2 || arr_check[0]  == 4){
-            var left1 = iwidth1;
-        } 
-        if(arr_check[1]  == 1 || arr_check[1] == 5 || arr_check[1] == 3){
-             var left2 = -iwidth2;
-        }else if(arr_check[1]  == 2 || arr_check[1]  == 4){
-             var left2 = iwidth2;
-        }
-         if(arr_check[2] == 1 || arr_check[2] == 5 || arr_check[2] == 3){
-            var left3 = -iwidth3;
-        }else if(arr_check[2]  == 2 || arr_check[2]  == 4){
-            var left3 = iwidth3;
+        for (var x=0;x<playnum;x++){
+            var xs = x+1;
+            if (iwidth[x] <= -textWidth[x] ) {
+                iwidth[x] = scrollWidth[x]  ;
+                if(playnum == xs){
+                    stops[id] = 0;
+                }else{
+                    stops[id] = xs;
+                }
+                if(arr_check[x+1] == 5){
+                    iwidth[x+1]=0;
+                }
+                $("#"+id+"affiche_text"+x+"").hide();
+                if(playnum == xs) {
+                    $("#"+id+"affiche_text0").show();
+                }else{
+                    $("#"+id+"affiche_text"+xs+"").show();
+                }
+            }
         }
 
-        $("#"+id+"affiche_text0").css(''+place1+'',''+left1 + 'px');
-        $("#"+id+"affiche_text1").css(''+place2+'',''+left2 + 'px');
-        $("#"+id+"affiche_text2").css(''+place3+'',''+left3 + 'px');
-     } 
+        for (var j=0;j<playnum;j++){
+            if(arr_check[j] == 1 || arr_check[j] == 5 || arr_check[j] == 3){
+                left[j] = -iwidth[j];
+            }else if(arr_check[j]  == 2 || arr_check[j]  == 4){
+                left[j] = iwidth[j];
+            }
+            $("#"+id+"affiche_text"+j+"").css(''+placese[j]+'',''+left[j] + 'px');
+        }
+    }
    
     var interval = window.setInterval (cmsstate,100);
     
@@ -655,17 +492,4 @@ function tcmsdota(id,resdata,playnum,type,cid=null){
     }
 }
 
-
-
-//  //可变速限速标志
-// function tcms(id){
-//     $.ajax({
-//         type:"GET",
-//         url:"bcd/php/tcms.php?itype=1&id="+id+"",
-//         dataType:"json",
-//         success:function(res){
-//             tcmsdota(id,res.checktcms,res.speedtcms,res.imgpicname);
-//         }
-//     })
-// }
 
