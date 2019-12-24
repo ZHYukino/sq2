@@ -17,26 +17,50 @@
         $devstate = json_decode($devstate,true);
 
         //取出气象状态
-        $vdstate = CurlCalss::curl(5,"","DevRealWDData");
+        $wdstate = CurlCalss::curl(5,"","DevRealWDData");
+        $wdpara = json_decode($wdstate,true)["data"];
+        foreach ($wdpara as $k=>$v){
+            $wd[$v["iid"]]["fengsu"] = $v["fengsu"];
+            $wd[$v["iid"]]["nengjiandu"] = $v["nengjiandu"];
+        }
+
+        //取出车检状态
+        $vdstate = CurlCalss::curl(5,"","DevRealVDData");
         $vdpara = json_decode($vdstate,true)["data"];
         foreach ($vdpara as $k=>$v){
-            $vd[$v["iid"]]["fengsu"] = $v["fengsu"];
-            $vd[$v["iid"]]["nengjiandu"] = $v["nengjiandu"];
+            for($i=1;$i<=4;$i++) {
+                $vd[$v["iid"]]["icount".$i] = $v["icount".$i];
+                $vd[$v["iid"]]["focc".$i]  = $v["focc".$i] ;
+                $vd[$v["iid"]]["fspeed".$i]  = $v["fspeed".$i] ;
+            }
         }
 
         //把状态插入数组中
         foreach ($para["data"] as $k=>$v){
             if($v["itypeid"] == 22){
-                foreach ($vd as $key=>$value){
+                foreach ($wd as $key=>$value){
                     if($v["iid"] == $key){
                         $para["data"][$k]["fengsu"] = $value["fengsu"];
                         $para["data"][$k]["nengjiandu"] = $value["nengjiandu"];
                     }
                 }
             }
+            if ($v["itypeid"] == 20) {
+                foreach ($vd as $key => $value) {
+                    if ($v["iid"] == $key) {
+                        for ($i = 1; $i <= 4; $i++) {
+                            $para["data"][$k]["icount" . $i] = $value["icount" . $i];
+                            $para["data"][$k]["focc" . $i] = $value["focc" . $i];
+                            $para["data"][$k]["fspeed" . $i] = $value["fspeed" . $i];
+                        }
+                    }
+                }
+            }
             $para["data"][$k]["state"] = $devstate["data"][$k]["istate"];
             $para["data"][$k]["ivalue"] = isset($devstate["data"][$k]["ivalue"]) ? $devstate["data"][$k]["ivalue"] :"";
         }
+
+
 
         //插入图片
         foreach ($para["data"] as $k=>$v){

@@ -106,7 +106,7 @@ require ('./bcd/php/config.php');
             </table>
         </div>
 
-        <div id="allpicture" style="display: none;margin-top: 10px">
+        <div id="allpicture" style="display: none;margin: 30px">
 
         </div>
 
@@ -229,13 +229,42 @@ require ('./bcd/php/config.php');
 checkpicid = "";
     //选中的图片方法
 function checkthispic(id){
-    console.log(id);
+    if( id == checkpicid){
+        return false;
+    }
+    $("#"+id+"").css('border',"7px solid #0088cc");
+    var $this= $("#"+id+"");
+    var path = $this[0].src;
+    filename = "";
+    if(path.indexOf("/") != -1)//如果包含有"/"号 从最后一个"/"号+1的位置开始截取字符串
+    {
+        filename=path.substring(path.lastIndexOf("/")+1,path.length);
+    }
+    else
+    {
+        filename=path;
+    }
+
+    $this.css({
+        //获得当前已定位元素的top值
+        top:$this.position().top,
+        left:$this.position().left
+    }).animate({
+        //获得当前元素的宽度并*2
+        width:$this.width()*1.8,
+        height:$this.height()*1.8,
+    },300);
+
+
     $("#"+checkpicid+"").css('border',"");
+    $("#"+checkpicid+"").animate({
+        //获得当前元素的宽度并*2
+        width:50,
+        height:50,
+    },300);
     $("#"+checkpicid+"i").children().remove();
     checkpicid = id;
-    $("#"+id+"").css('border',"2.5px solid #e4393c");
-    var redpic = "<img src='pic2/sys_item_selected.gif'  style='position:absolute;margin-top: 50px;' >"
-    $("#"+id+"i").append(redpic)
+
 }
 
 
@@ -266,6 +295,7 @@ function checkthispic(id){
           if(res.iresult == 1){
             ajaxup(i,res.picname,act = 3,"图片"+cid+"");
             layer.msg(res.sinfo);
+            history.go(0);
           }
           if(res.code == -1){
             layer.msg(res.msg);
@@ -321,37 +351,47 @@ function checkthispic(id){
     })
 
 
-     //picx
+     //allpic
      $("#selectpic"+i+"").click(function () {
          //  console.log(cid);//图片 1 2
          //  console.log(i);//动作id
+         $("#allpicture").children().remove();
          $.ajax({
              type:"get",
              url:"bcd/php/cmsshow.php?itype=7&id="+id+"&item="+i+"&cid="+cid+"",
+             cache:false,
              dataType:"json",
              success(res){
-                 var img ="<ul>";
+                 var img ="<ul >";
+                 var num = 0;
                  for (var key in res.data){
-                     console.log(res.data[key]);
-                     img += "<a  href=\"javascript:;\"  style='margin-left: 30px;margin-top: 10px;width: 60px;height: 60px;' ><img id=\"allpic"+key+"\" src=\""+res.data[key]+"\"  onclick='checkthispic(this.id);'  style='margin-left: 30px;margin-top: 10px;width: 40px;height: 40px;'><i id=\"allpic"+key+"i\"></i></a>"
-
-                 }
+                    //图片名字
+                     var pciname=res.data[key].substring(res.data[key].lastIndexOf("/")+1,res.data[key].length);
+                     num +=1;
+                     img += "<a  href=\"javascript:;\"  style='height: 100px;width: 100px' ><span style='position: absolute;margin-left: 30px;margin-top: 105px;font-family: KaiTi;'>"+pciname+"</span><img id=\"allpic"+key+"\" src=\""+res.data[key]+"\"  onclick='checkthispic(this.id);'  style=\"width:50px;height: 50px;margin: 30px\"></a>"
+                     if(num%5 == 0){
+                        img += "<br>";
+                     }
+                  }
                  img +="</ur>"
                  $("#allpicture").append(img);
              }
          })
          layer.open({
              type: 1
-             ,area: ['700px', '280px']
+             ,area: ['670px', '480px']
              ,title:'图片选择'
              ,content:$("#allpicture")
              ,btn: ['提交','关闭']
              ,id:"selectpic"
              ,btn1: function(index, layero){
                  $("#allpicture").children().remove();
+                  ajaxup(i,filename,act = 3,"图片"+cid+"");
+                 checkpicid = "";
                  layer.close(index);
              },btn2: function(index, layero){
                  $("#allpicture").children().remove();
+                 checkpicid = "";
                  layer.close(index);
              }
          })

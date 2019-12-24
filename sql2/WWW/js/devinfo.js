@@ -155,6 +155,12 @@ function devgetpara2(arr_,b,t,u){
 					arr_[i].push(jsonObject.rows[i].fnvalue);   //29
 					arr_[i].push(jsonObject.rows[i].fnvalue1);  //30
 					arr_[i].push(jsonObject.rows[i].value1);  //31
+                    arr_[i].push(jsonObject.rows[i].icount1);  //32
+                    arr_[i].push(jsonObject.rows[i].icount2);
+                    arr_[i].push(jsonObject.rows[i].focc1);
+                    arr_[i].push(jsonObject.rows[i].focc2);
+                    arr_[i].push(jsonObject.rows[i].fspeed1);
+                    arr_[i].push(jsonObject.rows[i].fspeed2);
 				}
 			}
 			b[0]=true;
@@ -758,7 +764,10 @@ function devchangvalue(i,arr_,jsonObject){
 	for (var j=0;j<arr_.length;j++){
 		if (jsonObject.rows[i].id==arr_[j][1]){
 			if (jsonObject.rows[i].state!=arr_[j][19] || jsonObject.rows[i].value !=arr_[j][28] || jsonObject.rows[i].fnvalue!=arr_[j][29] ||
-				jsonObject.rows[i].fnvalue1 !=arr_[j][30] || jsonObject.rows[i]. value1!=arr_[j][31]  || jsonObject.rows[i].shape!=arr_[j][9])
+				jsonObject.rows[i].fnvalue1 !=arr_[j][30] || jsonObject.rows[i]. value1!=arr_[j][31]  || jsonObject.rows[i].shape!=arr_[j][9] ||
+                jsonObject.rows[i].icount1 !=arr_[j][32] || jsonObject.rows[i]. icount2!=arr_[j][33]  || jsonObject.rows[i].focc1!=arr_[j][34] ||
+                jsonObject.rows[i].focc2 !=arr_[j][35] || jsonObject.rows[i]. fspeed1!=arr_[j][36]  || jsonObject.rows[i].fspeed2!=arr_[j][37]
+			)
 			{
 				arr_[j][16]=true;
 				arr_[j][17]=jsonObject.rows[i].dt;
@@ -769,6 +778,13 @@ function devchangvalue(i,arr_,jsonObject){
 				arr_[j][30]=jsonObject.rows[i].fnvalue1;		//  f2
 				arr_[j][28]=jsonObject.rows[i].value;    // va
 				arr_[j][31]=jsonObject.rows[i].value1;    // va 1
+
+                arr_[j][32]=jsonObject.rows[i].icount1;    // 32
+                arr_[j][33]=jsonObject.rows[i].icount2;    // va 1
+                arr_[j][34]=jsonObject.rows[i].focc1;    // va 1
+                arr_[j][35]=jsonObject.rows[i].focc2;    // va 1
+                arr_[j][36]=jsonObject.rows[i].fspeed1;    // va 1
+                arr_[j][37]=jsonObject.rows[i].fspeed2;    // 37
 				// arr_[j][23]=jsonObject.rows[i].v1;
 				// arr_[j][24]=jsonObject.rows[i].v2;
 			}

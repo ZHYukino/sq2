@@ -12,11 +12,12 @@
     $error10 = '{"code":-1,"msg":"账号密码不可为空","count":0,"data":[]}';
     $error2 = '{"code":-1,"msg":"查询数据的数目为零","count":0,"data":[]}';
     $error3 = '{"code":-1,"msg":"参数错误","count":0,"data":[]}';
+    $error5 = '{"code":-1,"msg":"用户已存在","count":0,"data":[]}';
     // $error1 = '{"code":-1,"msg":"请求失败，请先登录","count":0,"data":[]}';
 
 	$error12 = '{"code":-1,"msg":"日期格式错误","count":0,"data":[]}';
 	$error1 = '{"code":-1,"msg":"请求失败，请先登录","count":0,"data":[]}';
-    $error7 = '{"code":-1,"msg":"请求失败，需要ajax请求","count":0,"data":[]}';
+    $error7 = '{"code":-1,"msg":"用户不存在","count":0,"data":[]}';
     $error6 = '{"code":-1,"msg":"密码错误","count":0,"data":[]}';
 	$success1 = '{"code":0,"msg":"添加成功","count":0,"data":[]}';
 	$success2 = '{"code":0,"msg":"报废成功","count":0,"data":[]}';

@@ -48,13 +48,21 @@ function roadpara(){
 //点击标题栏事件
 function devclick(num){
     if($("#typeimg"+num+"").width() == 50  && $("#typeimg"+num+"").height() == 50){
-        $("#typeimg"+num+"").css("width","30px");
-        $("#typeimg"+num+"").css("height","30px");
+        $("#typeimg"+num+"").animate({
+            //获得当前元素的宽度并*2
+            width:30,
+            height:30,
+        },200);
+        // $("#typeimg"+num+"").css("height","30px");
         $("."+num+"").hide();
         var checknum = 0;
     }else{
-        $("#typeimg"+num+"").css("width","50px");
-        $("#typeimg"+num+"").css("height","50px");
+        $("#typeimg"+num+"").animate({
+            //获得当前元素的宽度并*2
+            width:50,
+            height:50,
+        },200);
+        // $("#typeimg"+num+"").css("height","50px");
         $("."+num+"").show();
         var checknum = 1;
     }
@@ -98,14 +106,8 @@ function devmove(id) {
                     xvalue = xvalue * 100 / wvalue;
                     yvalue = yvalue * 100 / hvalue;
                     //验证数据
-                    if (xvalue < 0) {
-                        xvalue = 0
-                    }
-                    ;
-                    if (yvalue < 0) {
-                        yvalue = 0
-                    }
-                    ;
+                    if (xvalue < 0)   xvalue = 0 ;
+                    if (yvalue < 0)   yvalue = 0 ;
                     $.ajax({
                         type: "GET",
                         url: "bcd/php/setxy.php?itype=0&id=" + id + "&type=" + type + "&xvalue=" + xvalue + "&yvalue=" + yvalue + "&dc=" + new Date().getTime() + "",
@@ -133,6 +135,7 @@ function roadpara2(){
         cache:false,
         success:function (res) {
             if(res.code==1) {
+                var vdstatesplay = new Array();
                 var bodydev = "";
                 var cmsnum = 0;
                 var cmsid = new Array();
@@ -142,9 +145,13 @@ function roadpara2(){
                     var x = (res.data[j].ipointx==0) ? 0 :res.data[j].ipointx;
                     var y = (res.data[j].ipointy==0) ? 20 :res.data[j].ipointy;
                     var updown = (res.data[j].iupdown == 1) ?"上行":(res.data[j].iupdown == 2 ? "下行" :"变电所") ;
-                    bodydev = "<div id=\""+res.data[j].iid+"\"  title=\""+res.data[j].scode+"\r"+res.data[j].scname+"\r"+updown+"\"  class=\""+res.data[j].itypeid+"\"  style=\"cursor:pointer;position:absolute;left: "+x+"%;top:"+y+"%  \"> <img src=\"pic2/"+res.data[j].picpath+"\"  style='width: 32px;height: 32px;'>"
+                    bodydev = "<div id=\""+res.data[j].iid+"\"  title=\""+res.data[j].scode+"\r"+res.data[j].scname+"\r"+updown+"\"  class=\""+res.data[j].itypeid+"\"  style=\"cursor:pointer;position:absolute;left: "+x+"%;top:"+y+"%  \">";
+                    //图片更改style
+                    if(res.data[j].itypeid == 20)  bodydev += "<img src=\"pic2/"+res.data[j].picpath+"\"  style='width: 32px;height: 32px;margin-left:120px'>" ;
+                    else  bodydev += "<img src=\"pic2/"+res.data[j].picpath+"\"  style='width: 32px;height: 32px;'>" ;
+
                     if(res.data[j].itypeid == 22){
-                        bodydev += "<div id=\"vdvalue"+res.data[j].iid+"\" style='font-size: 13px'>风速："+res.data[j].fengsu+ " <br>能见度："+res.data[j].nengjiandu+ "</div>";
+                        bodydev += "<div id=\"vdvalue"+res.data[j].iid+"\" style='font-size: 15px;font-weight: bold;'>风速："+res.data[j].fengsu+ " <br>能见度："+res.data[j].nengjiandu+ "</div>";
                     }else if(res.data[j].itypeid == 23 ){
                          bodydev +="<div id=\"10000"+res.data[j].iid+"affiche\"  ; class=\"cmsplayback\"  style='display: block; width: 96%; height: 30px;top:-32px;left:-160px;margin: 0 auto;position: absolute;  overflow: hidden;background: #000000;   width: 320px;   height: 32px; position: absolute; border-top-left-radius: 2px;border-top-right-radius: 2px;border-bottom-left-radius: 2px;border-bottom-right-radius: 2px;'></div>";
                          cmsid[cmsnum]  = "10000"+res.data[j].iid+"";
@@ -153,13 +160,19 @@ function roadpara2(){
                          bodydev +="<div id=\"10000"+res.data[j].iid+"affichetcms\"  ; class=\"tcmsplayback\"  style='display: block; width: 96%; height: 30px;top:-50px;left:-8px;margin: 0 auto;position: absolute;  overflow: hidden;background: #000000;   width: 48px;   height:48px; position: absolute; border-top-left-radius: 2px;border-top-right-radius: 2px;border-bottom-left-radius: 2px;border-bottom-right-radius: 2px;'></div>";
                          tcmsid[tcmsnum]  = "10000"+res.data[j].iid+"";
                          tcmsnum += 1; 
+                    }else if(res.data[j].itypeid == 20){
+                        vdstatesplay[res.data[j].iid] = "<div style='overflow: hidden;background-color: #ff5722;width: 270px;height: 18px;display: block;position:absolute;'>"
+                        vdstatesplay[res.data[j].iid] += "<div id=\"vdvalue"+res.data[j].iid+"\" style='font-size: 13px;font-weight: bold;color:white;position: absolute;'><ul style=\"list-style: none;\"><li id=\"vdcontent1"+res.data[j].iid+"\" style=\"list-style: none;margin: 0 30px\"> 流量："+res.data[j].icount1  + " 流量："+res.data[j].icount2  + " 流量："+res.data[j].icount3+ " 流量："+res.data[j].icount4+ "</li><li id=\"vdcontent2"+res.data[j].iid+"\" style=\"list-style: none;margin: 0 10px\">占有率："+res.data[j].focc1+ " 占有率："+res.data[j].focc2+" 占有率："+res.data[j].focc3+ " 占有率："+res.data[j].focc4+ "</li>";
+                        vdstatesplay[res.data[j].iid] += "<li id=\"vdcontent3"+res.data[j].iid+"\" style=\"list-style: none;margin:0 10px\">平均速："+res.data[j].fspeed1 + " 平均速："+res.data[j].fspeed2+" 平均速：" +res.data[j].fspeed3 + " 平均速："+res.data[j].fspeed4+ "</li></ul></div>";
+                        vdstatesplay[res.data[j].iid] += "</div>"
+                        bodydev += vdstatesplay[res.data[j].iid];
                     }
-                    bodydev += " </div>";
+                    bodydev += "</div>";
                     $("#dev_div_body").append(bodydev);
                     //移动
                     devmove(res.data[j].iid);
 
-                }//for循环结束   
+                }//for循环结束
 
                 //加载cms
                 for (var i = 0; i < $(".cmsplayback").length; i++) {
@@ -175,11 +188,18 @@ function roadpara2(){
                     gettcmsshow(tcmsid[i]);
                     // cmsid[i].replace("10000",'')
                     opencmsplay(tcmsid[i],2)
-                }//for循环结束 
+                }//for循环结束
+
+                //加载vdstate
+                for (var key in vdstatesplay ) {
+
+                    vdstateplay(key);
+                }
             }
         }
     })
 }
+
 
 
 
@@ -200,6 +220,7 @@ function opencmsplay(id,type){
                 ,btn: ['关闭'] //只是为了演示
                 ,yes: function(index, layero){
                     layer.close(index);
+                    history.go(0);
                 }
                  ,zIndex: layer.zIndex
                 ,success: function(layero,index){
@@ -222,6 +243,7 @@ function opencmsplay(id,type){
                 ,btn: ['关闭'] //只是为了演示
                 ,yes: function(index, layero){
                     layer.close(index);
+                    history.go(0);
                 }
                 ,success: function(layero,index){
                     layer.full(index);
@@ -373,8 +395,8 @@ layui.use('layer', function(){
             , done: function (res) {
                 //如果是异步请求数据方式，res即为你接口返回的信息。
                 //如果是直接赋值的方式，res即为：{data: [], count: 99} data为当前页数据、count为数据总长度
-                console.log(res);
                 window.newcode = "0000"+res.count;
+                newcode = newcode.substr(newcode.length-5);
             }
           });
 
@@ -412,9 +434,13 @@ layui.use('layer', function(){
                             data:{"code":code,"ename":ename,"cname":cname,"remark":remark,"enable":enable},
                             dataType: "json",
                             success:function(res){
-                                layer.msg(res.msg, {icon: 1});
-                                layer.close(index);
-                                opentableadmin();
+                                if(res.code === 0){
+                                    layer.msg(res.msg, {icon: 1});
+                                    layer.close(index);
+                                    opentableadmin();
+                                }else{
+                                    layer.msg(res.msg, {icon: 2});
+                                }
                             }
                         })
                     },btn2: function(index, layero){
@@ -426,6 +452,8 @@ layui.use('layer', function(){
               layer.confirm('真的删除此用户么', function(index){
                 // if(data.FEName == "super") return false;
                 curdadmin(2,data.FEName);
+                newcode = "0000"+(newcode-1);
+                newcode = newcode.substr(newcode.length-5);
                 obj.del(); //删除对应行（tr）的DOM结构
                 layer.close(index);
               });

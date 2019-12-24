@@ -235,7 +235,9 @@ function defaultAddImg(typevalue,selectvalue,picclass,arr_info,snum) {
 				//+"\" title=\""+ title +"\" state=\""+ state +"\" shape=\""+ shape
 				//+"\" updown=\""+ updown +"\" i1=\""+ i1 +"\" i2=\""+ i2 +"\" n1=\""+ n1
 				//+"\" n2=\""+ n2 +"\" v1=\""+ v1 +"\" v2=\""+ v2 +"\" picurl=\""+ picurl +"\" ipport=\""+ ipport +"\"
-				picmodule = picmodule + "<img title=\"" + picinfo + "\" src=\"" + picurl + "\" style=\"" + thiswh + "\" />";
+				if(typevalue == "VD") picmodule = picmodule +"<img title=\"" + picinfo + "\" src=\"" + picurl + "\" style=\"" + thiswh + "margin-left: 50px\" />";
+				else picmodule = picmodule + "<img title=\"" + picinfo + "\" src=\"" + picurl + "\" style=\"" + thiswh + "\" />";
+
 				switch (typevalue) {
 					case "LIGHT":
 						picmodule = picmodule + "<div class=\"picatfont\">in:" + n1 + " out:" + n2 + "</div>";
@@ -246,6 +248,11 @@ function defaultAddImg(typevalue,selectvalue,picclass,arr_info,snum) {
 					case "FSFX":
 						picmodule = picmodule + "<div class=\"picatfont\">fs:" + n3 + " fx:" + i1 + "</div>";
 						break;
+					case "VD":
+						picmodule += "<div style='overflow: hidden;background-color: #ff5722;width:140px;height: 18px;display: block;position:absolute;'>";
+                        picmodule += "<div id=\"vdvalue"+id+"\" style='font-size: 13px;font-weight: bold;color:white;position: absolute;'><ul style=\"list-style: none;\"><li id=\"vdcontent"+id+"\" style=\"list-style: none;margin: 2px 18px\"> 流量："+arr_info[snum][32]  + " 流量："+arr_info[snum][33]  + " </li><li id=\"vdcontent2"+id+"\" style=\"list-style: none;margin: 2px 5px\">占有率："+arr_info[snum][34]+ " 占有率："+arr_info[snum][35]+" </li>";
+                        picmodule += "<li id=\"vdcontent3"+id+"\" style=\"list-style: none;margin:2px 5px\">平均速："+arr_info[snum][36] + " 平均速："+arr_info[snum][37]+"</li></ul></div>";
+                        picmodule += "</div>"
 				}
 				picmodule = picmodule + "</div>";
 				//拼接结束
@@ -311,6 +318,9 @@ function defaultUpdateImg(typevalue,selectvalue,picclass,arr_info,snum){
 					var picurl = returnPicurl(typevalue, state, shape, updown, i1, i2,tunnelnum,n3,n1);
 					$("#" + id + " img").attr("title", picinfo);
 					$("#" + id + " img").attr("src", picurl);
+					if(typevalue == "VD"){
+                        thiswh += "margin-left: 50px" ;
+					}
 					$("#" + id + " img").attr("style", thiswh);
 					switch (typevalue) {
 						case "LIGHT":
@@ -321,6 +331,11 @@ function defaultUpdateImg(typevalue,selectvalue,picclass,arr_info,snum){
 							break;
 						case "FSFX":
 							$("#" + id + " .picatfont").html("fs:" + n3 + " fx:" + i1 + "");
+							break;
+						case "VD":
+                            $("#vdcontent1"+id+"").html("流量："+arr_info[snum][32] + " 流量："+arr_info[snum][33]+"");
+                            $("#vdcontent2"+id+"").html("占有率："+arr_info[snum][34] + " 占有率："+arr_info[snum][35]+"");
+                            $("#vdcontent3"+id+"").html("平均速："+arr_info[snum][36] + " 平均速："+arr_info[snum][37]+"");
 							break;
 					}
 				}
@@ -334,6 +349,10 @@ function defaultUpdateImg(typevalue,selectvalue,picclass,arr_info,snum){
 
 //点击事件
 function bindLeftKey(picclass,id,pointX,pointY) {
+	//车横
+	if(picclass == "default-pic-VD"){
+        vdstateplay(id);
+	}
     //可限速标志
     if (picclass == "default-pic-TCMS") {
         $("#" + id + "affichetcms").show();

@@ -29,6 +29,29 @@
             $result["rows"][$num]["id"] = "10000".$v["iid"];
             $num = $num+1;
         }
+
+        $vdstate = CurlCalss::curl(5,"","DevRealVDData");
+        $vdpara = json_decode($vdstate,true)["data"];
+        foreach ($vdpara as $k=>$v){
+            for($i=1;$i<=4;$i++) {
+                $vd[$v["iid"]]["icount".$i] = $v["icount".$i];
+                $vd[$v["iid"]]["focc".$i]  = $v["focc".$i] ;
+                $vd[$v["iid"]]["fspeed".$i]  = $v["fspeed".$i] ;
+            }
+        }
+
+        foreach ($result["rows"] as $k =>$v){
+            foreach ($vd as $key=>$value){
+                if($v["id"] == "10000".$key) {
+                    for ($i = 1; $i <= 4; $i++){
+                        $result["rows"][$k]["icount" . $i] = $value["icount" . $i];
+                        $result["rows"][$k]["focc" . $i] = $value["focc" . $i];
+                        $result["rows"][$k]["fspeed" . $i] = $value["fspeed" . $i];
+                    }
+                }
+            }
+        }
+
         $result["results"] = $num;
         echo json_encode($result);
     }

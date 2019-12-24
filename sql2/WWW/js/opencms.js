@@ -1,4 +1,24 @@
- 
+
+
+//车检的状态字体滚动
+function vdstateplay(idvalue){
+    function vdcmsstate(obj) {
+        var $self = obj.find("ul");
+        var lineHeight = $self.find("li:first").height();
+        $self.animate({
+            "marginTop": -lineHeight + "px"
+        }, 600, function() {
+            $self.css({
+                marginTop: 0
+            }).find("li:first").appendTo($self);
+        })
+    }
+    var intervalvdplay = setInterval(function() {
+        vdcmsstate($("#vdvalue"+idvalue+""));
+    }, 4000);
+}
+
+
 //获得门架的数据
  function getcmsshow(id,type=0,cid) {
     $.ajax({
@@ -333,7 +353,7 @@ function tcmsdota(id,resdata,playnum,type,cid=null){
             var reg=/[\u4E00-\u9FA5]/g;
             var cidnum=cid.replace(reg,'');
             if(!isNaN(cidnum * 1)){
-                 picxlabel[i] = "<tr><th>名称</th><th>信息</th></tr><tr><td>X坐标</td><td><input type='text' value=\""+uppicx[cidnum-1]+"\"  maxlength=\"3\" class=\"picx"+i+"\"></td></tr><tr><td>当前图片</td><td>"+ uppicpath[cidnum-1] +"</td></tr><tr><td>上传并且更改图片</td><td><button type=\"button\"class=\"layui-btn-sm layui-btn-primary\" id=\"filepic"+i+"\">上传图片</button></td></tr>"
+                 picxlabel[i] = "<tr><th>名称</th><th>信息</th></tr><tr><td>X坐标</td><td><input type='text' value=\""+uppicx[cidnum-1]+"\"  maxlength=\"3\" class=\"picx"+i+"\"></td></tr><tr><td>当前图片</td><td>"+ uppicpath[cidnum-1] +"<button id=\"selectpic"+i+"\"  style='margin-left: 35px' class=\"layui-btn layui-btn-xs\">更改图片</button></td></tr><tr><td>上传并且更改图片</td><td><button type=\"button\"class=\"layui-btn-sm layui-btn-primary\" id=\"filepic"+i+"\">上传图片</button></td></tr>"
                 img[i] = showimg[cidnum-1];
             }
         }else if(cid != null && cid == "文字"){

@@ -1,0 +1,91 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="renderer" content="ie-comp">
+
+    <title id="title_name"></title>
+    <meta name="renderer" content="ie-comp">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <!---------- CSS ---------->
+    <link href="jspackage/backthemes/css/bootstrap.min14ed.css" rel="stylesheet">
+    <link href="jspackage/backthemes/css/font-awesome.min93e3.css" rel="stylesheet">
+
+    <!-- 拖动 -->
+    <link href="jspackage/jquery-ui/jquery-ui-1.10.4.min.css" rel="stylesheet">
+    <!-- layui组件 -->
+    <link href="jspackage/layui/css/layui.css" media="all" rel="stylesheet">
+    <!-- 表格 -->
+    <link href="jspackage/backthemes/css/plugins/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+    <!-- 自定义 -->
+    <link href="css/pagestyle.css?vs=112" rel="stylesheet">
+    <link href="css/tunnel.css"  rel="stylesheet">
+    <!--    tree-->
+    <link type="text/css" rel="stylesheet" href="jspackage/rightMenu/zTreeStyle/zTreeStyle.css" />
+    <link type="text/css" rel="stylesheet" href="jspackage/rightMenu/zTreeStyle/zTreeIcons.css" />
+    <link type="text/css" rel="stylesheet" href="jspackage/rightMenu/css/trees.css" />
+    <!---------- JS ---------->
+    <!-- 默认加载 -->
+    <script src="jspackage/jquery/jquery-1.10.2.min.js"></script>
+    <script src="jspackage/aes/md5.js"></script>
+    <script src="jspackage/aes/rsa.js"></script>
+    <script src="jspackage/aes/aes.js"></script>
+    <script src="jspackage/backthemes/js/bootstrap.min.js"></script><!-- ?v=3.3.6 -->
+    <!--[if lt IE 9]><script src="jspackage/json2/json2.js"></script><![endif]-->
+    <script type="text/javascript" src="jspackage/rightMenu/js/jquery-ztree-2.5.js"></script>
+    <style>
+        /*ui,li {*/
+            /*list-style: none;*/
+        /*}*/
+        #news{
+            height: 75px;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+<script type="text/javascript">
+    $(function() {
+        var $this = $("#news");
+        var scrollTimer;
+        $this.hover(function() {
+            clearInterval(scrollTimer);
+        }, function() {
+            scrollTimer = setInterval(function() {
+                scrollNews($this);
+            }, 2000);
+        }).trigger("mouseleave");
+
+        function scrollNews(obj) {
+            var $self = obj.find("ul");
+            var lineHeight = $self.find("li:first").height();
+            $self.animate({
+                "marginTop": -lineHeight + "px"
+            }, 600, function() {
+                $self.css({
+                    marginTop: 0
+                }).find("li:first").appendTo($self);
+            })
+        }
+    })
+</script>
+
+
+<div id="news">
+    <ul style="list-style: none;">
+        <li style="list-style: none;"><a href="#" title="aaaaaaaaaaaaaaa">aaaaaaaaaaaaaaa</a></li>
+        <li style="list-style: none;"><a href="#" title="bbbbbbbbbbbbbbb">bbbbbbbbbbbbbbb</a></li>
+        <li style="list-style: none;"><a href="#" title="ccccccccccccccc">ccccccccccccccc</a></li>
+        <li style="list-style: none;"><a href="#" title="ddddddddddddddd">ddddddddddddddd</a></li>
+        <li style="list-style: none;"> <a href="#" title="eeeeeeeeeeeeeee">eeeeeeeeeeeeeee</a></li>
+        <li style="list-style: none;"><a href="#" title="fffffffffffffff">fffffffffffffff</a></li>
+        <li style="list-style: none;"><a href="#" title="ggggggggggggggg">ggggggggggggggg</a></li>
+    </ul>
+</div>
+
+</body>

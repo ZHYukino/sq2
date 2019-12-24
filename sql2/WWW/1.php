@@ -21,19 +21,19 @@ var_dump($s);
 </html>
 
 <script>
-    // function res() {
-    //     var name = "admin";
-    //     var pass = "111";
-    //     $.ajax({
-    //         type:"post",
-    //         url:"http://192.168.8.180:70/bcd/json/login.php?itype=fa8az2SWLoJOOXE-0IFgf6KG_vSuVPPTuNmqZGy9l1r9L5mzCiZvkGPOYJg-HENKLBPYfg",
-    //         dataType:"json",
-    //         success:function (res) {
+    function res() {
+        var name = "admin";
+        var pass = "111";
+        $.ajax({
+            type:"post",
+            url:"http://192.168.8.180:88/bcd/php/getpara.php?sid=0.23720949308809858&itype=2&q=20&tunnel=1",
+            dataType:"json",
+            success:function (res) {
 
-    //         }
-    //     })
-    // }
-    // res()
+            }
+        })
+    }
+    res()
     function res2() {
         var name = "super";
         var pass = "9047033B3B0BE0C06AE59A82E44627CC";

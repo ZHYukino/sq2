@@ -318,7 +318,8 @@
             echo $success5;
         }
      }
-     //选择图片
+
+     //取出所有图片
     else if($type == 7){
          $item = $_GET["item"];
          $cid = $_GET["cid"];
