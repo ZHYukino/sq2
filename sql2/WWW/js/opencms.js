@@ -1,7 +1,67 @@
 
 
+//托动
+function devmove(id,tunnel=0) {
+    $(document).keyup(function (event){
+        if(event.keyCode == 17) {
+            $("#"+id+"").draggable('disable');
+        }
+    })
+    $(document).keydown(function (event){
+        if(event.keyCode == 17){
+            $("#"+id+"").draggable({
+                start: function () {
+                    flag = false;
+                },
+                stop: function () {
+                    setTimeout(function () {
+                        flag = true;
+                    }, 500);
+                    if(tunnel >=1) {
+                        var Ht = parseInt($("#default_top_panel").height());
+                        var Wt = parseInt($("#default_panel_left").width());
+                        var cname = $(this).attr("title");
+                        var id = $(this).attr("id");
+                        var xvalue = $(this).offset().left - Wt;
+                        var yvalue = $(this).offset().top - Ht;
+                        var wvalue = $("#default_panel_img").width();
+                        var hvalue = $("#default_panel_img").height();
+                        xvalue = xvalue * 100 / wvalue;
+                        yvalue = yvalue * 100 / hvalue;
+                    }
+                    if(tunnel == 0) {
+                        var type = $(this).attr("class");
+                        var id = $(this).attr("id");
+                        var xvalue = $(this).offset().left;
+                        var yvalue = $(this).offset().top;
+                        var wvalue = $(window).width();
+                        var hvalue = $(window).height();
+                        xvalue = xvalue * 100 / wvalue;
+                        yvalue = yvalue * 100 / hvalue;
+                    }
+                    //验证数据
+                    if (xvalue < 0)   xvalue = 0 ;
+                    if (yvalue < 0)   yvalue = 0 ;
+                    $.ajax({
+                        type: "GET",
+                        url: "bcd/php/setxy.php?itype=0&id=" + id + "&xvalue=" + xvalue + "&yvalue=" + yvalue + "&dc=" + new Date().getTime() + "",
+                        dataType: "json",
+                        success: function (mydata) {
+
+                        }
+                    })
+                }
+            });
+            $("#"+id+"").draggable('enable');
+        }
+    })
+}
+
+intervalvdplay = new Array();
+
 //车检的状态字体滚动
 function vdstateplay(idvalue){
+    clearInterval(intervalvdplay[idvalue]);
     function vdcmsstate(obj) {
         var $self = obj.find("ul");
         var lineHeight = $self.find("li:first").height();
@@ -13,7 +73,8 @@ function vdstateplay(idvalue){
             }).find("li:first").appendTo($self);
         })
     }
-    var intervalvdplay = setInterval(function() {
+
+     intervalvdplay[idvalue] = setInterval(function() {
         vdcmsstate($("#vdvalue"+idvalue+""));
     }, 4000);
 }

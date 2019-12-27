@@ -60,10 +60,19 @@
             $para["data"][$k]["ivalue"] = isset($devstate["data"][$k]["ivalue"]) ? $devstate["data"][$k]["ivalue"] :"";
         }
 
+        //插入情报版的xy位置
+        $path = "../../playxy.ini";
+        $playxy = parse_ini_file($path,true);
 
 
         //插入图片
         foreach ($para["data"] as $k=>$v){
+            foreach ($playxy as $key => $value){
+                if($v["iid"] == $key){
+                    $para["data"][$k]["playx"] = $value["x"];
+                    $para["data"][$k]["playy"] = $value["y"];
+                }
+            }
             $ivalue = empty($v["ivalue"]) ? 1: $v["ivalue"];
             //cam
             if($v["itypeid"] == 17){

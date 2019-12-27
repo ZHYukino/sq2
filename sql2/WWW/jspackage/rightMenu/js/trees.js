@@ -1,10 +1,6 @@
 
 
 
-$(document).bind("contextmenu", function () {
-    console.log("用户点击鼠标右键....." + new Date().getTime());
-    return false;
-});
 
 function trees(id,dev){
 var countryTree = (function(countryTree) {

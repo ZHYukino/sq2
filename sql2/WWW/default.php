@@ -66,22 +66,22 @@ if(!isset($_SESSION['uid'])){
  -->
         <!-- 内容主体区域 -->
     <div style="padding: 15px;">
-        <div      style="position: absolute;  top: 55%; left: 66%;">
-            <img id="one3" src="./pic2/tunnel3.png" onclick="use3()" style="cursor:pointer;width: 40px;height: 40px; "  title="<?php $opt_ini["TuName"]["Tu1"] ;?>">
+        <div    id="tunnel3"  style="position: absolute;  top: 0%; left: 0%;">
+            <img id="one3" src="./pic2/tunnel3.png" onclick="use(3)" style="cursor:pointer;width: 40px;height: 40px; "  title="<?php $opt_ini["TuName"]["Tu1"] ;?>">
             <img id="bt3" src="./pic2/tunnel3.png"  style="cursor:pointer;display:none ;width: 40px;height: 40px;"  title="<?php $opt_ini["TuName"]["Tu1"] ;?>"  >
             <div style="color: red">C隧道</div>
         </div>
-        <div style="position: absolute;  top: 28%;  left: 30%;">
-            <img id="one2" src="./pic2/tunnel2.png" onclick="use2() " style="cursor:pointer;width: 40px;height: 40px;" title="<?php $opt_ini["TuName"]["Tu2"] ;?>">
+        <div id="tunnel2" style="position: absolute;  top: 0%;  left: 0%;">
+            <img id="one2" src="./pic2/tunnel2.png" onclick="use(2) " style="cursor:pointer;width: 40px;height: 40px;" title="<?php $opt_ini["TuName"]["Tu2"] ;?>">
             <img id="bt2" src="./pic2/tunnel2.png"  style="cursor:pointer; display:none ;width: 40px;height: 40px;" title="<?php $opt_ini["TuName"]["Tu2"] ;?>">
             <div style="color: red">B隧道</div>
         </div>
-        <div style="position: absolute;left: 45%;top: 40%;">
-            <img id="one1" src="./pic2/tunnel1.png" onclick="use1()"  style="cursor:pointer;width: 40px;height: 40px;" title="<?php $opt_ini["TuName"]["Tu0"] ;?>">
+        <div  id="tunnel1" style="position: absolute;left: 0%;top: 0%;">
+            <img id="one1" src="./pic2/tunnel1.png" onclick="use(1)"  style="cursor:pointer;width: 40px;height: 40px;" title="<?php $opt_ini["TuName"]["Tu0"] ;?>">
             <img id="bt1" src="./pic2/tunnel1.png"   style="cursor:pointer; display:none ;width: 40px;height: 40px;" title="<?php $opt_ini["TuName"]["Tu0"] ;?>"  >
             <div style="color: red">A隧道</div>
         </div>
-        </div>
+    </div>
 
     <div class="admintable" style="display: none">
         <table class="layui-hide" id="table1"  lay-filter="admintable"></table>
@@ -137,8 +137,9 @@ if(!isset($_SESSION['uid'])){
 <script src="./jspackage/layui/layui.js"></script>
 <script type="text/javascript" src="js/opencms.js"></script>
 <script type = "text/javascript"   src="js/Des.js"></script>
-<script src="js/default.js"></script>
 <script src="js/tunnel.js"></script>
+<script src="js/default.js"></script>
+
 
 <script>
     // JavaScript代码区域

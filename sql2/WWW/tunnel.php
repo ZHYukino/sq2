@@ -63,7 +63,6 @@ if(!isset($_SESSION['uid'])){
         </div>
     </div>
     <div class="dn">
-        <!-- ini file -->
         <input id="config_language" type="text" class="dn" value="<?php echo $opt_ini["config"]['SoftLanguage']; ?>">
         <input id="config_city_left" type="text" class="dn" value="<?php echo $opt_ini["config"]['RoadName1']; ?>">
         <input id="config_city_right" type="text" class="dn" value="<?php echo $opt_ini["config"]['RoadName2']; ?>">
@@ -79,17 +78,41 @@ if(!isset($_SESSION['uid'])){
     </div>
 </div>
 
-<div id="content_panel" class="content-panel">
-    <div id="default_top_panel">
-        <div class="default-top-title">
-            <?php echo $opt_ini["config"]['RoadName1'] ; ?> ————————— <?php echo $opt_ini['config']['RoadName2']; ?>
-        </div>
-        <div class="default-top-select">
+<div class="layui-layout layui-layout-admin" >
+    <div class="layui-header">
+        <ul class="layui-nav layui-cyan">
+<!--            <li class="layui-nav-item"><a href="">控制</a></li>-->
+<!--            <li class="layui-nav-item"><a href="">控制</a></li>-->
+<!--            <li class="layui-nav-item"><a href="">用户</a></li>-->
+            <li class="layui-nav-item"   id="dev-nav-1"><a style="cursor:pointer;"   id="dev_iphone" ><img   src="./pic2/ts.png"  style="width:30px;height:30px;"  ></a></li>
+            <li class="layui-nav-item"   id="dev-nav-2"></li>
+            <li class="layui-nav-item"   id="dev-nav-3"></li>
+            <li class="layui-nav-item"   id="dev-nav-4"></li>
+            <li class="layui-nav-item"   id="dev-nav-5"></li>
+            <li class="layui-nav-item"   id="dev-nav-6"></li>
+            <li class="layui-nav-item"   id="dev-nav-7"></li>
+            <li class="layui-nav-item"   id="dev-nav-8"></li>
+            <li class="layui-nav-item"   id="dev-nav-11"></li>
+            <li class="layui-nav-item"   id="dev-nav-15"></li>
+            <li class="layui-nav-item"   id="dev-nav-16"></li>
+            <li class="layui-nav-item"   id="dev-nav-17"></li>
+            <li class="layui-nav-item"   id="dev-nav-18"></li>
+            <li class="layui-nav-item"   id="dev-nav-19"></li>
+            <li class="layui-nav-item"   id="dev-nav-20"></li>
+            <li class="layui-nav-item"   id="dev-nav-22"></li>
+            <li class="layui-nav-item"   id="dev-nav-23"></li>
+            <li class="layui-nav-item"   id="dev-nav-25"></li>
+
+<!--            <li class="layui-nav-item"><a href="">用户</a></li>-->
+        </ul>
+    </div>
+
+    <div id="default_top_panel" style="display: none;">
+        <div class="default-top-select" >
             <div class="layui-form">
                 <div class="layui-form-item">
                     <div class="layui-inline">
                         <div class="layui-input-inline"  style="visibility: hidden;">
-<!--                            去掉这个select-->
                             <select id="default_place_select" lay-filter="default_place_select" >
                                 <?php
                                 require_once ("bcd/php/gettunnel.php");
@@ -111,16 +134,12 @@ if(!isset($_SESSION['uid'])){
         </div>
         <div class="ch"></div>
         <div class="default-top-content">
-
-
-
         </div>
     </div>
 
 
     <div id="default_panel" class="default-panel">
-        <!-- 标题栏 -->
-        <div id="default_panel_left" class="default-panel-left">
+        <div id="default_panel_left" class="default-panel-left" style="">
             <ul>
                 <li id="li_leftmenu_dev" title="选择设备"><i class="layui-icon layui-icon-component"></i></li>
                 <li id="li_leftmenu_info" title="系统信息"><i class="layui-icon layui-icon-console"></i></li>
@@ -141,7 +160,7 @@ if(!isset($_SESSION['uid'])){
                 <?php
                 for($i=0;$i<count($cms);$i++) {
                     if(isset($cms[$i])) {
-                        echo "<div id=" . $cms[$i]["id"] . "affiche   ;  style='display: block; width: 96%; height: 30px;margin: 0 auto;position: absolute;  overflow: hidden;background: #000000;   width: 320px;   height: 32px; position: absolute; display: none;border-top-left-radius: 2px;border-top-right-radius: 2px;border-bottom-left-radius: 2px;border-bottom-right-radius: 2px;'>";
+                        echo "<div id=" . $cms[$i]["id"] . "affiche   ;  style='cursor:pointer;display: block; width: 96%; height: 30px;margin: 0 auto;position: absolute;  overflow: hidden;background: #000000;   width: 320px;   height: 32px; position: absolute; display: none;border-top-left-radius: 2px;border-top-right-radius: 2px;border-bottom-left-radius: 2px;border-bottom-right-radius: 2px;'>";
                         ?>
                       </div>
                  <?php  }
@@ -150,14 +169,13 @@ if(!isset($_SESSION['uid'])){
                  <?php
                 for($j=0;$j<count($tcms);$j++){
                     if(isset($tcms[$j])){
-                        echo "<div id=" . $tcms[$j]["id"] . "affichetcms   ;   style='display: block; width: 96%; height: 30px;margin: 0 auto;position: relative;  overflow: hidden;background: #000000;   width: 48px;   height: 48px; position: absolute; display: none;border-top-left-radius: 2px;border-top-right-radius: 2px;border-bottom-left-radius: 2px;border-bottom-right-radius: 2px;'>";
+                        echo "<div id=" . $tcms[$j]["id"] . "affichetcms   ;   style='cursor:pointer;display: block; width: 96%; height: 30px;margin: 0 auto;position: relative;  overflow: hidden;background: #000000;   width: 48px;   height: 48px; position: absolute; display: none;border-top-left-radius: 2px;border-top-right-radius: 2px;border-bottom-left-radius: 2px;border-bottom-right-radius: 2px;'>";
                         echo "</div>";
                     }
                 }
              ?>
             </div>
         </div>
-
     </div>
 
     <div id="pageload" style="display:none;"></div>

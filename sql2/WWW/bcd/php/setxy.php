@@ -8,6 +8,26 @@
     $result = array("result"=>0,"msg"=>"","type"=>"");
     $x = checkstr($_GET["xvalue"]);
     $y = checkstr($_GET["yvalue"]);
+
+    if(strpos($id,"play") !== false || strpos($id,"affichetcms") !== false || strpos($id,"affiche") !== false  || strpos($id,"tunnel") !== false){
+        if(strpos($id,"play") !== false){
+            $id = str_replace("play","",$id);
+        }else if(strpos($id,"affichetcms") !== false){
+            $id = str_replace("affichetcms","",$id);
+            $id = str_replace("10000","",$id);
+        }else if(strpos($id,"affiche") !== false){
+            $id = str_replace("affiche","",$id);
+            $id = str_replace("10000","",$id);
+        }
+        $path = "../../playxy.ini";
+        $play = parse_ini_file($path,true);
+        $play[$id]["x"] = round($x, 2);
+        $play[$id]["y"] = round($y, 2);
+        $result = write_ini_file($play, $path, true);
+        die();
+    }
+
+
     if(isset($_SESSION["uid"])){
         //公路页面设置xy
         if($itype == 0){

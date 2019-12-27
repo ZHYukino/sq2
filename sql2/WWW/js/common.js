@@ -3,7 +3,6 @@ function closecms(dev,type) {
 	switch (dev) {
         case 1:
             for (var i = 0; i < arr_CMS.length; i++) {
-            	console.log(13);
                 var id = arr_CMS[i][1];
                 if(type == 1){
                 	 $("#" + id + "affiche").show();
@@ -23,13 +22,101 @@ function closecms(dev,type) {
                 }
             }
             break;
+        // case 3:
+        //     for (var i = 0; i < arr_VD.length; i++) {
+        //         var id = arr_VD[i][1];
+        //         if(type == 1){
+        //             $("#play" + id + "").show();
+        //         }else{
+        //             $("#play" + id + "").hide();
+        //         }
+        //     }
+        //     break;
     }
 }
+
+function devreturnarrdata(dataitem) {
+    switch(dataitem){
+        case "TS":
+            arr_=arr_TS;
+            break;
+        case "LS":
+            arr_=arr_LS;
+            break;
+        case "LIGHT":
+            arr_=arr_LIGHT;
+            break;
+        case "LED":
+            arr_=arr_LED;
+            break;
+        case "FAN":
+            arr_=arr_FAN;
+            break;
+        case "COVI":
+            arr_=arr_COVI;
+            break;
+        case "FSFX":
+            arr_=arr_FSFX;
+            break;
+        case "FB":
+            arr_=arr_FB;
+            break;
+        case "FGS":
+            arr_=arr_FGS;
+            break;
+        case "FGW":
+            arr_=arr_FGW;
+            break;
+        case "FGR":
+            arr_=arr_FGR;
+            break;
+        case "DOOR":
+            arr_=arr_DOOR;
+            break;
+        case "CMS":
+            arr_=arr_CMS;
+            break;
+        case "CAM":
+            arr_=arr_CAM;
+            break;
+        case "DEC":
+            arr_=arr_DEC;
+
+            break;
+        case "ET":
+            arr_=arr_ET;
+            break;
+        case "VD":
+            arr_=arr_VD;
+            break;
+        case "PUMP":
+            arr_=arr_PUMP;
+            break;
+        case "WD":
+            arr_=arr_WD;
+            break;
+        case "TCMS":
+            arr_=arr_TCMS;
+            break;
+        case "FCMS":
+            arr_=arr_FCMS;
+            break;
+        case "DOOREx":
+            arr_=arr_DOOREx;
+            break;
+        case "ETHOST":
+            arr_=arr_DEC;
+            break;
+    }
+    return arr_;
+}
+
 //下拉框
 //选择设备加载图标
 function loadCheckbox(){
-	var tunnelnum=$("#default_place_select").val();//隧道号
+	tunnelnum=$("#default_place_select").val();//隧道号
 	var tunnel_name=$("#default_place_select").find("option:selected").text(); //隧道号
+
 	$.ajax({
 		type: "GET",
 		url : "bcd/php/getcheck.php?itype=1&tunnel="+tunnelnum+"&dc=" + new Date().getTime() + "",
@@ -41,8 +128,23 @@ function loadCheckbox(){
 				 $("#title_name").text(tunnel_name);
 				 closecms(3);
 				for(var dataitem in mydata){
+					arr_ = devreturnarrdata(dataitem);
+                    var devtunnelnum = 0;
+                    for (var k in arr_){
+						if(arr_[k][2] == tunnelnum){
+                            devtunnelnum += 1;
+						}
+					}
+                    if(devtunnelnum == 0){
+                        $("#dev-nav-"+devtypecontrolbtn[dataitem]+"").empty();
+                    }
 					if(mydata[dataitem]==1){
 						$("input[typename="+ dataitem +"]").attr("checked","");
+                        $("#typeimg"+devtypecontrolbtn[dataitem]+"").css("width","40px");
+                        $("#typeimg"+devtypecontrolbtn[dataitem]+"").css("height","40px");
+					}else{
+                        $("#typeimg"+devtypecontrolbtn[dataitem]+"").css("width","25px");
+                        $("#typeimg"+devtypecontrolbtn[dataitem]+"").css("height","25px");
 					}
 				}
 			}
@@ -59,24 +161,19 @@ function loadCheckbox(){
 function saveCheckbox(typevalue){
 	$.ajax({
 		type: "GET",
-		url : "bcd/php/getcheck.php?itype=0&name="+ typevalue +"&dc=" + new Date().getTime() + "",
+		url : "bcd/php/getcheck.php?itype=0&tunnel="+tunnelnum+"&name="+ typevalue +"&dc=" + new Date().getTime() + "",
 		//data:{},
 		dataType: "json",
 		success: function(mydata){
-			if(mydata.code == "CMS"){
-				if(mydata.resmsg === 1){
-					closecms(1,1);
-				}else{
-					 closecms(1,0);//隐藏情报板
-				}
+			if(typevalue == "CMS"){
+				closecms(1,mydata.data);
 			}
-			if(mydata.code == "TCMS"){
-				 if(mydata.resmsg === 1){
-					closecms(2,1);
-				}else{
-					 closecms(2,0);//隐藏情报板
-				}
+			if(typevalue == "TCMS"){
+                closecms(2,mydata.data);
 			}
+            // if(typevalue == "VD"){
+            //     closecms(3,mydata.data);
+            // }
 		},
 		error: function(json){}
 	});
@@ -98,80 +195,7 @@ function defaultAjax(typevalue,selectvalue,picclass,unum){
 	//当前背景图大小
 	picW=$("#default_panel_img").width();
 	picH=$("#default_panel_img").height();
-//	console.log(typevalue);
-
-	switch(typevalue){
-		case "TS":
-			arr_=arr_TS;
-			break;
-		case "LS":
-			arr_=arr_LS;
-			break;
-		case "LIGHT":
-			arr_=arr_LIGHT;
-			break;
-		case "LED":
-			arr_=arr_LED;
-			break;
-		case "FAN":
-			arr_=arr_FAN;
-			break;
-		case "COVI":
-			arr_=arr_COVI;
-			break;
-		case "FSFX":
-			arr_=arr_FSFX;
-			break;
-		case "FB":
-			arr_=arr_FB;
-			break;
-		case "FGS":
-			arr_=arr_FGS;
-			break;
-		case "FGW":
-			arr_=arr_FGW;
-			break;
-		case "FGR":
-			arr_=arr_FGR;
-			break;
-		case "DOOR":
-			arr_=arr_DOOR;
-			break;
-		case "CMS":
-			arr_=arr_CMS;
-			break;
-		case "CAM":
-			arr_=arr_CAM;
-			break;
-		case "DEC":
-			arr_=arr_DEC;
-
-			break;
-		case "ET":
-			arr_=arr_ET;
-			break;
-		case "VD":
-			arr_=arr_VD;
-			break;
-		case "PUMP":
-			arr_=arr_PUMP;
-			break;
-		case "WD":
-			arr_=arr_WD;
-			break;
-		case "TCMS":
-			arr_=arr_TCMS;
-			break;
-		case "FCMS":
-			arr_=arr_FCMS;
-			break;
-		case "DOOREx":
-			arr_=arr_DOOREx;
-			break;
-		case "ETHOST":
-			arr_=arr_DEC;
-			break;
-	}
+    arr_ = devreturnarrdata(typevalue);
 	if(unum==0){
 		defaultAddImg(typevalue,selectvalue,picclass,arr_,0);
 	}else{
@@ -189,6 +213,7 @@ function defaultAddImg(typevalue,selectvalue,picclass,arr_info,snum) {
 				var id = arr_info[snum][1];
 				var devcode = arr_info[snum][3];
 				var title = arr_info[snum][4] + "&#13;" + arr_info[snum][13] + "&#13;" + arr_info[snum][5];
+                var titleplay = arr_info[snum][4] + "\n" + arr_info[snum][13] + "\n" + arr_info[snum][5];
 				var updown = arr_info[snum][6];
 				var ipaddr = arr_info[snum][7];
 				var ipport = arr_info[snum][8];
@@ -202,10 +227,12 @@ function defaultAddImg(typevalue,selectvalue,picclass,arr_info,snum) {
 				var state = arr_info[snum][18];
 				var i1 = arr_info[snum][19];        //state
 				var i2 = arr_info[snum][20];         //-1
-				var n1 = arr_info[snum][29];
-				var n2 = arr_info[snum][30];
+				var n1 = arr_info[snum][29];         //fengsu
+				var n2 = arr_info[snum][30];		//风向
 				var n3 = arr_info[snum][28];     //  value
 				var channel = arr_info[snum][26];//通道号
+				var playx = picW / 100 *arr_info[snum][40];
+				var playy = picH / 100 *arr_info[snum][41];
 				//var v1=arr_info[snum][23];
 				//var v2=arr_info[snum][24];
 				//图片位置
@@ -235,7 +262,7 @@ function defaultAddImg(typevalue,selectvalue,picclass,arr_info,snum) {
 				//+"\" title=\""+ title +"\" state=\""+ state +"\" shape=\""+ shape
 				//+"\" updown=\""+ updown +"\" i1=\""+ i1 +"\" i2=\""+ i2 +"\" n1=\""+ n1
 				//+"\" n2=\""+ n2 +"\" v1=\""+ v1 +"\" v2=\""+ v2 +"\" picurl=\""+ picurl +"\" ipport=\""+ ipport +"\"
-				if(typevalue == "VD") picmodule = picmodule +"<img title=\"" + picinfo + "\" src=\"" + picurl + "\" style=\"" + thiswh + "margin-left: 50px\" />";
+				if(typevalue == "VD") picmodule = picmodule +"<img title=\"" + picinfo + "\" src=\"" + picurl + "\" style=\"" + thiswh + "\" />";
 				else picmodule = picmodule + "<img title=\"" + picinfo + "\" src=\"" + picurl + "\" style=\"" + thiswh + "\" />";
 
 				switch (typevalue) {
@@ -249,10 +276,30 @@ function defaultAddImg(typevalue,selectvalue,picclass,arr_info,snum) {
 						picmodule = picmodule + "<div class=\"picatfont\">fs:" + n3 + " fx:" + i1 + "</div>";
 						break;
 					case "VD":
-						picmodule += "<div style='overflow: hidden;background-color: #ff5722;width:140px;height: 18px;display: block;position:absolute;'>";
-                        picmodule += "<div id=\"vdvalue"+id+"\" style='font-size: 13px;font-weight: bold;color:white;position: absolute;'><ul style=\"list-style: none;\"><li id=\"vdcontent"+id+"\" style=\"list-style: none;margin: 2px 18px\"> 流量："+arr_info[snum][32]  + " 流量："+arr_info[snum][33]  + " </li><li id=\"vdcontent2"+id+"\" style=\"list-style: none;margin: 2px 5px\">占有率："+arr_info[snum][34]+ " 占有率："+arr_info[snum][35]+" </li>";
-                        picmodule += "<li id=\"vdcontent3"+id+"\" style=\"list-style: none;margin:2px 5px\">平均速："+arr_info[snum][36] + " 平均速："+arr_info[snum][37]+"</li></ul></div>";
-                        picmodule += "</div>"
+						var plug = "";
+						// if( window["var"+ id +""] !== false ) {
+                        plug +="<div class= \""+ picclass + " picselectclass\">"
+                        plug += "<div id=\"play" + id + "\"      title=\"" + title + "\" style=\"cursor:pointer;overflow: hidden;background-color: #ff5722;width:140px;height: 18px;display: block;position:absolute;left:" + playx + "px;top:" + playy + "px\">";
+                        plug += "<div id=\"vdvalue" + id + "\" style='font-size: 13px;font-weight: bold;color:white;position: absolute;'><ul style=\"list-style: none;\"><li id=\"vdcontent" + id + "\" style=\"list-style: none;margin: 2px 10px\"> 流量：" + arr_info[snum][32] + " &nbsp&nbsp&nbsp流量：" + arr_info[snum][33] + " </li><li id=\"vdcontent2" + id + "\" style=\"list-style: none;margin: 2px 5px\">占有率：" + arr_info[snum][34] + " 占有率：" + arr_info[snum][35] + " </li>";
+                        plug += "<li id=\"vdcontent3" + id + "\" style=\"list-style: none;margin:2px 5px\">平均速：" + arr_info[snum][36] + " 平均速：" + arr_info[snum][37] + "</li></ul></div>";
+                        plug += "</div></div>"
+                        // }
+                        $("#default_cover").append(plug);
+                        devmove("play"+id+"",1);
+                        // window["var"+ id +""] = false;
+						break;
+					case "WD":
+                        picmodule +="<div id=\"wdvalue"+id+"\" style='font-size: 14px;font-weight: bold;'>风速："+arr_info[snum][38]+ " <br>能见度："+arr_info[snum][39]+ "</div>";
+                        break;
+					case "TCMS":
+                        $("#" + id + "affichetcms").attr("title",titleplay);
+                        $("#" + id + "affichetcms").css("left", "" + playx  + "px");
+                        $("#" + id + "affichetcms").css("top", "" + playy	 + "px");
+                        break;
+					case "CMS":
+                        $("#" + id + "affiche").attr("title",titleplay);
+                        $("#" + id + "affiche").css("left", "" + playx  + "px");
+                        $("#" + id + "affiche").css("top", "" + playy	 + "px");
 				}
 				picmodule = picmodule + "</div>";
 				//拼接结束
@@ -318,9 +365,6 @@ function defaultUpdateImg(typevalue,selectvalue,picclass,arr_info,snum){
 					var picurl = returnPicurl(typevalue, state, shape, updown, i1, i2,tunnelnum,n3,n1);
 					$("#" + id + " img").attr("title", picinfo);
 					$("#" + id + " img").attr("src", picurl);
-					if(typevalue == "VD"){
-                        thiswh += "margin-left: 50px" ;
-					}
 					$("#" + id + " img").attr("style", thiswh);
 					switch (typevalue) {
 						case "LIGHT":
@@ -337,6 +381,9 @@ function defaultUpdateImg(typevalue,selectvalue,picclass,arr_info,snum){
                             $("#vdcontent2"+id+"").html("占有率："+arr_info[snum][34] + " 占有率："+arr_info[snum][35]+"");
                             $("#vdcontent3"+id+"").html("平均速："+arr_info[snum][36] + " 平均速："+arr_info[snum][37]+"");
 							break;
+                        case "WD":
+                            $("#wdvalue"+id+"").html("风速："+arr_info[snum][38]+ " <br>能见度："+arr_info[snum][39]+ "");
+                        	break;
 					}
 				}
 			}
@@ -357,33 +404,34 @@ function bindLeftKey(picclass,id,pointX,pointY) {
     if (picclass == "default-pic-TCMS") {
         $("#" + id + "affichetcms").show();
         if (!window["var" + id + ""]) return false;   			//防止执行两次 运动
-
-        if (window["tcmscheck" + id + ""] !== false) {
-            $("#" + id + "affichetcms").css("left", "" + pointX  + "%");
-            $("#" + id + "affichetcms").css("top", "" + pointY - 7	 + "%");
-        }
        gettcmsshow(id);
-       window["var"+ id +""] = false; 
+       window["var"+ id +""] = false;
+       devmove(id+"affichetcms",1);
+       function opentcmswindow(){
+           var index=layer.open({
+               type: 2//此处以iframe举例
+               ,title: '限速标志'+id.replace("10000",'')
+               ,area: ['1300px', '670px']
+               ,shade: 0
+               ,maxmin: true
+               ,offset: [Ht+10]
+               ,id: 'LAY_LSTSdbclick_tcms' //防止重复弹出
+               ,content: 'tcms.php?tcms='+id+''
+               ,btn: ['关闭'] //只是为了演示
+               ,yes: function(index, layero){
+                   layer.close(index);
+               }
+               ,success: function(layero,index){
+                   layer.full(index);
+               }
+           });
+	   }
        $("#" + id + "").on('dblclick', function () {
-            var index=layer.open({
-                type: 2//此处以iframe举例
-                ,title: '限速标志'+id.replace("10000",'')
-                ,area: ['1300px', '670px']
-                ,shade: 0
-                ,maxmin: true
-                ,offset: [Ht+10]
-				, id: 'LAY_LSTSdbclick_tcms' //防止重复弹出
-                 ,content: 'tcms.php?tcms='+id+''
-               // , content: 'html内容'
-                ,btn: ['关闭'] //只是为了演示
-                ,yes: function(index, layero){
-                    layer.close(index);
-                }
-                ,success: function(layero,index){
-                    layer.full(index);
-                }
-            });
-        })
+           opentcmswindow()
+        });
+       $("#" + id + "affichetcms") .on('dblclick', function () {
+            opentcmswindow()
+       })
     }
 
     //门架标志 右击
@@ -391,20 +439,10 @@ function bindLeftKey(picclass,id,pointX,pointY) {
 			$("#" + id + "affiche").show();
 			//防止执行两次 运动
 			if (window["var" + id + ""]  == false) return false;
-			// //如果通过setxy移动过限速标志情报板就不再修改位置
-				if (pointX < 10) {
-					//位置最左最右特殊化
-					$("#" + id + "affiche").css("left", "" + pointX - 1 + "%");
-				} else if (pointX > 90) {
-					$("#" + id + "affiche").css("left", "" + pointX - 18 + "%");
-				} else {
-					$("#" + id + "affiche").css("left", "" + pointX - 9 + "%");
-				}
-				$("#" + id + "affiche").css("top", "" + pointY - 5 + "%");
-			// }
 			getcmsshow(id);
-			window["var"+ id +""] = false;     
-            $("#" + id + "").on('dblclick', function () {
+			devmove(id+"affiche",1);
+			window["var"+ id +""] = false;
+			function opencmswindow(){
                 var index=layer.open({
                     type: 2//此处以iframe举例
                     ,title: '门架势情报版'+id.replace("10000",'')
@@ -412,8 +450,8 @@ function bindLeftKey(picclass,id,pointX,pointY) {
                     ,shade: 0
                     ,maxmin: true
                     ,offset: [Ht+10]
-					, id: 'LAY_LSTSdbclick_cms' //防止重复弹出
-                     ,content: 'cms.php?cms='+id+''
+                    , id: 'LAY_LSTSdbclick_cms' //防止重复弹出
+                    ,content: 'cms.php?cms='+id+''
                     ,btn: ['关闭'] //只是为了演示
                     ,yes: function(index, layero){
                         layer.close(index);
@@ -422,8 +460,13 @@ function bindLeftKey(picclass,id,pointX,pointY) {
                         layer.full(index);
                     }
                 });
-            })
-        // })
+			}
+            $("#" + id + "").on('dblclick', function () {
+                opencmswindow();
+            });
+			$("#" + id + "affiche").on('dblclick', function () {
+				opencmswindow();
+			})
     }
 
     //信号灯双击
@@ -854,24 +897,6 @@ function bindLeftKey(picclass,id,pointX,pointY) {
                             //data:{},
                             dataType: "json",
                             success: function (mydata) {
-                                if (mydata.type == 23 && mydata.result) {
-                                    var cmscheck = "cmscheck" + id;
-                                    window[cmscheck] = false;
-                                    if (xvalue < 10) {
-                                        //位置最左最右特殊化
-                                        $("#" + id + "affiche").css("left", "" + xvalue - 1 + "%");
-                                    } else if (xvalue > 90) {
-                                        $("#" + id + "affiche").css("left", "" + xvalue - 18 + "%");
-                                    } else {
-                                        $("#" + id + "affiche").css("left", "" + xvalue - 9 + "%");
-                                    }
-                                    $("#" + id + "affiche").css("top", "" + yvalue - 5 + "%");
-                                } else if (mydata.result && mydata.type == 25) {
-                                    var tcmscheck = "tcmscheck" + id;
-                                    window[tcmscheck] = false;
-                                    $("#" + id + "affichetcms").css("left", "" + xvalue  + "%");
-                                    $("#" + id + "affichetcms").css("top", "" + yvalue - 7 + "%");
-                                }
                                 if (!mydata.result) {
                                     sendThisScreenMSG(mydata.msg);
                                 }

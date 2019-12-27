@@ -29,7 +29,7 @@
             $result["rows"][$num]["id"] = "10000".$v["iid"];
             $num = $num+1;
         }
-
+        //车检
         $vdstate = CurlCalss::curl(5,"","DevRealVDData");
         $vdpara = json_decode($vdstate,true)["data"];
         foreach ($vdpara as $k=>$v){
@@ -39,7 +39,6 @@
                 $vd[$v["iid"]]["fspeed".$i]  = $v["fspeed".$i] ;
             }
         }
-
         foreach ($result["rows"] as $k =>$v){
             foreach ($vd as $key=>$value){
                 if($v["id"] == "10000".$key) {
@@ -52,6 +51,21 @@
             }
         }
 
+        //气象
+        $wdstate = CurlCalss::curl(5,"","DevRealWDData");
+        $wdpara = json_decode($wdstate,true)["data"];
+        foreach ($wdpara as $k=>$v){
+            $wd[$v["iid"]]["fengsu"] = $v["fengsu"];
+            $wd[$v["iid"]]["nengjiandu"] = $v["nengjiandu"];
+        }
+        foreach ($result["rows"] as $k=>$v){
+            foreach ($wd as $key => $value) {
+                if ($v["id"] == "10000".$key) {
+                    $result["rows"][$k]["fengsu"] = $value["fengsu"];
+                    $result["rows"][$k]["nengjiandu"] = $value["nengjiandu"];
+                }
+            }
+        }
         $result["results"] = $num;
         echo json_encode($result);
     }

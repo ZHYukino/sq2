@@ -57,7 +57,17 @@
         }
         $result["results"] = count($para["data"]);
         $num = 0;
+
+        //获取playxy.ini里的值
+        $playxy = parse_ini_file("../../playxy.ini",true);
+
         foreach ($para["data"] as $k=>$v){
+            foreach ($playxy as $key => $value){
+                if ($v["iid"] == $key){
+                    $result["rows"][$k]["playx"] = $value["x"];
+                    $result["rows"][$k]["playy"] = $value["y"];
+                }
+            }
             $result["rows"][$k]["id"] = "10000".$v["iid"];
             $result["rows"][$k]["pointx"] = $v["ipointx"];
             $result["rows"][$k]["pointy"] = $v["ipointy"];
@@ -96,6 +106,22 @@
                             $result["rows"][$k]["focc" . $i] = $value["focc" . $i];
                             $result["rows"][$k]["fspeed" . $i] = $value["fspeed" . $i];
                         }
+                    }
+                }
+            }
+        }else if($q == 22){
+            //取出气象状态
+            $wdstate = CurlCalss::curl(5,"","DevRealWDData");
+            $wdpara = json_decode($wdstate,true)["data"];
+            foreach ($wdpara as $k=>$v){
+                $wd[$v["iid"]]["fengsu"] = $v["fengsu"];
+                $wd[$v["iid"]]["nengjiandu"] = $v["nengjiandu"];
+            }
+            foreach ($result["rows"] as $k=>$v){
+                foreach ($wd as $key => $value) {
+                    if ($v["id"] == "10000".$key) {
+                        $result["rows"][$k]["fengsu"] = $value["fengsu"];
+                        $result["rows"][$k]["nengjiandu"] = $value["nengjiandu"];
                     }
                 }
             }

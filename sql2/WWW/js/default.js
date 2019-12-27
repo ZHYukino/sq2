@@ -1,4 +1,30 @@
 
+//页面载入
+clicktype(2);
+function clicktype(num){
+    $.ajax({
+        type: "GET",
+        url: "bcd/php/getcheck.php?itype="+num+"",
+        cache:false,
+        dataType: "json",
+        success: function (mydata) {
+            checkini = mydata.data;
+        }
+    })
+}
+
+$.ajax({
+    url:"bcd/php/gettunnel.php?itype=1",
+    dataType:"json",
+    type:"get",
+    cache:false,
+    success:function (res) {
+        for (var i =1; i<=res.results;i++){
+            $("#tunnel"+i+"").css("top",""+res.rows[i-1].y+"%");
+            $("#tunnel"+i+"").css("left",""+res.rows[i-1].x+"%")
+        }
+    }
+})
 
 
 $(document).bind("contextmenu", function () {
@@ -37,7 +63,7 @@ function roadpara(){
                 var devpic = res.data;
                 for(var i= 0;i<res.count;i++){
                     var typeid = res.data[i].iid;
-                    var usehead = "<a style=\"cursor:pointer;\"  onclick=\"devclick("+typeid+")\" id=\"dev_iphone"+i+"\" ><img  id=\"typeimg"+typeid+"\" src=\""+devpic[i].pic+"\"  style=\"width:30px;height:30px;\"   \"></a>";
+                    var usehead = "<a style=\"cursor:pointer;\"  onclick=\"devclick("+typeid+")\" id=\"dev_iphone"+i+"\" ><img  id=\"typeimg"+typeid+"\" src=\""+devpic[i].pic+"\"  style=\"width:25px;height:25px;\"   \"></a>";
                     $("#dev-nav-"+i+"").html(usehead);
                 }
             }
@@ -47,11 +73,11 @@ function roadpara(){
 
 //点击标题栏事件
 function devclick(num){
-    if($("#typeimg"+num+"").width() == 50  && $("#typeimg"+num+"").height() == 50){
+    if($("#typeimg"+num+"").width() == 40  && $("#typeimg"+num+"").height() == 40){
         $("#typeimg"+num+"").animate({
             //获得当前元素的宽度并*2
-            width:30,
-            height:30,
+            width:25,
+            height:25,
         },200);
         // $("#typeimg"+num+"").css("height","30px");
         $("."+num+"").hide();
@@ -59,8 +85,8 @@ function devclick(num){
     }else{
         $("#typeimg"+num+"").animate({
             //获得当前元素的宽度并*2
-            width:50,
-            height:50,
+            width:40,
+            height:40,
         },200);
         // $("#typeimg"+num+"").css("height","50px");
         $("."+num+"").show();
@@ -79,54 +105,25 @@ function devclick(num){
 
 
 
-
-//托动
-function devmove(id) {
-    $(document).keyup(function (event){
-        if(event.keyCode == 17) {
-            $("#"+id+"").draggable('disable');
+//重新判断设备是否显示
+function recheck(checkini) {
+    // console.log(checkini);
+    for(var key in checkini) {
+        if(checkini[key] ==  1){
+            $("#typeimg"+key+"").css("width","40px");
+            $("#typeimg"+key+"").css("height","40px");
+            $("."+key+"").show();
+        }else if(checkini[key] ==  0){
+            $("#typeimg"+key+"").css("width","25px");
+            $("#typeimg"+key+"").css("height","25px");
+            $("."+key+"").hide();
         }
-    })
-    $(document).keydown(function (event){
-        if(event.keyCode == 17){
-            $("#"+id+"").draggable({
-                start: function () {
-                    flag = false;
-                },
-                stop: function () {
-                    setTimeout(function () {
-                        flag = true;
-                    }, 500);
-                    var type = $(this).attr("class");
-                    var id = $(this).attr("id");
-                    var xvalue = $(this).offset().left ;
-                    var yvalue = $(this).offset().top ;
-                    var wvalue = $(window).width();
-                    var hvalue = $(window).height();
-                    xvalue = xvalue * 100 / wvalue;
-                    yvalue = yvalue * 100 / hvalue;
-                    //验证数据
-                    if (xvalue < 0)   xvalue = 0 ;
-                    if (yvalue < 0)   yvalue = 0 ;
-                    $.ajax({
-                        type: "GET",
-                        url: "bcd/php/setxy.php?itype=0&id=" + id + "&type=" + type + "&xvalue=" + xvalue + "&yvalue=" + yvalue + "&dc=" + new Date().getTime() + "",
-                        //data:{},
-                        dataType: "json",
-                        success: function (mydata) {
-
-                        }
-                    })
-                }
-            });
-            $("#"+id+"").draggable('enable');
-        }
-    })
+    }
 }
 
 
 //设备加载
-roadpara2()
+roadpara2();
 function roadpara2(){
     $.ajax({
         url:"bcd/php/getroadpara.php?itype=2",
@@ -135,66 +132,79 @@ function roadpara2(){
         cache:false,
         success:function (res) {
             if(res.code==1) {
+                roaddev = res.data;
                 var vdstatesplay = new Array();
                 var bodydev = "";
                 var cmsnum = 0;
                 var cmsid = new Array();
                 var tcmsnum = 0;
                 var tcmsid = new Array();
+                var plug = "";
+                var num = 10;
                 for (var j = 0 ;j<res.count;j++){
                     var x = (res.data[j].ipointx==0) ? 0 :res.data[j].ipointx;
                     var y = (res.data[j].ipointy==0) ? 20 :res.data[j].ipointy;
+                    var playx = (res.data[j].ipointx== 0) ? 0 :res.data[j].playx;
+                    var playy = (res.data[j].ipointy== 0) ? 20 :res.data[j].playy;
                     var updown = (res.data[j].iupdown == 1) ?"上行":(res.data[j].iupdown == 2 ? "下行" :"变电所") ;
+                    plug = "";
                     bodydev = "<div id=\""+res.data[j].iid+"\"  title=\""+res.data[j].scode+"\r"+res.data[j].scname+"\r"+updown+"\"  class=\""+res.data[j].itypeid+"\"  style=\"cursor:pointer;position:absolute;left: "+x+"%;top:"+y+"%  \">";
-                    //图片更改style
-                    if(res.data[j].itypeid == 20)  bodydev += "<img src=\"pic2/"+res.data[j].picpath+"\"  style='width: 32px;height: 32px;margin-left:120px'>" ;
-                    else  bodydev += "<img src=\"pic2/"+res.data[j].picpath+"\"  style='width: 32px;height: 32px;'>" ;
+                    bodydev += "<img src=\"pic2/"+res.data[j].picpath+"\"  class=\""+res.data[j].itypeid+"\"  style='width: 32px;height: 32px;'>" ;
 
                     if(res.data[j].itypeid == 22){
-                        bodydev += "<div id=\"vdvalue"+res.data[j].iid+"\" style='font-size: 15px;font-weight: bold;'>风速："+res.data[j].fengsu+ " <br>能见度："+res.data[j].nengjiandu+ "</div>";
+                        bodydev += "<div id=\"wdvalue"+res.data[j].iid+"\" style='font-size: 15px;font-weight: bold;'>风速："+res.data[j].fengsu+ " <br>能见度："+res.data[j].nengjiandu+ "</div>";
                     }else if(res.data[j].itypeid == 23 ){
-                         bodydev +="<div id=\"10000"+res.data[j].iid+"affiche\"  ; class=\"cmsplayback\"  style='display: block; width: 96%; height: 30px;top:-32px;left:-160px;margin: 0 auto;position: absolute;  overflow: hidden;background: #000000;   width: 320px;   height: 32px; position: absolute; border-top-left-radius: 2px;border-top-right-radius: 2px;border-bottom-left-radius: 2px;border-bottom-right-radius: 2px;'></div>";
+                         plug +="<div id=\"10000"+res.data[j].iid+"affiche\"  ;  class=\""+res.data[j].itypeid+"\"    title=\""+res.data[j].scode+"\r"+res.data[j].scname+"\r"+updown+"\"  style=\"cursor:pointer;display: block; width: 96%; height: 30px;top:"+playy+"%;left:"+playx+"%;margin: 0 auto;position: absolute;  overflow: hidden;background: #000000;   width: 320px;   height: 32px; position: absolute; border-top-left-radius: 2px;border-top-right-radius: 2px;border-bottom-left-radius: 2px;border-bottom-right-radius: 2px;\"></div>";
                          cmsid[cmsnum]  = "10000"+res.data[j].iid+"";
-                         cmsnum += 1; 
+                         cmsnum += 1;
+                        $("#dev_div_body").append(plug);
+                        devmove("10000"+res.data[j].iid+"affiche");
                     }else if(res.data[j].itypeid == 25){
-                         bodydev +="<div id=\"10000"+res.data[j].iid+"affichetcms\"  ; class=\"tcmsplayback\"  style='display: block; width: 96%; height: 30px;top:-50px;left:-8px;margin: 0 auto;position: absolute;  overflow: hidden;background: #000000;   width: 48px;   height:48px; position: absolute; border-top-left-radius: 2px;border-top-right-radius: 2px;border-bottom-left-radius: 2px;border-bottom-right-radius: 2px;'></div>";
+                         plug +="<div id=\"10000"+res.data[j].iid+"affichetcms\"  ;  class=\""+res.data[j].itypeid+"\"    title=\""+res.data[j].scode+"\r"+res.data[j].scname+"\r"+updown+"\"  style=\"cursor:pointer;left:"+playx+"%;top:"+playy+"%;display: block; width: 96%; height: 30px;margin: 0 auto;position: absolute;  overflow: hidden;background: #000000;   width: 48px;   height:48px; position: absolute; border-top-left-radius: 2px;border-top-right-radius: 2px;border-bottom-left-radius: 2px;border-bottom-right-radius: 2px;\"></div>";
                          tcmsid[tcmsnum]  = "10000"+res.data[j].iid+"";
-                         tcmsnum += 1; 
+                         tcmsnum += 1;
+                        $("#dev_div_body").append(plug);
+                        devmove("10000"+res.data[j].iid+"affichetcms");
                     }else if(res.data[j].itypeid == 20){
-                        vdstatesplay[res.data[j].iid] = "<div style='overflow: hidden;background-color: #ff5722;width: 270px;height: 18px;display: block;position:absolute;'>"
-                        vdstatesplay[res.data[j].iid] += "<div id=\"vdvalue"+res.data[j].iid+"\" style='font-size: 13px;font-weight: bold;color:white;position: absolute;'><ul style=\"list-style: none;\"><li id=\"vdcontent1"+res.data[j].iid+"\" style=\"list-style: none;margin: 0 30px\"> 流量："+res.data[j].icount1  + " 流量："+res.data[j].icount2  + " 流量："+res.data[j].icount3+ " 流量："+res.data[j].icount4+ "</li><li id=\"vdcontent2"+res.data[j].iid+"\" style=\"list-style: none;margin: 0 10px\">占有率："+res.data[j].focc1+ " 占有率："+res.data[j].focc2+" 占有率："+res.data[j].focc3+ " 占有率："+res.data[j].focc4+ "</li>";
+                        vdstatesplay[res.data[j].iid] = "<div id=\"play"+res.data[j].iid+"\"  title=\""+res.data[j].scode+"\r"+res.data[j].scname+"\r"+updown+"\"   class=\""+res.data[j].itypeid+"\"  style=\"cursor:pointer;overflow: hidden;background-color: #ff5722;width: 270px;height: 18px;display: block;position:absolute;left: "+playx+"%;top:"+playy+"%\">"
+                        vdstatesplay[res.data[j].iid] += "<div id=\"vdvalue"+res.data[j].iid+"\" style='font-size: 13px;font-weight: bold;color:white;position: absolute;'><ul style=\"list-style: none;\"><li id=\"vdcontent1"+res.data[j].iid+"\" style=\"list-style: none;cursor:pointer;margin: 0 30px\"> 流量："+res.data[j].icount1  + " &nbsp流量："+res.data[j].icount2  + " &nbsp流量："+res.data[j].icount3+ " &nbsp流量："+res.data[j].icount4+ "</li><li id=\"vdcontent2"+res.data[j].iid+"\" style=\"list-style: none;margin: 0 10px\">占有率："+res.data[j].focc1+ " 占有率："+res.data[j].focc2+" 占有率："+res.data[j].focc3+ " 占有率："+res.data[j].focc4+ "</li>";
                         vdstatesplay[res.data[j].iid] += "<li id=\"vdcontent3"+res.data[j].iid+"\" style=\"list-style: none;margin:0 10px\">平均速："+res.data[j].fspeed1 + " 平均速："+res.data[j].fspeed2+" 平均速：" +res.data[j].fspeed3 + " 平均速："+res.data[j].fspeed4+ "</li></ul></div>";
-                        vdstatesplay[res.data[j].iid] += "</div>"
-                        bodydev += vdstatesplay[res.data[j].iid];
+                        vdstatesplay[res.data[j].iid] += "</div>";
+                        plug += vdstatesplay[res.data[j].iid];
+                        $("#dev_div_body").append(plug);
                     }
                     bodydev += "</div>";
                     $("#dev_div_body").append(bodydev);
                     //移动
                     devmove(res.data[j].iid);
-
+                    //重新判断 设备是否显示
+                    recheck(checkini);
                 }//for循环结束
+                devmove("tunnel1");
+                devmove("tunnel2");
+                devmove("tunnel3");
 
                 //加载cms
-                for (var i = 0; i < $(".cmsplayback").length; i++) {
-                    // console.log(cmsid[i]);
+                for (var i = 0; i < cmsid.length; i++) {
+                    // console.log(cmsid);
                     getcmsshow(cmsid[i]);
-                    // cmsid[i].replace("10000",'')
                     opencmsplay(cmsid[i],1)
                 }//for循环结束 
 
                 //加载tcms
-                for (var i = 0; i < $(".tcmsplayback").length; i++) {
-                    // console.log(cmsid[i]);
+                for (var i = 0; i < tcmsid.length; i++) {
+                    // console.log(tcmsid[i].replace("10000",''));
                     gettcmsshow(tcmsid[i]);
-                    // cmsid[i].replace("10000",'')
                     opencmsplay(tcmsid[i],2)
                 }//for循环结束
 
                 //加载vdstate
                 for (var key in vdstatesplay ) {
-
                     vdstateplay(key);
+                    devmove("play"+key+"");
                 }
+                //执行更新
+                updevstatedate()
             }
         }
     })
@@ -207,78 +217,62 @@ function roadpara2(){
 function opencmsplay(id,type){
     layui.use('layer', function(){
         if(type === 1){
-        $("#" + id.replace("10000","") + "").on('dblclick', function () {
-            var index=layer.open({
-                type: 2//此处以iframe举例
-                ,title: '门架势情报版'+id.replace("10000",'')+''
-                ,area: ['1300px', '670px']
-                ,shade: 0
-                ,maxmin: true
-                , id: 'LAY_LSTSdbclick_cms' //防止重复弹出
-                 ,content: 'cms.php?cms='+id+''
-               // , content: 'html内容'
-                ,btn: ['关闭'] //只是为了演示
-                ,yes: function(index, layero){
-                    layer.close(index);
-                    history.go(0);
-                }
-                 ,zIndex: layer.zIndex
-                ,success: function(layero,index){
-                    // console.log($("#"+id+"affiche").html());
-                    layer.full(index);
-                }
-            });
-         })
+            function opencmswindow(){
+                var index=layer.open({
+                    type: 2//此处以iframe举例
+                    ,title: '门架势情报版'+id.replace("10000",'')+''
+                    ,area: ['1300px', '670px']
+                    ,shade: 0
+                    ,maxmin: true
+                    , id: 'LAY_LSTSdbclick_cms' //防止重复弹出
+                    ,content: 'cms.php?cms='+id+''
+                    // , content: 'html内容'
+                    ,btn: ['关闭'] //只是为了演示
+                    ,yes: function(index, layero){
+                        layer.close(index);
+                        history.go(0);
+                    }
+                    ,zIndex: layer.zIndex
+                    ,success: function(layero,index){
+                        layer.full(index);
+                    }
+                });
+            }
+            $("#" + id.replace("10000","") + "").on('dblclick', function () {
+                opencmswindow()
+             })
+            $("#" + id + "affiche").on('dblclick', function () {
+                opencmswindow()
+            })
         }else if(type === 2){
+            function opentcmswindow(){
+                var index=layer.open({
+                    type: 2//此处以iframe举例
+                    ,title: '限速'+id.replace("10000",'')+''
+                    ,area: ['1300px', '670px']
+                    ,shade: 0
+                    ,maxmin: true
+                    , id: 'LAY_LSTSdbclick_tcms' //防止重复弹出
+                    ,content: 'tcms.php?tcms='+id+''
+                    // , content: 'html内容'
+                    ,btn: ['关闭'] //只是为了演示
+                    ,yes: function(index, layero){
+                        layer.close(index);
+                        history.go(0);
+                    }
+                    ,success: function(layero,index){
+                        layer.full(index);
+                    }
+                });
+            }
              $("#" + id.replace("10000","") + "").on('dblclick', function () {
-            var index=layer.open({
-                type: 2//此处以iframe举例
-                ,title: '限速'+id.replace("10000",'')+''
-                ,area: ['1300px', '670px']
-                ,shade: 0
-                ,maxmin: true
-                , id: 'LAY_LSTSdbclick_tcms' //防止重复弹出
-                 ,content: 'tcms.php?tcms='+id+''
-               // , content: 'html内容'
-                ,btn: ['关闭'] //只是为了演示
-                ,yes: function(index, layero){
-                    layer.close(index);
-                    history.go(0);
-                }
-                ,success: function(layero,index){
-                    layer.full(index);
-                }
-            });
-         })
+                 opentcmswindow()
+             })
+            $("#" + id + "affichetcms").on('dblclick', function () {
+                opentcmswindow()
+            })
         }
     })    
-}
-
-
-clicktype(2);
-//页面载入
-function clicktype(num){
-    var num;
-    $.ajax({
-        type: "GET",
-        url: "bcd/php/getcheck.php?itype="+num+"",
-        cache:false,
-        dataType: "json",
-        success: function (mydata) {
-            var check = mydata.data;
-            for(var key in check) {
-                 if(check[key] ==  1){
-                     $("#typeimg"+key+"").css("width","50px");
-                     $("#typeimg"+key+"").css("height","50px");
-                     $("."+key+"").show();
-                 }else if(check[key] ==  0){
-                     $("#typeimg"+key+"").css("width","30px");
-                     $("#typeimg"+key+"").css("height","30px");
-                     $("."+key+"").hide();
-                 }
-            }
-        }
-    })
 }
 
 
@@ -365,7 +359,7 @@ layui.use('layer', function(){
         opentableadmin();
          layer.open({
             type: 1
-            ,area: ['800px', '450px']
+            ,area: ['810px', '550px']
             ,title:'用户信息'
             ,content:$(".admintable")
             ,btn: ['关闭']
@@ -515,6 +509,12 @@ layui.use('layer', function(){
     }
 })
 
+
+function updevstatedate() {
+    //全局变量
+    // console.log(roaddev)
+
+}
 
 
 

@@ -1,94 +1,46 @@
-<?php
-    //ÓÃcookie »ñÈ¡Éè±¸
+ï»¿<?php
+    //ç”¨cookie èŽ·å–è®¾å¤‡
     require_once ("common.php");
-    if($itype==1){
-        if(empty($_COOKIE["CheckList"])){
-            $arr = array();
-            $arr["CAM"]=1;
-            $arr["COVI"]=1;
-            $arr["DOOR"]=1;
-            $arr["FAN"]=1;
-            $arr["FB"]=1;
-            $arr["FGR"]=1;
-            $arr["FGS"]=1;
-            $arr["FGW"]=1;
-            $arr["FSFX"]=1;
-            $arr["LED"]=1;
-            $arr["LIGHT"]=1;
-            $arr["LS"]=1;
-            $arr["CMS"]=1;
-            $arr["TS"]=1;
-            $arr["VD"]=1;
-            $arr["DEC"]=1;
-            $arr["ET"]=1;
-            $arr["WD"]=1;
-            $arr["TCMS"]=1;
-            $arr["ETHOST"]=1;
-            $result = $arr;
-            $arr = serialize($arr);
-            setcookie("CheckList",$arr,time()+3600*24*30);
-            
-        }
-       else{
-           $result = unserialize($_COOKIE["CheckList"]);
-       }
-       echo json_encode($result);
+    $path = "../../check.ini";
+    $tunnel = isset($_GET["tunnel"]) ? $_GET["tunnel"] :"";
+    $name = isset($_GET["name"]) ? $_GET["name"] :"" ;
+    $data = parse_ini_file($path,true);
+    if($itype == 1 ) {
+        echo json_encode($data[$tunnel]) ;
     }
-    $name = !empty($_GET['name']) ? $_GET['name'] : "";
     if($itype==0 && $name !="") {
-        $result = unserialize($_COOKIE["CheckList"]);
-        if(array_key_exists($name,$result)) {               //Èç¹ûÇëÇóµÄÉè±¸ÃûÔÚ cookie ÖÐ²Å¿ªÊ¼Ö´ÐÐ
-            if ($result[$name] == 1) {
-                $result[$name] = 0;
-                $resnum =  $result[$name];
-                $result = serialize($result);
-                setcookie("CheckList", $result, time() + 3600 * 24 * 30);
-            } else if ($result[$name] == 0) {
-                $result[$name] = 1;
-                $resnum =  $result[$name];
-                $result = serialize($result);
-                setcookie("CheckList", $result, time() + 3600 * 24 * 30);
-            }
-        }
-        $res["msg"] =1;
-        $res["code"]=$name;
-        $res["resmsg"] =  $resnum;
-        echo json_encode($res);
+        if($data[$tunnel][$name] == 1)  $data[$tunnel][$name] = 0;
+        else if($data[$tunnel][$name] == 0)  $data[$tunnel][$name] = 1;
+        $res = write_ini_file($data, $path, true);
+        $codes = array(
+            "msg" =>"ä¿®æ”¹æˆåŠŸ",
+            "code" => 0,
+            "data"=>$data[$tunnel][$name],
+        );
+        echo json_encode($codes);
     }
-    //¹«Â·Éè±¸
+    //å…¬è·¯è®¾å¤‡
     $devtype = array(
-        "23"=>"cms",
-        "25"=>"tcms",
-        "17"=>"cam",
-        "19"=>"et",
-        "20"=>"vd",
-        "22"=>"wd",
+        "23"=>"CMS",
+        "25"=>"TCMS",
+        "17"=>"CAM",
+        "19"=>"ET",
+        "20"=>"VD",
+        "22"=>"WD",
     );
     if($itype == 2){
-        if(!isset($_COOKIE["road"])) {
-            $num = 0;
-            foreach ($devtype as $k => $v) {
-                $res[$k] = 1;
-                $num = $num+1;
-            }
-            $cookies = serialize($res);
-            setcookie("road", $cookies, time() + 3600 * 24 * 30);
-        }else{
-            $res = unserialize($_COOKIE["road"]);
+        foreach ($devtype as $k => $v) {
+            $res[$k] = $data[0][$v];
         }
         $road["data"] = $res;
         $road["count"] = count($res);
         $road["code"] = 1;
-       echo json_encode($road);
+        echo json_encode($road);
     }
     elseif($itype == 3 && $id !=""){
-        $checknum  = $_GET["checknum"];
-        $res = unserialize($_COOKIE["road"]);
-        $res[$id] = $checknum;
-        setcookie("road",serialize($res),time()+3600*24*30);
-        $road["data"] = unserialize($_COOKIE["road"]);
-        $road["count"] = count(unserialize($_COOKIE["road"]));
-        $road["msg"]  = "ÐÞ¸ÄÉè±¸³É¹¦";
-        $road["code"] = 1;
-        echo json_encode($road);
+        if( $data[0][$devtype[$id]] == 1)   $data[0][$devtype[$id]] = "0";
+        else if( $data[0][$devtype[$id]] == 0)   $data[0][$devtype[$id]] = "1";
+        echo $data[0][$devtype[$id]];
+        $res = write_ini_file($data, $path, true);
+        echo $success5;
     }
