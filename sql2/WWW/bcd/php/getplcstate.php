@@ -7,7 +7,7 @@
         $path = "PLCState";
         $plc = CurlCalss::curl(6,'',$path);
         $plc = json_decode($plc,true);
-        $result["result"] = $plc["num"];
+        $result["results"] = $plc["num"];
         foreach ($plc["data"] as $k=>$v){
             $result["rows"][$k]["runmode"] = $v["irunmode"];
             $result["rows"][$k]["state"] = $v["istate"];

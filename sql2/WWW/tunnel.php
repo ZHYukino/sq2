@@ -23,7 +23,7 @@ if(!isset($_SESSION['uid'])){
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
     <!---------- CSS ---------->
-    <link href="jspackage/backthemes/css/bootstrap.min14ed.css" rel="stylesheet">
+<!--    <link href="jspackage/backthemes/css/bootstrap.min14ed.css" rel="stylesheet">-->
     <link href="jspackage/backthemes/css/font-awesome.min93e3.css" rel="stylesheet">
 
     <!-- 拖动 -->
@@ -34,11 +34,16 @@ if(!isset($_SESSION['uid'])){
     <link href="jspackage/backthemes/css/plugins/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
     <!-- 自定义 -->
     <link href="css/pagestyle.css?vs=112" rel="stylesheet">
-    <link href="css/tunnel.css"  rel="stylesheet">
-    <!--    tree-->
-    <link type="text/css" rel="stylesheet" href="jspackage/rightMenu/zTreeStyle/zTreeStyle.css" />
-    <link type="text/css" rel="stylesheet" href="jspackage/rightMenu/zTreeStyle/zTreeIcons.css" />
-    <link type="text/css" rel="stylesheet" href="jspackage/rightMenu/css/trees.css" />
+    <style>
+        .layui-header{
+            display:block;
+            white-space:nowrap;
+        }
+        .layui-header li
+        {
+            display:inline-block;
+        }
+    </style>
     <!---------- JS ---------->
     <!-- 默认加载 -->
     <script src="jspackage/jquery/jquery-1.10.2.min.js"></script>
@@ -51,7 +56,7 @@ if(!isset($_SESSION['uid'])){
     <script type="text/javascript" src="jspackage/rightMenu/js/jquery-ztree-2.5.js"></script>
 
 </head>
-<body scoll=no>
+<body scoll=no  class="layui-layout-body">
 <div id="setmap"></div>
 <div id="ie8-warning" class="dn">您使用的浏览器小于 Internet Explorer 9，无法显示该页面。建议您升级到Internet Explorer 9或使用360、Firefox、Chrome、Opera浏览器。
 </div>
@@ -80,70 +85,80 @@ if(!isset($_SESSION['uid'])){
 
 <div class="layui-layout layui-layout-admin" >
     <div class="layui-header">
-        <ul class="layui-nav layui-cyan">
-<!--            <li class="layui-nav-item"><a href="">控制</a></li>-->
-<!--            <li class="layui-nav-item"><a href="">控制</a></li>-->
-<!--            <li class="layui-nav-item"><a href="">用户</a></li>-->
-            <li class="layui-nav-item"   id="dev-nav-1"><a style="cursor:pointer;"   id="dev_iphone" ><img   src="./pic2/ts.png"  style="width:30px;height:30px;"  ></a></li>
-            <li class="layui-nav-item"   id="dev-nav-2"></li>
-            <li class="layui-nav-item"   id="dev-nav-3"></li>
-            <li class="layui-nav-item"   id="dev-nav-4"></li>
-            <li class="layui-nav-item"   id="dev-nav-5"></li>
-            <li class="layui-nav-item"   id="dev-nav-6"></li>
-            <li class="layui-nav-item"   id="dev-nav-7"></li>
-            <li class="layui-nav-item"   id="dev-nav-8"></li>
-            <li class="layui-nav-item"   id="dev-nav-11"></li>
-            <li class="layui-nav-item"   id="dev-nav-15"></li>
-            <li class="layui-nav-item"   id="dev-nav-16"></li>
-            <li class="layui-nav-item"   id="dev-nav-17"></li>
-            <li class="layui-nav-item"   id="dev-nav-18"></li>
-            <li class="layui-nav-item"   id="dev-nav-19"></li>
-            <li class="layui-nav-item"   id="dev-nav-20"></li>
-            <li class="layui-nav-item"   id="dev-nav-22"></li>
-            <li class="layui-nav-item"   id="dev-nav-23"></li>
-            <li class="layui-nav-item"   id="dev-nav-25"></li>
-
-<!--            <li class="layui-nav-item"><a href="">用户</a></li>-->
+        <ul class="layui-nav layui-cyan"  >
+            <li class="layui-nav-item" >
+                <a style="cursor:pointer;text-decoration: none;" >照明模式<span id="control_led_value" class="layui-badge" style="position:relative;">手动</span></a>
+                <dl  class="layui-nav-child">
+                    <dd><a  style="cursor:pointer;text-decoration: none;color: red;"  id="control_led_parameter">照明控制参数</a></dd>
+                    <dd><a  style="cursor:pointer;text-decoration: none;"  id="control_LED_select0">照明手动控制</a></dd>
+                    <dd><a  style="cursor:pointer;text-decoration: none;"  id="control_LED_select1">照明环境控制</a></dd>
+                    <dd><a  style="cursor:pointer;text-decoration: none;"  id="control_LED_select2">照明时序控制</a></dd>
+                </dl>
+            </li>
+            <li class="layui-nav-item">
+                <a style="cursor:pointer;text-decoration: none;" >风机模式<span id="control_fan_value" class="layui-badge" style="position:relative;">手动</span></a>
+                <dl  class="layui-nav-child">
+                    <dd><a  style="cursor:pointer;text-decoration: none;color: red;"  id="control_fan_parameter">风机控制参数</a></dd>
+                    <dd><a  style="cursor:pointer;text-decoration: none;"  id="control_FAN_select0">风机手动控制</a></dd>
+                    <dd><a  style="cursor:pointer;text-decoration: none;"  id="control_FAN_select1">风机环境控制</a></dd>
+                    <dd><a  style="cursor:pointer;text-decoration: none;"  id="control_FAN_select2">风机时序控制</a></dd>
+                </dl>
+            </li>
+        </ul>
+        <ul class="layui-nav layui-layout-left"  style="margin-left:110px;">
+            <li style="margin-top: 23px;margin-left: 20px"  ><a  id="controltitle1" class="layui-icon layui-icon-prev"  onclick="leftusetitle(1)" style=" text-decoration:none;cursor:pointer;font-size: 30px; color: #1E9FFF;display: block"></a></li>
+        </ul>
+        <div class="layui-nav layui-layout-left"   style="overflow: hidden;margin-left:200px;width: 760px;padding: 0px">
+            <ul id="usedaotasdesd" style="width: 760px">
+                <li class="layui-nav-item"   id="dev-nav-1"></li>
+                <li class="layui-nav-item"   id="dev-nav-2"></li>
+                <li class="layui-nav-item"   id="dev-nav-4"></li>
+                <li class="layui-nav-item"   id="dev-nav-5"></li>
+                <li class="layui-nav-item"   id="dev-nav-6"></li>
+                <li class="layui-nav-item"   id="dev-nav-7"></li>
+                <li class="layui-nav-item"   id="dev-nav-8"></li>
+                <li class="layui-nav-item"   id="dev-nav-11"></li>
+                <li class="layui-nav-item"   id="dev-nav-15"></li>
+                <li class="layui-nav-item"   id="dev-nav-17"></li>
+                <li class="layui-nav-item"   id="dev-nav-18"></li>
+                <li class="layui-nav-item"   id="dev-nav-19"></li>
+                <li class="layui-nav-item"   id="dev-nav-20"></li>
+                <li class="layui-nav-item"   id="dev-nav-22"></li>
+                <li class="layui-nav-item"   id="dev-nav-23"></li>
+                <li class="layui-nav-item"   id="dev-nav-25"></li>
+            </ul>
+        </div>
+        <ul class="layui-nav layui-layout-left"  style="margin-left:950px;">
+            <li style="margin-top: 23px;margin-left: 7px"  ><a id="controltitle2"  class="layui-icon layui-icon-next"  onclick="leftusetitle(-1)" style=" text-decoration:none;cursor:pointer;font-size: 30px; color: #1E9FFF;display: block"></a></li>
         </ul>
     </div>
 
-    <div id="default_top_panel" style="display: none;">
-        <div class="default-top-select" >
-            <div class="layui-form">
-                <div class="layui-form-item">
-                    <div class="layui-inline">
-                        <div class="layui-input-inline"  style="visibility: hidden;">
-                            <select id="default_place_select" lay-filter="default_place_select" >
-                                <?php
-                                require_once ("bcd/php/gettunnel.php");
-                                $tunnel = isset($_GET["tunnel"])? $_GET["tunnel"]:"" ;
-                                for($i=0;$i< $res["results"];$i++)
-                                {
-                                    if($tunnel == $res["rows"][$i]["id"]) {
-                                        echo "<option    value=" . $res["rows"][$i]["id"] . " selected='selected'>" . $res["rows"][$i]["tuvalue"] . "</option>";
-                                    }else{
-                                        echo "<option    value=" . $res["rows"][$i]["id"].">" . $res["rows"][$i]["tuvalue"] . "</option>";
-                                    }
-                                }
-                                ?>
-                            </select>
-                        </div>
-                    </div>
-                </div>
+    <div id="content_panel" class="content-panel">
+        <div id="default_top_panel" style="display:none;">
+            <div class="layui-input-inline">
+                <select id="default_place_select" lay-filter="default_place_select"  >
+                    <?php
+                    require_once ("bcd/php/gettunnel.php");
+                    $tunnel = isset($_GET["tunnel"])? $_GET["tunnel"]:"" ;
+                    for($i=0;$i< $res["results"];$i++)
+                    {
+                        if($tunnel == $res["rows"][$i]["id"]) {
+                            echo "<option    value=" . $res["rows"][$i]["id"] . " selected='selected'>" . $res["rows"][$i]["tuvalue"] . "</option>";
+                        }else{
+                            echo "<option    value=" . $res["rows"][$i]["id"] .">" . $res["rows"][$i]["tuvalue"] . "</option>";
+                        }
+                    }
+                    ?>
+                </select>
             </div>
         </div>
-        <div class="ch"></div>
-        <div class="default-top-content">
-        </div>
-    </div>
-
 
     <div id="default_panel" class="default-panel">
         <div id="default_panel_left" class="default-panel-left" style="">
             <ul>
-                <li id="li_leftmenu_dev" title="选择设备"><i class="layui-icon layui-icon-component"></i></li>
-                <li id="li_leftmenu_info" title="系统信息"><i class="layui-icon layui-icon-console"></i></li>
-                <li id="li_leftmenu_plc" title="PLC通信状况"><i class="layui-icon layui-icon-engine"></i></li>
+<!--                <li id="li_leftmenu_dev" title="选择设备"><i class="layui-icon layui-icon-component"></i></li>-->
+<!--                <li id="li_leftmenu_info" title="系统信息"><i class="layui-icon layui-icon-console"></i></li>-->
+<!--                <li id="li_leftmenu_plc" title="PLC通信状况"><i class="layui-icon layui-icon-engine"></i></li>-->
                 <li id="li_leftmenu_covi" class="dn" title="CO/VI采集数据"><i class="layui-icon layui-icon-chart-screen"></i></li>
                 <li id="li_leftmenu_fsfx" class="dn" title="风速/风向采集数据"><i class="layui-icon layui-icon-chart-screen"></i></li>
                 <li id="li_leftmenu_gq" class="dn" title="光强度采集数据"><i class="layui-icon layui-icon-chart-screen"></i></li>
@@ -429,143 +444,6 @@ if(!isset($_SESSION['uid'])){
 </div>
 <div class="ch"></div>
 
-<!--<div id="openFirePlan_panel_editCMS" class="dn" style="position:absolute;top:10px;">-->
-<!--    <div class="layui-form">-->
-<!--        <div class="group-cms">-->
-<!--            <div class="panel-cms-attribute-list">-->
-<!--                <div>-->
-<!--                    <div class="layui-form-item">-->
-<!--                        <label class="layui-form-label">显示内容</label>-->
-<!--                        <div class="layui-input-block">-->
-<!--                            <textarea id="input_cms_content_textarea" name="cms-content-textarea" placeholder="请输入显示内容" class="layui-textarea" style="margin:0;"></textarea>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                    <div class="layui-form-item" style="margin:0;">-->
-<!--                        <div class="layui-input-block">-->
-<!--                            <div id="button_div_openCmsInfo" class="layui-btn layui-btn-normal">预留</div>-->
-<!--                            <div id="button_div_addCmsInfo" class="layui-btn layui-btn-normal">新增</div>-->
-<!--                            <div id="button_div_clearCmsInfo" class="layui-btn layui-btn-primary">清空</div>-->
-<!--                            <div id="button_div_showCmsInfo" class="layui-btn layui-btn-primary">预览</div>-->
-<!--                            <div id="div_cmsReserveInfo_id" class="dn"></div>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--                <div>-->
-<!--                    <table id="tb_cmsfont"></table>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--            <div class="panel-cms-attribute-edit">-->
-<!--                <blockquote class="layui-elem-quote layui-quote-nm" style="font-size:11px;">-->
-<!--                    <div class="block-cms-font">-->
-<!--                        <div class="line-cms-font-title">字号</div>-->
-<!--                        <div class="line-cms-font-content">-->
-<!--                            <select id="select_openFirePlan_fontsize" lay-filter="select_openFirePlan_fontsize">-->
-<!--                                <option value="0">48*48</option>-->
-<!--                                <option value="1">32*32</option>-->
-<!--                                <option value="2">24*24</option>-->
-<!--                                <option value="3">16*16</option>-->
-<!--                                <option value="4">20*20</option>-->
-<!--                                <option value="5">40*40</option>-->
-<!--                            </select>-->
-<!--                        </div>-->
-<!--                        <div class="ch"></div>-->
-<!--                    </div>-->
-<!--                    <div class="block-cms-font">-->
-<!--                        <div class="line-cms-font-title">字体</div>-->
-<!--                        <div class="line-cms-font-content">-->
-<!--                            <select id="select_openFirePlan_fontfamily" lay-filter="select_openFirePlan_fontfamily">-->
-<!--                                <option value="0">宋体</option>-->
-<!--                                <option value="1">楷体</option>-->
-<!--                                <option value="2">黑体</option>-->
-<!--                            </select>-->
-<!--                        </div>-->
-<!--                        <div class="ch"></div>-->
-<!--                    </div>-->
-<!--                    <div class="block-cms-font">-->
-<!--                        <div class="line-cms-font-title">字体颜色</div>-->
-<!--                        <div class="line-cms-font-content">-->
-<!--                            <select id="select_openFirePlan_fontcolor" lay-filter="select_openFirePlan_fontcolor">-->
-<!--                                <option value="0">红色</option>-->
-<!--                                <option value="1">绿色</option>-->
-<!--                                <option value="2">黄色</option>-->
-<!--                            </select>-->
-<!--                        </div>-->
-<!--                        <div class="ch"></div>-->
-<!--                    </div>-->
-<!--                    <div class="block-cms-font">-->
-<!--                        <div class="line-cms-font-title">出字方式</div>-->
-<!--                        <div class="line-cms-font-content">-->
-<!--                            <select id="select_openFirePlan_fontgo" lay-filter="select_openFirePlan_fontgo">-->
-<!--                                <option value="0">直接显示</option>-->
-<!--                                <option value="1">从上往下</option>-->
-<!--                                <option value="2">从下往上</option>-->
-<!--                                <option value="3">从左往右</option>-->
-<!--                                <option value="4">从右往左</option>-->
-<!--                            </select>-->
-<!--                        </div>-->
-<!--                        <div class="ch"></div>-->
-<!--                    </div>-->
-<!--                    <div class="block-cms-font">-->
-<!--                        <div class="line-cms-font-title">出字速度</div>-->
-<!--                        <input id="input_openFirePlan_fontspeed" type="text" class="editcms-input" value="4">-->
-<!--                        (1-8)-->
-<!--                    </div>-->
-<!--                    <div class="block-cms-font">-->
-<!--                        <div class="line-cms-font-title">停留时间</div>-->
-<!--                        <input id="input_openFirePlan_fontstay" type="text" class="editcms-input" value="1">-->
-<!--                        秒-->
-<!--                    </div>-->
-<!--                    <div class="block-cms-font">-->
-<!--                        <div class="line-cms-font-title">左边距</div>-->
-<!--                        <input id="input_openFirePlan_fontleft" type="text" class="editcms-input" value="0">-->
-<!--                    </div>-->
-<!--                    <div class="block-cms-font">-->
-<!--                        <div class="line-cms-font-title">上边距</div>-->
-<!--                        <input id="input_openFirePlan_fontright" type="text" class="editcms-input" value="0">-->
-<!--                    </div>-->
-<!--                    </fieldset>-->
-<!---->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--</div>-->
-<!--<div class="ch"></div>-->
-<!---->
-<!--<div id="reserveinfo_panel" class="dn" style="position:absolute;top:10px;">-->
-<!--    <div class="layui-form">-->
-<!--        <div class="group-cms">-->
-<!--            <div>-->
-<!--                <div class="layui-form-item">-->
-<!--                    <label class="layui-form-label">显示内容</label>-->
-<!--                    <div class="layui-input-block">-->
-<!--                        <textarea id="input_reserveinfo_textarea" name="input-reserveinfo-textarea" placeholder="请输入显示内容" class="layui-textarea" style="margin:0;"></textarea>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--                <div class="layui-form-item" style="margin:0;">-->
-<!--                    <div class="layui-input-block">-->
-<!--                        <div id="button_div_addReserveInfo" class="layui-btn layui-btn-normal">新增</div>-->
-<!--                        <div id="button_div_editReserveInfo" class="layui-btn layui-btn-normal">编辑</div>-->
-<!--                        <div id="button_div_clearReserveInfo" class="layui-btn layui-btn-primary">清空</div>-->
-<!--                        <div id="div_editReserveInfo_id" class="dn"></div>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--            <div>-->
-<!--                <table id="tb_reserveinfo"></table>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--</div>-->
-<!--<div class="ch"></div>-->
-
-<!--<div id="openFirePlan_panel_seeCMS" class="dn" style="position:absolute;top:10px;">-->
-<!--    <div class="layui-form">-->
-<!--        <div id="div_seeCMS_group" class="group-cms-see">-->
-<!--            <div id="div_seeCMS" class="div-seeCMS"></div>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--</div>-->
-<!--<div class="ch"></div>-->
 
 <div id="eject_monitorwall_panel" class="dn" style="position:absolute;top:10px;">
     <div class="layui-form">
@@ -667,28 +545,6 @@ if(!isset($_SESSION['uid'])){
     </div>
 </div>
 <div class="ch"></div>
-<!-- showMonitorWall End -->
-
-<!-- showMonitorWall Start -->
-<!--<div id="showMonitorWall_CMSupload" class="cdn" style="position:absolute;top:10%;left: 10px;">-->
-<!--    <div class="layui-form">-->
-<!--        <div class="panel-group">-->
-<!--            <div id="onscreen_panel">-->
-<!--                --><?php
-//                for($i=0;$i<count($cms);$i++){ ?>
-<!--                    --><?php //echo "    <div class=\"layui-upload\">";  ?>
-<!--                    --><?php //echo "    <button type=\"button\"  style='display:none'; class=\"layui-btn\" id=\"cmsuploadimg".  $cms[$i]["id"]."\"  >多文件上传</button>  ";?>
-<!--                    --><?php //echo  "<blockquote  id=\"cmsuploadtext".  $cms[$i]["id"]."\"  class=\"layui-elem-quote layui-quote-nm\" style=\"margin-top: 10px;display:none;\">";?>
-<!--                    --><?php // echo "预览图： <div class=\"layui-upload-list\" id=\"cmsuploadpic".  $cms[$i]["id"]."\"></div>";?>
-<!--                    --><?php //echo "</blockquote>";?>
-<!--                --><?php //}?>
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--</div>-->
-<!--<div class="cdn"></div>-->
-<!-- showPanelPlc end -->
-
 
 <!-- showPanelPlc start -->
 <div id="control_panel_plc" class="dn" style="position:absolute;top:10px;">
@@ -1395,7 +1251,6 @@ if(!isset($_SESSION['uid'])){
 <div class="ch"></div>
 <!-- ptz_objid end-->
 
-<!--<script src="jspackage/tree/js/jquery.ztree.all.min.js"></script>-->
 
 </body>
 </html>

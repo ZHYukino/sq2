@@ -250,9 +250,27 @@
             return true;
         }
         //设置获取id
-        $id= isset($_GET["id"])?$_GET["id"]:"";
-        $id = str_replace("10000",'',$id);
-        $itype=isset($_GET['itype'])?$_GET['itype']:"";
+    $itype = isset($_GET['itype'])?checkstr($_GET['itype']):"";
+    $itype = htmlspecialchars($itype);
+    $id = isset($_GET['id'])?checkstr($_GET['id']):"";
+    $id = str_replace("10000","",$id);
+    $id = htmlspecialchars($id);
+    $page = isset($_GET['page'])?checkstr($_GET['page']):"";
+    $total = empty($_GET['total']) ? "" : htmlspecialchars($_GET['total']);
+
+    $page = htmlspecialchars($page);
+    $limit = isset($_GET['limit'])?checkstr($_GET['limit']):"";
+    $limit= htmlspecialchars(  $limit);
+    $pagesize = empty($page)?"0":($page-1) * $limit;
+    $top = !empty($limit)?"top ".$limit : "";
+
+    $name = isset($_GET["name"]) ?  htmlspecialchars($_GET["name"]) : "";
+    $tunnel = isset($_GET["tunnel"]) ?  htmlspecialchars($_GET["tunnel"]) : -1;           //获取前台数据
+    $updown = isset($_GET["updown"]) ?  htmlspecialchars($_GET["updown"]) : -1;
+    $sendtext = isset($_GET["sendtext"]) ?  htmlspecialchars($_GET["sendtext"]) : -1;
+    $textformat = isset($_GET["textformat"]) ?  htmlspecialchars($_GET["textformat"]) : -1 ;
+
+    $content = isset($_GET["type"]) ? htmlspecialchars($_GET["type"]) :"";
 
 
 

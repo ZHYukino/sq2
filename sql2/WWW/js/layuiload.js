@@ -190,52 +190,93 @@ function layuiload(){
 		devjsonerrorequipment=$.parseJSON(devjsonerrorequipment); //转为JSON
 		$("#tb_errorequipment").bootstrapTable('refreshOptions',{'data':devjsonerrorequipment.rows});				
 	});
-	
+
 	//界面照明控制模式
-	form.on('select(control_LED_select)', function(data){	
-		//数组赋值
-		ZMMode=$("#control_LED_select").val();								   
+	function titlesetisauto(type,i) {
 		$.ajax({
 			type: "GET",
-			url : "bcd/php/setisauto.php?itype=2&state="+ ZMMode +"&dc=" + new Date().getTime() + "",
+			url: "bcd/php/setisauto.php?itype="+type+"&tunnel="+tunnelnum+"&state=" + i + "&dc=" + new Date().getTime() + "",
 			//data:{},
 			dataType: "json",
-			success: function(mydata){
-				if(mydata){
+			success: function (mydata) {
+				if (mydata) {
 					//环境启动
-					if(mydata.result){
+					if (mydata.result) {
 						AutoModeRun();
+						var html = (i==0) ? "手动" : (i == 1) ?  "环境" : "时序";
+						if(type == 1)  $("#control_fan_value").html(html);
+						else  $("#control_led_value").html(html);
 					}
-					
-					sendThisScreenMSG(mydata.msg);
-				}
-			 },
-			error: function(json){}
-		});	
-	}); 
-	
-	//界面风机控制模式
-	form.on('select(control_FAN_select)', function(data){	
-		//数组赋值
-		FJMode=$("#control_FAN_select").val();									   
-		$.ajax({
-			type: "GET",
-			url : "bcd/php/setisauto.php?itype=1&state="+ FJMode +"&dc=" + new Date().getTime() + "",
-			//data:{},
-			dataType: "json",
-			success: function(mydata){
-				if(mydata){
-					//环境启动
-					if(mydata.result){
-						AutoModeRun();
-					}
-					
 					sendThisScreenMSG(mydata.msg);
 				}
 			},
-			error: function(json){}
-		});		
+			error: function (json) {
+			}
+		})
+	}
+
+	$("#control_LED_select0").click(function () {
+        titlesetisauto(2,0)
 	});
+	$("#control_LED_select1").click(function () {
+        titlesetisauto(2,1)
+	});
+	$("#control_LED_select2").click(function () {
+        titlesetisauto(2,2)
+	});
+	$("#control_FAN_select0").click(function () {
+        titlesetisauto(1,0)
+	});
+    $("#control_FAN_select1").click(function () {
+        titlesetisauto(1,1)
+    });
+    $("#control_FAN_select2").click(function () {
+        titlesetisauto(1,2)
+    });
+
+	// form.on('select(control_LED_select)', function(data){
+	// 	//数组赋值
+	// 	ZMMode=$("#control_LED_select").val();
+	// 	$.ajax({
+	// 		type: "GET",
+	// 		url : "bcd/php/setisauto.php?itype=2&state="+ ZMMode +"&dc=" + new Date().getTime() + "",
+	// 		//data:{},
+	// 		dataType: "json",
+	// 		success: function(mydata){
+	// 			if(mydata){
+	// 				//环境启动
+	// 				if(mydata.result){
+	// 					AutoModeRun();
+	// 				}
+	// 				sendThisScreenMSG(mydata.msg);
+	// 			}
+	// 		 },
+	// 		error: function(json){}
+	// 	});
+	// });
+	//
+	// //界面风机控制模式
+	// form.on('select(control_FAN_select)', function(data){
+	// 	//数组赋值
+	// 	FJMode=$("#control_FAN_select").val();
+	// 	$.ajax({
+	// 		type: "GET",
+	// 		url : "bcd/php/setisauto.php?itype=1&state="+ FJMode +"&dc=" + new Date().getTime() + "",
+	// 		//data:{},
+	// 		dataType: "json",
+	// 		success: function(mydata){
+	// 			if(mydata){
+	// 				//环境启动
+	// 				if(mydata.result){
+	// 					AutoModeRun();
+	// 				}
+	//
+	// 				sendThisScreenMSG(mydata.msg);
+	// 			}
+	// 		},
+	// 		error: function(json){}
+	// 	});
+	// });
 	
 	//双击-选择方案-表格选择
 	//console.log(arr_PLAN)
@@ -573,29 +614,7 @@ $("#li_leftmenu_info").on("click",function(){
 	});
 })
 
-//PLC通信状况
-$("#li_leftmenu_plc").on("click",function(){
-	layer.open({
-		type: 1 //此处以iframe举例
-		,title: 'PLC通信状况'
-		,area: ['800px', '480px']
-		,shade: 0
-		,maxmin: true
-		,offset: [Ht+10] 
-		// ,id: 'LAY_control_panel_plc' //防止重复弹出
-		,content: $("#control_panel_plc")
-		,btn: ['关闭'] //只是为了演示
-		,yes: function(index, layero){
-			layer.close(index);
-		}
-		,zIndex: layer.zIndex 
-		,success: function(layero){
-			layer.setTop(layero); 
-			showPlc();
-		}
-	});
 
-})
 
 //CO/VI采集数据
 $("#li_leftmenu_covi").on("click",function(){
@@ -1215,10 +1234,10 @@ $(document).on("click", "#control_led_parameter", function() {
 	layer.open({
 		type: 1 //此处以iframe举例
 		,title: "照明控制参数"
-		,area: ['800px', '480px']
+		,area: ['850px', '510px']
 		,shade: 0
 		,maxmin: true
-		,offset: [Ht+10] 
+		,offset: [Ht+10]
 		,id: 'LAY_controlLED_panel' //防止重复弹出
 		,content: $("#controlLED_panel")
 		,btn: ['关闭'] //只是为了演示
@@ -1248,7 +1267,7 @@ $(document).on("click", "#control_fan_parameter", function() {
 	layer.open({
 		type: 1 //此处以iframe举例
 		,title: "风机控制参数"
-		,area: ['800px', '480px']
+		,area: ['850px', '510px']
 		,shade: 0
 		,maxmin: true
 		,offset: [Ht+10] 

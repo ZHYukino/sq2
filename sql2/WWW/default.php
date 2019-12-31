@@ -31,7 +31,7 @@ if(!isset($_SESSION['uid'])){
 <body class="layui-layout-body">
 <div class="layui-layout layui-layout-admin" >
     <div class="layui-header">
-        <ul class="layui-nav layui-bg-cyan">
+        <ul class="layui-nav layui-bg-cyan" id="usetitlebtn">
             <li class="layui-nav-item">
                 <a style="cursor:pointer;" >用户管理</a>
                 <dl  class="layui-nav-child">
@@ -40,13 +40,13 @@ if(!isset($_SESSION['uid'])){
                 </dl>
             </li>
 
-            <li class="layui-nav-item"   id="dev-nav-1"></li>
-            <li class="layui-nav-item"   id="dev-nav-2"></li>
-            <li class="layui-nav-item"   id="dev-nav-3"></li>
-            <li class="layui-nav-item"   id="dev-nav-4"></li>
-            <li class="layui-nav-item"   id="dev-nav-5"></li>
-            <li class="layui-nav-item"   id="dev-nav-6"></li>
-            <li class="layui-nav-item"   id="dev-nav-0"></li>
+<!--            <li class="layui-nav-item"   id="dev-nav-1"></li>-->
+<!--            <li class="layui-nav-item"   id="dev-nav-2"></li>-->
+<!--            <li class="layui-nav-item"   id="dev-nav-3"></li>-->
+<!--            <li class="layui-nav-item"   id="dev-nav-4"></li>-->
+<!--            <li class="layui-nav-item"   id="dev-nav-5"></li>-->
+<!--            <li class="layui-nav-item"   id="dev-nav-6"></li>-->
+<!--            <li class="layui-nav-item"   id="dev-nav-0"></li>-->
 
         </ul>
         <ul class="layui-nav layui-layout-right" id="usehead_nav" style="display: none">
@@ -147,7 +147,7 @@ if(!isset($_SESSION['uid'])){
         var element = layui.element;
 
     });
-   
+
 </script>
 <script type="text/html" id="barDemo">
 <!--   <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a> -->

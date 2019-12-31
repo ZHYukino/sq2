@@ -105,8 +105,7 @@ require ('./bcd/php/config.php');
 			</div>
 			<div class="ch"></div>
 			<div class="default-top-content">
-					  
-						
+
 				
 			</div>
 		</div>

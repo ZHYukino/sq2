@@ -1,5 +1,4 @@
 
-
 //托动
 function devmove(id,tunnel=0) {
     $(document).keyup(function (event){

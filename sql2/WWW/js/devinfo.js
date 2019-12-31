@@ -42,12 +42,14 @@ function getdevtypename(arr_,b){
 		success: function(mydata){
             var jsonObject=eval("("+mydata+")");
             window.devtypecontrolbtn = new Array();
-            for (var z=0;z<jsonObject.results;z++){
+            for (var z=1;z<jsonObject.results;z++){
                 var typeid = jsonObject.rows[z].fid;
                 devtypecontrolbtn[jsonObject.rows[z].fename] = jsonObject.rows[z].fid;
-                // console.log(jsonObject.rows[z].fename);
+                // var usehead = "<li class=\"layui-nav-item\"   id=\"dev-nav-"+typeid+"\">";
                 var usehead = "<a style=\"cursor:pointer;\"  onclick=\"titleclickcheckbox("+jsonObject.rows[z].fid+")\"  id=\"dev_iphone"+typeid+"\" ><img  id=\"typeimg"+typeid+"\" src=\""+jsonObject.rows[z].pic+"\"  style=\"width:25px;height:25px;\"   \"></a>";
                 $("#dev-nav-"+typeid+"").html(usehead);
+                // usehead += "</li>";
+                // $("#usedaotasdesd").append(usehead);
             }
 			if(mydata){
 				for (var i=0;i<jsonObject.results;i++){
@@ -762,10 +764,11 @@ var hasplcstate;
 function plcchangstate(i,arr_,jsonObject){
 	for (var j=0;j<arr_.length;j++){
 		if (jsonObject.rows[i].id==arr_[j][1]){
-			if (jsonObject.rows[i].state!=arr_[j][6]){
+			if (jsonObject.rows[i].state!=arr_[j][2]){
 				arr_[j][4]=true;
 				arr_[j][5]=jsonObject.rows[i].dt;
 				arr_[j][2]=jsonObject.rows[i].state;
+				console.log(jsonObject.rows[i].state);
 				arr_[j][7]=jsonObject.rows[i].runmode;
 			}
 			hasplcstate=true;
@@ -781,7 +784,7 @@ function ajaxChangedplcstate(){
 		jsonresponse=xmlhttpplcstate.responseText;
 		jsonObject=eval("("+jsonresponse+")");
 	 	for (var i=0;i<jsonObject.results;i++){
-			hasplcstate=false;			
+			hasplcstate=false;
 			if (!hasplcstate) {plcchangstate(i,arr_PLC,jsonObject);}
 		}
 	}
@@ -1104,25 +1107,29 @@ if (LEDinit[0]==true){
 function getMode(){
 	$.ajax({
 		type: "GET",
-		url : "bcd/php/getisauto.php?itype=1&dc=" + new Date().getTime() + "",
+		url : "bcd/php/getisauto.php?itype=1&tunnel="+tunnelnum+"&dc=" + new Date().getTime() + "",
 		dataType: "json",
 		async:false,
 		success: function(mydata){
 			if(mydata){
 				FJMode=mydata;
+                var html = (mydata==0) ? "手动" : (mydata == 1) ?  "环境" : "时序";
+                $("#control_fan_value").html(html);
 			}
 		},
 		error: function(mydata){}
 	});		
 	$.ajax({
 		type: "GET",
-		url : "bcd/php/getisauto.php?itype=2&dc=" + new Date().getTime() + "",
+		url : "bcd/php/getisauto.php?itype=2&tunnel="+tunnelnum+"&dc=" + new Date().getTime() + "",
 		//data:{},
 		dataType: "json",
 		async:false,
 		success: function(mydata){
 			if(mydata){
 				ZMMode=mydata;
+                var html = (mydata == 0) ? "手动" : (mydata == 1) ?  "环境" : "时序";
+                $("#control_led_value").html(html);
 			}
 		},
 		error: function(mydata){}

@@ -1,4 +1,24 @@
-﻿//下拉框和设备选择器关闭情报版
+﻿//标题栏点击滚动
+function leftusetitle(num) {
+    var usewidthes = parseInt($("#usedaotasdesd").width());
+    var margin =  parseInt($("#usedaotasdesd").css('marginLeft'));
+    var widthes = usewidthes * num;
+    var left = margin + widthes;
+    var liwides = $("#usedaotasdesd li").length;
+    var number = -(parseInt(liwides/9) );
+    if(left > 0 || left< number*usewidthes){
+        return false;
+    }
+    if($("#usedaotasdesd").is(":animated")) return false;
+    else {
+        $("#usedaotasdesd").animate({
+            "marginLeft": left + "px"
+        }, 230)
+    }
+}
+
+
+//下拉框和设备选择器关闭情报版
 function closecms(dev,type) {
 	switch (dev) {
         case 1:
@@ -22,16 +42,6 @@ function closecms(dev,type) {
                 }
             }
             break;
-        // case 3:
-        //     for (var i = 0; i < arr_VD.length; i++) {
-        //         var id = arr_VD[i][1];
-        //         if(type == 1){
-        //             $("#play" + id + "").show();
-        //         }else{
-        //             $("#play" + id + "").hide();
-        //         }
-        //     }
-        //     break;
     }
 }
 
@@ -120,13 +130,13 @@ function loadCheckbox(){
 	$.ajax({
 		type: "GET",
 		url : "bcd/php/getcheck.php?itype=1&tunnel="+tunnelnum+"&dc=" + new Date().getTime() + "",
-		//data:{},
 		dataType: "json",
 		success: function(mydata){
 			if(mydata){
 				 $(".default-panel-img").attr("src", "./pic2/tunnelBack"+tunnelnum+".jpg");
 				 $("#title_name").text(tunnel_name);
 				 closecms(3);
+				 titlepagenum = 0;
 				for(var dataitem in mydata){
 					arr_ = devreturnarrdata(dataitem);
                     var devtunnelnum = 0;
@@ -136,16 +146,19 @@ function loadCheckbox(){
 						}
 					}
                     if(devtunnelnum == 0){
-                        $("#dev-nav-"+devtypecontrolbtn[dataitem]+"").empty();
+                        // $("#dev-nav-"+devtypecontrolbtn[dataitem]+"").empty();
+                        $("#dev-nav-"+devtypecontrolbtn[dataitem]+"").remove();
+                    }else {
+                        if (mydata[dataitem] == 1) {
+                            $("input[typename=" + dataitem + "]").attr("checked", "");
+                            $("#typeimg" + devtypecontrolbtn[dataitem] + "").css("width", "40px");
+                            $("#typeimg" + devtypecontrolbtn[dataitem] + "").css("height", "40px");
+                        } else {
+                            $("#typeimg" + devtypecontrolbtn[dataitem] + "").css("width", "25px");
+                            $("#typeimg" + devtypecontrolbtn[dataitem] + "").css("height", "25px");
+                        }
+                        titlepagenum += 1;
                     }
-					if(mydata[dataitem]==1){
-						$("input[typename="+ dataitem +"]").attr("checked","");
-                        $("#typeimg"+devtypecontrolbtn[dataitem]+"").css("width","40px");
-                        $("#typeimg"+devtypecontrolbtn[dataitem]+"").css("height","40px");
-					}else{
-                        $("#typeimg"+devtypecontrolbtn[dataitem]+"").css("width","25px");
-                        $("#typeimg"+devtypecontrolbtn[dataitem]+"").css("height","25px");
-					}
 				}
 			}
 			//赋值加载图
@@ -154,7 +167,7 @@ function loadCheckbox(){
 		error: function(json){}
 	});
 }
-//
+
 
 
 //保存选择的设备
@@ -171,9 +184,6 @@ function saveCheckbox(typevalue){
 			if(typevalue == "TCMS"){
                 closecms(2,mydata.data);
 			}
-            // if(typevalue == "VD"){
-            //     closecms(3,mydata.data);
-            // }
 		},
 		error: function(json){}
 	});
@@ -1516,8 +1526,9 @@ function dafaultpageCommand(){
 }
 
 //plc状况
+showPlc()
 function showPlc(){
-	$(".plc-list-show").remove();
+    $(".dev-nav-plc").remove();
 	for (var snum=0;snum<arr_PLC.length;snum++){
 		var arrnum=arr_PLC[snum][0];
 		var sdid=arr_PLC[snum][2];
@@ -1538,11 +1549,10 @@ function showPlc(){
 		}
 		//判断有无PLC
 		if(plctunnel == tunnelnum) {
-            var plcmodule = "<div class=\"plc-list-show\" id=\"plc_id_" + id + "\">";
-            plcmodule = plcmodule + "" + name + "";
-            plcmodule = plcmodule + "<span><img src=\"" + plcpicurl + "\" style='width:90px;height:40px ' /></span>";
-            plcmodule = plcmodule + "</div>";
-            $("#plc_show").append(plcmodule);
+		    plcmodule = " <li   class=\"dev-nav-plc\" >";
+            plcmodule = plcmodule + "<a  title=\""+name+"\"  style=\"cursor:pointer;padding: 0px;width: 80px;height: 60px;\" ><img src=\"" + plcpicurl + "\" style='margin-left:20px;width:60px;height:40px ' /></a>";
+            plcmodule = plcmodule + "</li>";
+            $("#usedaotasdesd").append(plcmodule);
         }
 	}
 }
@@ -1559,6 +1569,7 @@ function updatePlc(){
 		arr_PLC[snum][4]=false;
 	}
 	if(plcflag==true){
+	    console.log(plcflag);
 		showPlc();
 	}
 }

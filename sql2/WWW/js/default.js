@@ -63,8 +63,11 @@ function roadpara(){
                 var devpic = res.data;
                 for(var i= 0;i<res.count;i++){
                     var typeid = res.data[i].iid;
-                    var usehead = "<a style=\"cursor:pointer;\"  onclick=\"devclick("+typeid+")\" id=\"dev_iphone"+i+"\" ><img  id=\"typeimg"+typeid+"\" src=\""+devpic[i].pic+"\"  style=\"width:25px;height:25px;\"   \"></a>";
-                    $("#dev-nav-"+i+"").html(usehead);
+                    var usehead = "<li class=\"layui-nav-item\"   id=\"dev-nav-"+typeid+"\">";
+                    usehead += "<a style=\"cursor:pointer;\"  onclick=\"devclick("+typeid+")\" id=\"dev_iphone"+i+"\" ><img  id=\"typeimg"+typeid+"\" src=\""+devpic[i].pic+"\"  style=\"width:25px;height:25px;\"   \"></a>";
+                    // $("#dev-nav-"+i+"").html(usehead);
+                    usehead += "</li>";
+                    $("#usetitlebtn").append(usehead);
                 }
             }
         }

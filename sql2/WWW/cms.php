@@ -69,7 +69,7 @@ require ('./bcd/php/config.php');
         <div class="layui-upload" style="width: 1500px;height: 38px">
 
         </div>
-        <div id="cmsshowlist" style="margin-bottom: 10px">
+        <div id="cmsshowlist" style="margin-top:10px;margin-bottom: 10px">
 
         </div>
         <div  style="position:absolute; ">
