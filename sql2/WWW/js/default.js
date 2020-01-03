@@ -233,7 +233,6 @@ function opencmsplay(id,type){
                     ,btn: ['关闭'] //只是为了演示
                     ,yes: function(index, layero){
                         layer.close(index);
-                        history.go(0);
                     }
                     ,zIndex: layer.zIndex
                     ,success: function(layero,index){
@@ -261,7 +260,6 @@ function opencmsplay(id,type){
                     ,btn: ['关闭'] //只是为了演示
                     ,yes: function(index, layero){
                         layer.close(index);
-                        history.go(0);
                     }
                     ,success: function(layero,index){
                         layer.full(index);

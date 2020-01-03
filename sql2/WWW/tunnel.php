@@ -106,7 +106,7 @@ if(!isset($_SESSION['uid'])){
             </li>
         </ul>
         <ul class="layui-nav layui-layout-left"  style="margin-left:110px;">
-            <li style="margin-top: 23px;margin-left: 20px"  ><a  id="controltitle1" class="layui-icon layui-icon-prev"  onclick="leftusetitle(1)" style=" text-decoration:none;cursor:pointer;font-size: 30px; color: #1E9FFF;display: block"></a></li>
+            <li style="margin-top: 23px;margin-left: 20px"  ><a  id="controltitle1" class="layui-icon layui-icon-left"  onclick="leftusetitle(1)" style=" text-decoration:none;cursor:pointer;font-size: 30px; color: white;display: none"></a></li>
         </ul>
         <div class="layui-nav layui-layout-left"   style="overflow: hidden;margin-left:200px;width: 760px;padding: 0px">
             <ul id="usedaotasdesd" style="width: 760px">
@@ -129,7 +129,7 @@ if(!isset($_SESSION['uid'])){
             </ul>
         </div>
         <ul class="layui-nav layui-layout-left"  style="margin-left:950px;">
-            <li style="margin-top: 23px;margin-left: 7px"  ><a id="controltitle2"  class="layui-icon layui-icon-next"  onclick="leftusetitle(-1)" style=" text-decoration:none;cursor:pointer;font-size: 30px; color: #1E9FFF;display: block"></a></li>
+            <li style="margin-top: 23px;margin-left: 7px"  ><a id="controltitle2"  class="layui-icon layui-icon-right"  onclick="leftusetitle(-1)" style=" text-decoration:none;cursor:pointer;font-size: 30px; color: white;display: block"></a></li>
         </ul>
     </div>
 
@@ -156,9 +156,6 @@ if(!isset($_SESSION['uid'])){
     <div id="default_panel" class="default-panel">
         <div id="default_panel_left" class="default-panel-left" style="">
             <ul>
-<!--                <li id="li_leftmenu_dev" title="选择设备"><i class="layui-icon layui-icon-component"></i></li>-->
-<!--                <li id="li_leftmenu_info" title="系统信息"><i class="layui-icon layui-icon-console"></i></li>-->
-<!--                <li id="li_leftmenu_plc" title="PLC通信状况"><i class="layui-icon layui-icon-engine"></i></li>-->
                 <li id="li_leftmenu_covi" class="dn" title="CO/VI采集数据"><i class="layui-icon layui-icon-chart-screen"></i></li>
                 <li id="li_leftmenu_fsfx" class="dn" title="风速/风向采集数据"><i class="layui-icon layui-icon-chart-screen"></i></li>
                 <li id="li_leftmenu_gq" class="dn" title="光强度采集数据"><i class="layui-icon layui-icon-chart-screen"></i></li>

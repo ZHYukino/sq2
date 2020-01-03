@@ -13,12 +13,27 @@ function leftusetitle(num) {
     else {
         $("#usedaotasdesd").animate({
             "marginLeft": left + "px"
-        }, 230)
+        }, 230);
+        widthes = usewidthes * num;
+        left = left + widthes;
+        liwides = $("#usedaotasdesd li").length;
+        number = -(parseInt(liwides/9) );
+        //隐藏或者显示标题栏左右点击按钮
+        if( left< number*usewidthes){
+            $("#controltitle2").hide();
+            $("#controltitle1").show();
+        }else if( left > 0 ){
+            $("#controltitle1").hide();
+            $("#controltitle2").show();
+        }else{
+            $("#controltitle1").show();
+            $("#controltitle2").show();
+        }
     }
 }
 
 
-//下拉框和设备选择器关闭情报版
+//下拉框和设备选择器隐藏情报版
 function closecms(dev,type) {
 	switch (dev) {
         case 1:
@@ -44,7 +59,7 @@ function closecms(dev,type) {
             break;
     }
 }
-
+//根据设备名返回设备数组
 function devreturnarrdata(dataitem) {
     switch(dataitem){
         case "TS":
@@ -178,6 +193,7 @@ function saveCheckbox(typevalue){
 		//data:{},
 		dataType: "json",
 		success: function(mydata){
+		    //如果保存的设备是cms 则调用隐藏函数
 			if(typevalue == "CMS"){
 				closecms(1,mydata.data);
 			}
@@ -2117,6 +2133,8 @@ function getErrorEquipmentJson(str){
 	for (var i=0;i<arr_Error.length;i++){
 		//不是全部和不是所属类别跳下一步
 		if(str!="all"&&arr_Error[i][4]!=devtype) continue;
+		//不是当前的隧道的跳下一步
+        if(arr_Error[i][3]!=tunnelnum) continue;
 		var   arr_tunnel =  (arr_Error[i][3] ==1)? "隧道A":(arr_Error[i][3] == 2 ?"隧道B":"隧道C" );     //更改隧道名字
 		if (count >0) rows=rows + ",";
 		count = count +1;

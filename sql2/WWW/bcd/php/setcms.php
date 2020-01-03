@@ -14,7 +14,7 @@
     }
 
     $marknum = time().round(0,9);
-
+    $userid = $_SESSION["uid"];
     //发送文件方法
      function upcmsfile($filename,$id,$marknum){
         $userid = $_SESSION["uid"];
@@ -57,9 +57,8 @@
             }
 
         }
-        //获取数据
+        //cms和tcm获取tree数据
         elseif ($itype == 2) {
-
             $path = "../localcms/" . $id . "/play.lst";
             $play = parse_ini_file($path, true);
             // $play["playlist"]["item0"] = iconv("GBK","UTF-8", $play["playlist"]["item0"]);
@@ -104,20 +103,40 @@
                 }
                
             }
-        
             echo json_encode($data);
-
         } //取亮度
         elseif ($itype == 3) {
+            $path = "CMSOperation2";
+            $sign = "FID=".$id."&FUserID=".$userid."&FMark=".$marknum ."";
+            $light = CurlCalss::curl(5,$sign,$path);
+            $light = json_decode($light,true);
+            if($light['iresult'] == 1){
+                $path = "CMSHow2";
+                $sign =  "FID=".$id."&FMark=".$marknum ."";
+                $light2 = CurlCalss::curl(5,$sign,$path);
+                $light2 = json_decode($light2,true);
+                echo json_encode($light2);
+            }else{
+                echo json_encode($light);
+            }
 
         } //设置亮度
         elseif ($itype == 4) {
-            $result = array(
-                'code' => "",
-                'light' => '',
-                'msg' => "",
-            );
-            echo json_encode($result);
+            $auto = $_GET["auto"];
+            $value = $_GET["value"];
+            $path = "CMSOperation3";
+            $sign = "FID=".$id."&FUserID=".$userid."&FMark=".$marknum ."&FValueAuto=".$auto."&FValue=".$value."";
+            $light = CurlCalss::curl(5,$sign,$path);
+            $setlight = json_decode($light,true);
+            if($setlight['iresult'] == 1){
+                $path = "CMSHow3";
+                $sign =  "FID=".$id."&FMark=".$marknum ."";
+                $light2 = CurlCalss::curl(5,$sign,$path);
+                $light2 = json_decode($light2,true);
+                echo json_encode($light2);
+            }else{
+                echo json_encode($setlight);
+            }
         }
         // 发送情报板
         elseif ($itype == 5) {

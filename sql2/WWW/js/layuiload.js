@@ -539,27 +539,7 @@ function updateTSSelectContent(selectid,thisArr_){
 	layuiFormUpdate(1);
 }
 
-//选择设备
-$("#li_leftmenu_dev").on("click",function(){
-	layer.open({
-		type: 1 //此处以iframe举例
-		,title: "选择设备"
-		,area: ['600px', '400px']
-		,shade: 0
-		,maxmin: true
-		,offset: '' 
-		,id: 'LAY_show' //防止重复弹出
-		,content: $("#checkbox_list")
-		,btn: ['关闭'] //只是为了演示
-		,yes: function(index, layero){
-			layer.close(index);
-		}
-		,zIndex: layer.zIndex 
-		,success: function(layero){
-			layer.setTop(layero); 
-		}
-	});
-})
+
 
 //火灾应急方案
 $("#li_leftmenu_fire").on("click",function(){
@@ -587,32 +567,6 @@ $("#li_leftmenu_fire").on("click",function(){
 })
 
 
-
-//系统信息
-$("#li_leftmenu_info").on("click",function(){
-	layer.open({
-		type: 1 //此处以iframe举例
-		,title: '系统信息'
-		,area: ['800px', '480px']
-		,shade: 0
-		,maxmin: true
-		,offset: [Ht+10] 
-		,id: 'LAY_control_panel_system' //防止重复弹出
-		,content: $("#control_panel_system")
-		,btn: ['关闭'] //只是为了演示
-		,yes: function(index, layero){
-			layer.close(index);
-		}
-		,zIndex: layer.zIndex 
-		,success: function(layero){
-			layer.setTop(layero); 
-			//加载照明及风机控制模式
-			$("#control_LED_select").val(ZMMode);
-			$("#control_FAN_select").val(FJMode);
-			layuiFormUpdate(1);
-		}
-	});
-})
 
 
 

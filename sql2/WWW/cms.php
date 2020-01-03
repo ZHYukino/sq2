@@ -150,10 +150,12 @@ require ('./bcd/php/config.php');
     var cmsbtn = "\n"+
         " <button id=\"cms_upload\" type=\"button\" class=\"layui-btn layui-btn-normal\">播放发送</button>\n" +
         " <button id=\"cms_down\" type=\"button\" class=\"layui-btn layui-btn-normal\">播放获取</button>\n" +
-        " <button id=\"cms_getlight\" type=\"button\" class=\"layui-btn layui-btn-primary\">获取亮度</button>\n" +
-        "              <button id=\"cms_setlight\" type=\"button\" class=\"layui-btn layui-btn-primary\">设置亮度</button>\n" +
+        " <button id=\"cms_getlight\" type=\"button\"  onclick=\"cms_getligth()\" class=\"layui-btn layui-btn-primary\">获取亮度</button>\n" +
+        "              <button id=\"cms_setlight\" type=\"button\"  onclick=\"cms_setligth()\" class=\"layui-btn layui-btn-primary\">设置亮度</button>\n" +
         "              <div class=\"layui-input-inline\">\n" +
-        "                  <input type=\"tel\" name=\"phone\" lay-verify=\"required|phone\" autocomplete=\"off\" class=\"layui-input\" style=\"width: 80px; height: 26px;background: #d0c0cf\">\n" +
+        "                  <input type=\"number\" name=\"phone\"  id=\"cmslight\" value=\"0\"   lay-verify=\"required|phone\" autocomplete=\"off\" class=\"layui-input\" style=\"width: 80px; height: 26px;background: #d0c0cf\">\n" +
+        " <input type=\"radio\" name=\"cmsauto\" value=\"0\" title=\"自动\" checked=\"\">自动\n" +
+        "      <input type=\"radio\" name=\"cmsauto\" value=\"1\" title=\"手动\">手动\n" +
         "              </div>";
     $(".layui-upload").append(cmsbtn);
     $("#cmsshowlist").text("播放列表");
@@ -207,11 +209,9 @@ require ('./bcd/php/config.php');
         })
     })
 
-
+    window.id = <?php  echo $_GET["cms"]; ?>;
     //更改情报版
-   
    function ajaxup(i,check,act,name=null){
-        id = <?php  echo $_GET["cms"]; ?>;
          $.ajax({
             type: "GET",
             url: "bcd/php/cmsshow.php?itype=1&id="+id+"&item="+i+"&check="+check+"&act="+act+"&picname="+name+"",
@@ -290,14 +290,19 @@ function checkthispic(id){
         elem: "#filepic"+i+"" //绑定元素
         ,url: 'bcd/php/setcms.php?itype=1&id='+id+'&picnum='+cid+'' //上传接口
         ,accept: 'file' //允许上传的文件类型
+          ,before: function(obj){ //obj参数包含的信息，跟 choose回调完全一致，可参见上文。
+              layer.load(); //上传loading
+           }
         ,done: function(res){
           //上传完毕回调
           if(res.iresult == 1){
+              layer.closeAll('loading'); //关闭loading
             ajaxup(i,res.picname,act = 3,"图片"+cid+"");
             layer.msg(res.sinfo);
             history.go(0);
           }
           if(res.code == -1){
+              layer.closeAll('loading'); //关闭loading
             layer.msg(res.msg);
           }
         }
@@ -445,4 +450,5 @@ function checkthispic(id){
         }
     }); 
 }
+
 </script>

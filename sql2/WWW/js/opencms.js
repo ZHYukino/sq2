@@ -1,4 +1,45 @@
 
+//播放获取
+function cms_downs() {
+    
+}
+
+
+//获取cms亮度
+function cms_getligth(){
+    $.ajax({
+        url:"bcd/php/setcms.php?itype=3&id="+id+""
+        ,type:"get"
+        ,dataType:"json"
+        ,success:function (res) {
+            if(res.iresult === 0){
+                layer.msg(res.sinfo,{icon:2,time:1000});
+            }else{
+                layer.msg(res.sinfo,{icon:1,time:1000});
+                $("#cmslight").val(res.ivalue);
+            }
+        }
+    })
+}
+//设置cms亮度
+function cms_setligth() {
+    var cmsauto = $("input[name='cmsauto']:checked").val();
+    var lightvalue =  $("#cmslight").val();
+    $.ajax({
+        url:"bcd/php/setcms.php?itype=4&id="+id+"&auto="+cmsauto+"&value="+lightvalue+""
+        ,type:"get"
+        ,dataType:"json"
+        ,success:function (res) {
+            if(res.iresult === 0){
+                layer.msg(res.sinfo,{icon:2,time:1000});
+            }else{
+                layer.msg(res.sinfo,{icon:1,time:1000});
+            }
+        }
+    })
+}
+
+
 //托动
 function devmove(id,tunnel=0) {
     $(document).keyup(function (event){
@@ -261,12 +302,14 @@ function cmssetdota(id,resdata,playnum,type,cid=null) {
     var placese = new Array();
 
     for (var j=0;j<playnum;j++){
+        //左右和立即出现
         if( arr_check[j] == 1 ||  arr_check[j] == 2 ||  arr_check[j] == 5 ){
             textWidth[j] = 320;
             placese[j] = "left";
             iwidth[j] =320;
             scrollWidth[j] = $("#"+id+"affiche").width() ;       //div 长度
-        }else{
+        }//上下
+        else{
             textWidth[j] = 32;
             iwidth[j] =32;
             placese[j] = "top";
@@ -300,10 +343,6 @@ function cmssetdota(id,resdata,playnum,type,cid=null) {
                     setTimeout(statecms, stoptime[x]);
                 }
             }
-        }
-
-        for (var x=0;x<playnum;x++){
-            var xs = x+1;
             if (iwidth[x] <= -textWidth[x] ) {
                 iwidth[x] = scrollWidth[x]  ;
                 if(playnum == xs){
@@ -321,27 +360,24 @@ function cmssetdota(id,resdata,playnum,type,cid=null) {
                     $("#"+id+"affiche_text"+xs+"").show();
                 }
             }
-        }
-
-        for (var j=0;j<playnum;j++){
-            if(arr_check[j] == 1 || arr_check[j] == 5 || arr_check[j] == 3){
-                left[j] = -iwidth[j];
-            }else if(arr_check[j]  == 2 || arr_check[j]  == 4){
-                left[j] = iwidth[j];
+            if(arr_check[x] == 1 || arr_check[x] == 5 || arr_check[x] == 3){
+                left[x] = -iwidth[x];
+            }else if(arr_check[x]  == 2 || arr_check[x]  == 4){
+                left[x] = iwidth[x];
             }
-            $("#"+id+"affiche_text"+j+"").css(''+placese[j]+'',''+left[j] + 'px');
+            $("#"+id+"affiche_text"+x+"").css(''+placese[x]+'',''+left[x] + 'px');
         }
      }
-    var interval = window.setInterval (cmsstate,100);
+    var interval = window.setInterval (cmsstate,50);
     
     function statecms(){
-         interval = window.setInterval (cmsstate,100);
+         interval = window.setInterval (cmsstate,50);
     }
      
 }
 
 
-
+//门夹播放版
 function tcmsdota(id,resdata,playnum,type,cid=null){
     var arr_check = new Array();
     var check = new Array("左边进场","右边进场","下移","上移","立即出现");
@@ -513,7 +549,7 @@ function tcmsdota(id,resdata,playnum,type,cid=null){
     var stops = new Array();
     stops[id] = 0;
 
-    function cmsstate(){
+    function tcmsstate(){
         for (var x=0;x<playnum;x++){
             var xs = x+1;
             var playes = playnum-1;
@@ -532,10 +568,6 @@ function tcmsdota(id,resdata,playnum,type,cid=null){
                     setTimeout(statecms, stoptime[x]);
                 }
             }
-        }
-
-        for (var x=0;x<playnum;x++){
-            var xs = x+1;
             if (iwidth[x] <= -textWidth[x] ) {
                 iwidth[x] = scrollWidth[x]  ;
                 if(playnum == xs){
@@ -553,22 +585,19 @@ function tcmsdota(id,resdata,playnum,type,cid=null){
                     $("#"+id+"affiche_text"+xs+"").show();
                 }
             }
-        }
-
-        for (var j=0;j<playnum;j++){
-            if(arr_check[j] == 1 || arr_check[j] == 5 || arr_check[j] == 3){
-                left[j] = -iwidth[j];
-            }else if(arr_check[j]  == 2 || arr_check[j]  == 4){
-                left[j] = iwidth[j];
+            if(arr_check[x] == 1 || arr_check[x] == 5 || arr_check[x] == 3){
+                left[x] = -iwidth[x];
+            }else if(arr_check[x]  == 2 || arr_check[x]  == 4){
+                left[x] = iwidth[x];
             }
-            $("#"+id+"affiche_text"+j+"").css(''+placese[j]+'',''+left[j] + 'px');
+            $("#"+id+"affiche_text"+x+"").css(''+placese[x]+'',''+left[x] + 'px');
         }
     }
    
-    var interval = window.setInterval (cmsstate,100);
+    var interval = window.setInterval (tcmsstate,50);
     
     function statecms(){
-         interval = window.setInterval (cmsstate,100);
+         interval = window.setInterval (tcmsstate,50);
     }
 }
 

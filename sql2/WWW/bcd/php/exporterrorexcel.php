@@ -56,7 +56,7 @@
                     break;
                 }else{
                     $result[$num]["typename"] = $type[ $v["itypeid"] ]["sename"];
-                    $result[$num]["cname"] = $v["scname"];
+                    $result[$num]["scname"] = $v["scname"];
                     $result[$num]["devaddr"] = $v["saddr"];
                     $result[$num]["tunnel"] = $opt["TuName"] ["Tu".($v["itunnelid"]-1)];
                     $num = $num +1;
@@ -73,7 +73,7 @@
                     break;
                 } else {
                     $result[$num]["typename"] = $type[$v["itypeid"]]["sename"];
-                    $result[$num]["cname"] = $v["scname"];
+                    $result[$num]["scname"] = $v["scname"];
                     $result[$num]["devaddr"] = $v["saddr"];
                     $tu = intval($v["itunnelid"]) - 1;
                     $result[$num]["tunnel"] = isset($opt["TuName"] ["Tu" .$tu]) ?  $opt["TuName"] ["Tu" .$tu] :"" ;

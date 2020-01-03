@@ -1,11 +1,4 @@
-﻿<?php 
-    //如果已经登陆了直接跳转
-   // session_start();
-//    if(!empty($_SESSION['name'])){
-//        header("location:default.php");
-//    }
-?>
-
+﻿
 <!DOCTYPE html>
 <html>
 
