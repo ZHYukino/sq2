@@ -32,7 +32,7 @@ var countryTree = (function(countryTree) {
                     tree.pNode = treeNode;
                     tree.showRightMenu({ //显示右键菜单
                         x: event.clientX,
-                        y: event.clientY -10
+                        y: event.clientY
                     });
                 }
             }

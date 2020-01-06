@@ -1,5 +1,5 @@
 <?php
-
+    //情报板 cms 的发送 和 cms 的读取 Tree 页面
     require_once ("common.php");
     session_start();
 
@@ -12,10 +12,11 @@
         echo json_encode($rejsondata);
         die();
     }
-
-    $marknum = time().round(0,9);
     $userid = $_SESSION["uid"];
-    //发送文件方法
+    //设置一个随机时间
+    $marknum = time().round(0,9);
+
+    //上传文件方法
      function upcmsfile($filename,$id,$marknum){
         $userid = $_SESSION["uid"];
         //上传播放动作
@@ -41,9 +42,10 @@
            if(end($ifname) != "bmp"){
                 die('{"code":-1,"msg":"图片格式错误","count":0,"data":[]}');
            }
+
            if ($file_size > 10 * 1024 * 1024) return $result["sinfo"] = "文件太大,超过10M。";
          
-            //是否存在
+            //是否存在文件
             $file_father_path = '../localcms/' . $id . '';
             if (!file_exists($file_father_path)) {
                 mkdir($file_father_path);
@@ -72,7 +74,7 @@
             );
             $num = 1;
             $pid = 1;
-           $rule = "/^[f]/";
+            $rule = "/^[f]/";
             foreach ($play["playlist"] as $k=>$v){
                 if("item_no" == $k){
                     continue;
@@ -85,7 +87,6 @@
                $pid = $pid+1;
                $newv = explode(",",$v);
                $shonw = explode("\\", $newv[3]);
-                // print_r($shonw);
                 $picnums = 0;
                foreach ($shonw as $key => $value) {
                     if(strpos($value,'B') !== false && strlen($value) === 4 ){
@@ -101,10 +102,11 @@
                        $num = $num + 1;
                     }
                 }
-               
+
             }
             echo json_encode($data);
-        } //取亮度
+        }
+        //取亮度
         elseif ($itype == 3) {
             $path = "CMSOperation2";
             $sign = "FID=".$id."&FUserID=".$userid."&FMark=".$marknum ."";
@@ -120,7 +122,8 @@
                 echo json_encode($light);
             }
 
-        } //设置亮度
+        }
+        //设置亮度
         elseif ($itype == 4) {
             $auto = $_GET["auto"];
             $value = $_GET["value"];
@@ -140,18 +143,11 @@
         }
         // 发送情报板
         elseif ($itype == 5) {
-          
             $result = upcmsfile("play.lst",$id, $marknum);
-
-            // $url = "http://127.0.0.1:8855/CMSHow0.html?FID=" . $id . "&FMark=".$marknum."";
-          
-            // $curdpost = CurlCalss::curl(1,1,1,$url);
-            
-          if($result["iresult"] === 1){
-              echo json_encode($result);
-          }
+            if($result["iresult"] === 1){
+                echo json_encode($result);
+            }
         }
-
         // 情报板获取
         elseif ($itype == 6) {
 

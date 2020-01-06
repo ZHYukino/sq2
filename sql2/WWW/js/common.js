@@ -1,25 +1,25 @@
 ﻿//标题栏点击滚动
 function leftusetitle(num) {
-    var usewidthes = parseInt($("#usedaotasdesd").width());
+    // var usewidthes = parseInt($("#usedaotasdesd").width());
+    //usewidthes 是 80每个元素的长度 + 2*2 两个元素的间距
+    var usewidthes = $("#usedaotasdesd li").width() + (2*2);
     var margin =  parseInt($("#usedaotasdesd").css('marginLeft'));
     var widthes = usewidthes * num;
     var left = margin + widthes;
     var liwides = $("#usedaotasdesd li").length;
-    var number = -(parseInt(liwides/9) );
-    if(left > 0 || left< number*usewidthes){
-        return false;
-    }
+    var number = -(parseInt(liwides) );
     if($("#usedaotasdesd").is(":animated")) return false;
     else {
         $("#usedaotasdesd").animate({
             "marginLeft": left + "px"
-        }, 230);
+        }, 200);
         widthes = usewidthes * num;
         left = left + widthes;
         liwides = $("#usedaotasdesd li").length;
-        number = -(parseInt(liwides/9) );
+        number = -(parseInt(liwides) );
+        var row_num = Math.ceil(parseInt($("#usedaotasdesd").width())/usewidthes);
         //隐藏或者显示标题栏左右点击按钮
-        if( left< number*usewidthes){
+        if( left< (number+row_num)*usewidthes){
             $("#controltitle2").hide();
             $("#controltitle1").show();
         }else if( left > 0 ){
@@ -168,9 +168,11 @@ function loadCheckbox(){
                             $("input[typename=" + dataitem + "]").attr("checked", "");
                             $("#typeimg" + devtypecontrolbtn[dataitem] + "").css("width", "40px");
                             $("#typeimg" + devtypecontrolbtn[dataitem] + "").css("height", "40px");
+                            $("#typeimg" + devtypecontrolbtn[dataitem] + "").css("padding", "0px");
                         } else {
                             $("#typeimg" + devtypecontrolbtn[dataitem] + "").css("width", "25px");
                             $("#typeimg" + devtypecontrolbtn[dataitem] + "").css("height", "25px");
+                            $("#typeimg" + devtypecontrolbtn[dataitem] + "").css("padding", "7.5px");
                         }
                         titlepagenum += 1;
                     }
@@ -1566,7 +1568,7 @@ function showPlc(){
 		//判断有无PLC
 		if(plctunnel == tunnelnum) {
 		    plcmodule = " <li   class=\"dev-nav-plc\" >";
-            plcmodule = plcmodule + "<a  title=\""+name+"\"  style=\"cursor:pointer;padding: 0px;width: 80px;height: 60px;\" ><img src=\"" + plcpicurl + "\" style='margin-left:20px;width:60px;height:40px ' /></a>";
+            plcmodule = plcmodule + "<a  title=\""+name+"\"  style=\"cursor:pointer;padding: 0px;width: 80px;height: 60px;\" ><img src=\"" + plcpicurl + "\" style='margin:0px 10px;width:60px;height:40px ' /></a>";
             plcmodule = plcmodule + "</li>";
             $("#usedaotasdesd").append(plcmodule);
         }

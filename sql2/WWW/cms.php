@@ -43,6 +43,8 @@ require ('./bcd/php/config.php');
     <!--[if lt IE 9]><script src="jspackage/json2/json2.js"></script><![endif]-->
     <script type="text/javascript" src="jspackage/rightMenu/js/jquery-ztree-2.5.js"></script>
 
+<!--    下拉-->
+    <link rel="stylesheet" href="jspackage/jiaoben2206/css/style.css" />
 </head>
 <body>
 
@@ -52,32 +54,36 @@ require ('./bcd/php/config.php');
 <script src="jspackage/rightclick/contextmenu.r2.js"></script>
 <!-- layui -->
 <script src="jspackage/layui/layui.all.js"></script>
-
-
+<script>
+    //三级菜单
+    $(document).ready(function() {
+        $( '.dropdown' ).hover(
+            function(){
+                $(this).children('.sub-menu').slideDown(200);
+            },
+            function(){
+                $(this).children('.sub-menu').slideUp(200);
+            }
+        );
+    });
+</script>
 <!--tree-->
 <script type="text/javascript" src="jspackage/rightMenu/js/trees.js"></script>
-
-
 <!-- ptz_objid start -->
 <div id="ptz_objid" class="dn" style="position:absolute;top:10px;"></div>
 <div class="ch"></div>
 <!-- ptz_objid end-->
 
-<div id="cms_one"  style="position:absolute;top:10px;margin: 10px 10px;">
-    <div class="cms_three">
-        <div id="devcms_show"></div>
-        <div class="layui-upload" style="width: 1500px;height: 38px">
-
-        </div>
-        <div id="cmsshowlist" style="margin-top:10px;margin-bottom: 10px">
-
-        </div>
+<div id="cms_one"  >
+    <div id="devcms_show_upload" class="layui-upload" ></div>
+    <div style="width: 300px;height: 400px;position: absolute;top: 65px;background-color: #00b7ee">123</div>
+    <div class="cms_three" style="margin-left: 300px">
+        <div id="cmsshowlist" ></div>
         <div  style="position:absolute; ">
             <div style="overflow:scroll;height:240px;">
-            <ul id='tree' class="tree" style="width: 330px;height: 600px">
+            <ul id='tree' class="tree" >
             </div>
         </div>
-
         <div id="cmsshowlists">
             <table class="layui-table" lay-size="sm"  >
               <colgroup>
@@ -105,22 +111,16 @@ require ('./bcd/php/config.php');
               </thead>
             </table>
         </div>
-
-        <div id="allpicture" style="display: none;margin: 30px">
-
-        </div>
-
-
-        <div id="rMenu" style="position: absolute">
+        <div id="allpicture" style=""></div>
+        <div id="rMenu">
             <li>
                 <ul id="r_addFolder"><li>添加动作</li></ul>
                 <ul id="r_addNode"><li>增加图片</li></ul>
-                <!-- <ul id="r_updateNode"><li>修改名称</li></ul> -->
                 <ul id="r_deleteNode"><li>删除</li></ul>
             </li>
         </div>
         <div id="dev_cms_run" >
-            <div style="width: 500px;height: 100px">
+            <div >
                 <?php
                 echo "<div class=" . $_GET["cms"] . "affiche   ;  style=' width: 96%; height: 30px;margin: 0 auto;position: relative;  overflow: hidden;background: #000000;   width: 320px;   height: 32px; position: absolute; border-top-left-radius: 2px;border-top-right-radius: 2px;border-bottom-left-radius: 2px;border-bottom-right-radius: 2px;'>";
                 echo "<div class=" . $_GET["cms"] . "affiche_text0  ;  style='position: absolute; height:32px;width:320px;' >";
@@ -129,7 +129,7 @@ require ('./bcd/php/config.php');
                 echo "</div>";
                 ?>
             </div>
-            <div id="cms_bigdiv" style="margin-top: 150px;margin-left: 0px;position: absolute;">
+            <div id="cms_bigdiv" >
             <?php
             for($i=0;$i<count($cms);$i++) {
                 if(isset($cms[$i])) {
@@ -139,34 +139,23 @@ require ('./bcd/php/config.php');
              <?php  }
             }
             ?>
-            </div>
         </div>
     </div>
+</div>
 
 
 </body>
 </html>
-<script>
-    var cmsbtn = "\n"+
-        " <button id=\"cms_upload\" type=\"button\" class=\"layui-btn layui-btn-normal\">播放发送</button>\n" +
-        " <button id=\"cms_down\" type=\"button\" class=\"layui-btn layui-btn-normal\">播放获取</button>\n" +
-        " <button id=\"cms_getlight\" type=\"button\"  onclick=\"cms_getligth()\" class=\"layui-btn layui-btn-primary\">获取亮度</button>\n" +
-        "              <button id=\"cms_setlight\" type=\"button\"  onclick=\"cms_setligth()\" class=\"layui-btn layui-btn-primary\">设置亮度</button>\n" +
-        "              <div class=\"layui-input-inline\">\n" +
-        "                  <input type=\"number\" name=\"phone\"  id=\"cmslight\" value=\"0\"   lay-verify=\"required|phone\" autocomplete=\"off\" class=\"layui-input\" style=\"width: 80px; height: 26px;background: #d0c0cf\">\n" +
-        " <input type=\"radio\" name=\"cmsauto\" value=\"0\" title=\"自动\" checked=\"\">自动\n" +
-        "      <input type=\"radio\" name=\"cmsauto\" value=\"1\" title=\"手动\">手动\n" +
-        "              </div>";
-    $(".layui-upload").append(cmsbtn);
-    $("#cmsshowlist").text("播放列表");
-</script>
+
 <script type="js/timer-master/timer.js"></script>
 <script src="js/opencms.js"></script>
 
 
 <script>
-    trees(<?php  echo $_GET["cms"]; ?>,"cms")
-    varname="var<?php  echo $_GET["cms"]; ?>";                  //这是防止重复cms重复的变量
+
+    id =<?php  echo $_GET["cms"]; ?>;
+    trees(id,"cms");
+    varname="var"+id+"";                  //这是防止重复cms重复的变量
     window[varname] = 100;
 
     //获得门架的数据
@@ -227,12 +216,12 @@ require ('./bcd/php/config.php');
    }
 
 checkpicid = "";
-    //选中的图片方法
+//选中的图片方法
 function checkthispic(id){
     if( id == checkpicid){
         return false;
     }
-    $("#"+id+"").css('border',"7px solid #0088cc");
+    $("#"+id+"").css('border',"4px solid #0088cc");
     var $this= $("#"+id+"");
     var path = $this[0].src;
     filename = "";
@@ -240,31 +229,15 @@ function checkthispic(id){
     {
         filename=path.substring(path.lastIndexOf("/")+1,path.length);
     }
-    else
-    {
-        filename=path;
-    }
-
-    $this.css({
-        //获得当前已定位元素的top值
-        top:$this.position().top,
-        left:$this.position().left
-    }).animate({
-        //获得当前元素的宽度并*2
-        width:$this.width()*1.8,
-        height:$this.height()*1.8,
-    },300);
-
-
     $("#"+checkpicid+"").css('border',"");
     $("#"+checkpicid+"").animate({
         //获得当前元素的宽度并*2
         width:50,
         height:50,
+        padding:0
     },300);
     $("#"+checkpicid+"i").children().remove();
     checkpicid = id;
-
 }
 
 
@@ -299,11 +272,12 @@ function checkthispic(id){
               layer.closeAll('loading'); //关闭loading
             ajaxup(i,res.picname,act = 3,"图片"+cid+"");
             layer.msg(res.sinfo);
-            history.go(0);
+              layer.closeAll('loading'); //关闭loading
           }
           if(res.code == -1){
               layer.closeAll('loading'); //关闭loading
-            layer.msg(res.msg);
+             layer.msg(res.msg);
+              layer.closeAll('loading'); //关闭loading
           }
         }
         ,error: function(){
@@ -341,7 +315,7 @@ function checkthispic(id){
             ajaxup(i,$(this).val(),act = 2);
             speed[i] = $(this).val();
         }
-    })
+    });
 
 
 
@@ -353,7 +327,7 @@ function checkthispic(id){
             ajaxup(i,$(this).val(),act = 4,"图片"+cid+"");
             picx[i] = $(this).val();
         }
-    })
+    });
 
 
      //allpic
@@ -414,11 +388,10 @@ function checkthispic(id){
 
 
 
-      //fontstyle
+    //fontstyle
    fontstyle[i] = $(".fontstyle"+i+"").val();
     $(".fontstyle"+i+"").change(function () {
         if($(this).val() != fontstyle[i]){
-            console.log($(this).val())
             ajaxup(i,$(this).val(),act = 6,"文字");
             fontstyle[i] = $(this).val();
         }
@@ -435,7 +408,7 @@ function checkthispic(id){
     //fontx
     fontx[i] = $(".fontx"+i+"").val();
     $(".fontx"+i+"").blur(function () {
-        //更改内容
+        //更改内容 x值
         if($(this).val() != fontx[i]){
             ajaxup(i,$(this).val(),act = 8,"文字");
             fontx[i] = $(this).val();

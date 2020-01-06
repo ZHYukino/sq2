@@ -1,4 +1,34 @@
 
+var cmsbtn = "\n"+
+    " <button id=\"cms_upload\" type=\"button\" class=\"layui-btn layui-btn-normal\">播放发送</button>\n" +
+    " <button id=\"cms_down\" type=\"button\" class=\"layui-btn layui-btn-normal\">播放获取</button>\n" +
+    " <button id=\"cms_getlight\" type=\"button\"  onclick=\"cms_getligth()\" class=\"layui-btn layui-btn-primary\">获取亮度</button>\n" +
+    " <button id=\"cms_setlight\" type=\"button\"  onclick=\"cms_setligth()\" class=\"layui-btn layui-btn-primary\" style='margin-right: 10px'>设置亮度</button>\n" +
+    " <div class=\"layui-input-inline\">\n" +
+    " <input type=\"number\" name=\"phone\"  id=\"cmslight\" value=\"0\"   lay-verify=\"required|phone\" autocomplete=\"off\" class=\"layui-input\" style=\"width: 80px; height: 26px;background: #d0c0cf\">\n" +
+    " <input type=\"radio\" name=\"cmsauto\" value=\"0\" title=\"自动\" checked>自动\n" +
+    " <input type=\"radio\" name=\"cmsauto\" value=\"1\" title=\"手动\">手动\n" +
+    " <button id=\"cms_setlight\" type=\"button\" style='position:absolute ;top:3px;margin-left:95px'   class=\"layui-btn layui-btn-primary\">全选中</button>\n" +
+    " <button id=\"cms_setlight\" type=\"button\" style='position:absolute ;top:3px;margin-left:185px'   class=\"layui-btn layui-btn-primary\">保存</button>\n" +
+    "</div>";
+$(".layui-upload").append(cmsbtn);
+var allplanselect = " <button class=\"layui-btn layui-btn-primary\" style='margin-left: 175px;position:absolute;top: 3px;opacity: 1'><nav>\n" +
+    "            <ul class=\"content clearfix\">\n" +
+    "                <li class=\"dropdown\">\n" +
+    "                    <a href=\"#\" style=\" text-decoration:none\">方案控制</a>\n" +
+    "                    <ul id=\"select_sub\" class=\"sub-menu\" style='margin-left:-20px'>\n" +
+    "                        <li class=\"dropdown\"><a href=\"#\" >选择</a> <ul id=\"del_sub\" class=\"sub-menu\"><li><a href=\"#\" onclick=\"alert(123)\">方案3</a></li><li><a href=\"#\">方案1</a></li><li><a href=\"#\">方案2</a></li></ul></li>\n" +
+    "                        <li class=\"dropdown\">\n" +
+    "                            <a href=\"#\">删除</a>\n" +
+    "                            <ul id=\"del_sub\" class=\"sub-menu\">\n" +
+    "                            <li><a href=\"#\" onclick=\"alert(123)\">方案3</a></li><li><a href=\"#\">方案1</a></li><li><a href=\"#\">方案2</a></li></ul>\n" +
+    "                        </li>\n" +
+    "                    </ul>\n" +
+    "                </li>\n" +
+    "            </ul></nav></button>";
+$(".layui-upload").append(allplanselect);
+$("#cmsshowlist").text("播放列表");
+
 //播放获取
 function cms_downs() {
     
@@ -17,6 +47,7 @@ function cms_getligth(){
             }else{
                 layer.msg(res.sinfo,{icon:1,time:1000});
                 $("#cmslight").val(res.ivalue);
+                $("input[name='cmsauto'][value="+res.ivalueauto+"]").attr("check",true);
             }
         }
     })

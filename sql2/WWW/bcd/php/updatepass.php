@@ -1,4 +1,5 @@
 <?php
+    //  修改密码
     require_once ("common.php");
     session_start();
     if(isset($_SESSION["uid"])){

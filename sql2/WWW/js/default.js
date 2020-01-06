@@ -64,7 +64,7 @@ function roadpara(){
                 for(var i= 0;i<res.count;i++){
                     var typeid = res.data[i].iid;
                     var usehead = "<li class=\"layui-nav-item\"   id=\"dev-nav-"+typeid+"\">";
-                    usehead += "<a style=\"cursor:pointer;\"  onclick=\"devclick("+typeid+")\" id=\"dev_iphone"+i+"\" ><img  id=\"typeimg"+typeid+"\" src=\""+devpic[i].pic+"\"  style=\"width:25px;height:25px;\"   \"></a>";
+                    usehead += "<a style=\"cursor:pointer;\"  onclick=\"devclick("+typeid+")\" id=\"dev_iphone"+i+"\" ><img  id=\"typeimg"+typeid+"\" src=\""+devpic[i].pic+"\"  style=\"width:25px;height:25px;padding: 7.5px\"   \"></a>";
                     // $("#dev-nav-"+i+"").html(usehead);
                     usehead += "</li>";
                     $("#usetitlebtn").append(usehead);
@@ -81,6 +81,7 @@ function devclick(num){
             //获得当前元素的宽度并*2
             width:25,
             height:25,
+            padding:7.5
         },200);
         // $("#typeimg"+num+"").css("height","30px");
         $("."+num+"").hide();
@@ -90,6 +91,7 @@ function devclick(num){
             //获得当前元素的宽度并*2
             width:40,
             height:40,
+            padding:0
         },200);
         // $("#typeimg"+num+"").css("height","50px");
         $("."+num+"").show();
@@ -115,10 +117,12 @@ function recheck(checkini) {
         if(checkini[key] ==  1){
             $("#typeimg"+key+"").css("width","40px");
             $("#typeimg"+key+"").css("height","40px");
+            $("#typeimg"+key+"").css("padding","0px");
             $("."+key+"").show();
         }else if(checkini[key] ==  0){
             $("#typeimg"+key+"").css("width","25px");
             $("#typeimg"+key+"").css("height","25px");
+            $("#typeimg"+key+"").css("padding","7.5px");
             $("."+key+"").hide();
         }
     }

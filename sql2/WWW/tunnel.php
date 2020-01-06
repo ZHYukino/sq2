@@ -89,7 +89,8 @@ if(!isset($_SESSION['uid'])){
             <li class="layui-nav-item" >
                 <a style="cursor:pointer;text-decoration: none;" >照明模式<span id="control_led_value" class="layui-badge" style="position:relative;">手动</span></a>
                 <dl  class="layui-nav-child">
-                    <dd><a  style="cursor:pointer;text-decoration: none;color: red;"  id="control_led_parameter">照明控制参数</a></dd>
+                    <dd><a style="cursor:pointer;text-decoration: none;" id="control_led_parameter">照明控制参数</a></dd>
+                    <hr>
                     <dd><a  style="cursor:pointer;text-decoration: none;"  id="control_LED_select0">照明手动控制</a></dd>
                     <dd><a  style="cursor:pointer;text-decoration: none;"  id="control_LED_select1">照明环境控制</a></dd>
                     <dd><a  style="cursor:pointer;text-decoration: none;"  id="control_LED_select2">照明时序控制</a></dd>
@@ -98,7 +99,8 @@ if(!isset($_SESSION['uid'])){
             <li class="layui-nav-item">
                 <a style="cursor:pointer;text-decoration: none;" >风机模式<span id="control_fan_value" class="layui-badge" style="position:relative;">手动</span></a>
                 <dl  class="layui-nav-child">
-                    <dd><a  style="cursor:pointer;text-decoration: none;color: red;"  id="control_fan_parameter">风机控制参数</a></dd>
+                    <dd><a  style="cursor:pointer;text-decoration: none;"  id="control_fan_parameter">风机控制参数</a></dd>
+                    <hr>
                     <dd><a  style="cursor:pointer;text-decoration: none;"  id="control_FAN_select0">风机手动控制</a></dd>
                     <dd><a  style="cursor:pointer;text-decoration: none;"  id="control_FAN_select1">风机环境控制</a></dd>
                     <dd><a  style="cursor:pointer;text-decoration: none;"  id="control_FAN_select2">风机时序控制</a></dd>
@@ -108,8 +110,8 @@ if(!isset($_SESSION['uid'])){
         <ul class="layui-nav layui-layout-left"  style="margin-left:110px;">
             <li style="margin-top: 23px;margin-left: 20px"  ><a  id="controltitle1" class="layui-icon layui-icon-left"  onclick="leftusetitle(1)" style=" text-decoration:none;cursor:pointer;font-size: 30px; color: white;display: none"></a></li>
         </ul>
-        <div class="layui-nav layui-layout-left"   style="overflow: hidden;margin-left:200px;width: 760px;padding: 0px">
-            <ul id="usedaotasdesd" style="width: 760px">
+        <div class="layui-nav layui-layout-left"   style="overflow: hidden;margin-left:200px;width: 750px;padding: 0px">
+            <ul id="usedaotasdesd" style="width: 750px">
                 <li class="layui-nav-item"   id="dev-nav-1"></li>
                 <li class="layui-nav-item"   id="dev-nav-2"></li>
                 <li class="layui-nav-item"   id="dev-nav-4"></li>

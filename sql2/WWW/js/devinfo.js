@@ -13,6 +13,7 @@ function titleclickcheckbox(data) {
                     //获得当前元素的宽度并*2
                     width:25,
                     height:25,
+					padding:7.5
                 },200);
                 saveCheckbox(key);
             }else{
@@ -22,6 +23,7 @@ function titleclickcheckbox(data) {
                     //获得当前元素的宽度并*2
                     width:40,
                     height:40,
+                    padding:0
                 },200);
                 saveCheckbox(key);
 			}

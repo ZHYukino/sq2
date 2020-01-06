@@ -1,14 +1,11 @@
 #tree{
 	color:red;
-	background:; 
 	margin-top: 5px;
-	height:430px;
-	width:230px;
+	width: 330px;height: 600px
 	}
 #dev_cms_run{
     	color: blue;
     	margin-left: 350px;
-    	background:;
    	 width: 1150px;
    	 height: 560px;
    	 margin-top: 10px;
@@ -17,8 +14,12 @@
 	padding:14px;
 	
 }
+#dev_cms_run div{
+	width: 500px;
+	height: 100px;
+}
 #cmsshowlist{
-	
+	margin-bottom: 10px;
     	margin-top: 10px;
    	 margin-left: 10px;
 }
@@ -50,7 +51,20 @@ div#rMenu ul li {
 	padding:2px 0;
 }
 div#cms_bigdiv{
-	margin-top: 200px;
-	margin-left: 0px;
 	position: absolute;
+	margin-top: 150px;
+}
+#rMenu{
+	position: absolute;
+}
+#allpicture{
+	display: none;
+	margin: 30px
+}
+#devcms_show_upload{
+	width: 1500px;
+	height: 38px
+}
+#cms_one{
+	position:absolute;top:10px;margin: 10px 10px;
 }
