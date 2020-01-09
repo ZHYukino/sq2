@@ -1,7 +1,5 @@
 
 
-
-
 function trees(id,dev){
 var countryTree = (function(countryTree) {
     var tree = {
@@ -19,13 +17,18 @@ var countryTree = (function(countryTree) {
             callback: {
                beforeClick: function(event, treeId, treeNode) {
                    if(treeId.pid == 1){
-                        getcmsshow(id,(treeId.id-1));
+                       if(window.location.pathname == "/cms.php"){
+                           getcmsshow(id,(treeId.id-1));
+                       }else {
+                           gettcmsshow(id,(treeId.id-1));
+                       }
                          
                    }else if(treeId.pid >= 2 ){
-                        
-                        getcmsshow(id,(treeId.pid-1),treeId.name);
-                        
-                       
+                       if(window.location.pathname == "/cms.php") {
+                           getcmsshow(id, (treeId.pid - 1), treeId.name);
+                       }else {
+                           gettcmsshow(id, (treeId.pid - 1), treeId.name);
+                       }
                    }
                 },
                 rightClick: function(event, treeId, treeNode) {

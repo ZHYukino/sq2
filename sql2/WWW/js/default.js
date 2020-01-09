@@ -230,11 +230,10 @@ function opencmsplay(id,type){
                     ,title: '门架势情报版'+id.replace("10000",'')+''
                     ,area: ['1300px', '670px']
                     ,shade: 0
-                    ,maxmin: true
+                    // ,maxmin: true
                     , id: 'LAY_LSTSdbclick_cms' //防止重复弹出
                     ,content: 'cms.php?cms='+id+''
                     // , content: 'html内容'
-                    ,btn: ['关闭'] //只是为了演示
                     ,yes: function(index, layero){
                         layer.close(index);
                     }
@@ -243,6 +242,8 @@ function opencmsplay(id,type){
                         layer.full(index);
                     }
                 });
+                let div = document.getElementById('LAY_LSTSdbclick_cms');
+                div.scrollTop = div.scrollHeight
             }
             $("#" + id.replace("10000","") + "").on('dblclick', function () {
                 opencmswindow()
@@ -257,11 +258,10 @@ function opencmsplay(id,type){
                     ,title: '限速'+id.replace("10000",'')+''
                     ,area: ['1300px', '670px']
                     ,shade: 0
-                    ,maxmin: true
+                    // ,maxmin: true
                     , id: 'LAY_LSTSdbclick_tcms' //防止重复弹出
                     ,content: 'tcms.php?tcms='+id+''
                     // , content: 'html内容'
-                    ,btn: ['关闭'] //只是为了演示
                     ,yes: function(index, layero){
                         layer.close(index);
                     }

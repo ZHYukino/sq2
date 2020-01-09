@@ -1325,9 +1325,11 @@ function rightMenuAjax(classname,id,state,act){
 				var changetype;
 				var cname;
 				var tip;
+				var devtype;
 				switch(classname){
 					case "TS":
 						changetype="信息灯控制";
+                        devtype = 1;
 						cname=arr_TS[tno][13];
 						switch(act){
 							case "TS_red":
@@ -1357,6 +1359,7 @@ function rightMenuAjax(classname,id,state,act){
 						}
 						break;
 					case "LED":
+                        devtype = 6;
 						changetype="照明控制";
 						cname=arr_LED[tno][13];
 						switch(act){
@@ -1370,6 +1373,7 @@ function rightMenuAjax(classname,id,state,act){
 						break;
 					case "FAN":
 						changetype="风机控制";
+                        devtype = 8;
 						cname=arr_FAN[tno][13];
 						switch(act){
 							case "FAN_stop":
@@ -1384,7 +1388,8 @@ function rightMenuAjax(classname,id,state,act){
 						}
 						break;
 					case "DOOR":
-						changetype="防火门控制";
+                        devtype = 16;
+						changetype="车横";
 						cname=arr_DOOR[tno][13];
 						switch(act){
 							case "DOOR_up":
@@ -1396,7 +1401,8 @@ function rightMenuAjax(classname,id,state,act){
 						}
 						break;
 					case "DOOREx":
-						changetype="卷帘门控制";
+                        devtype = 0;
+						changetype="防火门";
 						cname=arr_DOOREx[tno][13];
 						switch(act){
 							case "DOOREx_up":
@@ -1412,6 +1418,7 @@ function rightMenuAjax(classname,id,state,act){
 						break;
 					case "LS":
 						changetype="信息灯控制";
+                        devtype = 2;
 						cname=arr_LS[tno][13];
 						switch(act){
 							case "LS_stop":
@@ -1442,7 +1449,7 @@ function rightMenuAjax(classname,id,state,act){
 				tip=encodeURIComponent(tip);
 				$.ajax({
 						type: "GET",
-						url : "bcd/php/setvalue.php?itype=1&id="+ id +"&state="+ state +"&changetype="+ changetype +"&cname="+ cname +"&tip="+ tip +"&dc=" + new Date().getTime() + "",
+						url : "bcd/php/setvalue.php?itype=1&devtype="+devtype+"&tunnel="+tunnelnum+"&id="+ id +"&fvalue="+ state +"&changetype="+ changetype +"&cname="+ cname +"&tip="+ tip +"&dc=" + new Date().getTime() + "",
 						//data:{},
 						dataType: "json",
 						success: function(mydata){

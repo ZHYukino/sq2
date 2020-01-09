@@ -1,4 +1,6 @@
 
+
+
 var cmsbtn = "\n"+
     " <button id=\"cms_upload\" type=\"button\" class=\"layui-btn layui-btn-normal\">播放发送</button>\n" +
     " <button id=\"cms_down\" type=\"button\" class=\"layui-btn layui-btn-normal\">播放获取</button>\n" +
@@ -16,7 +18,7 @@ var allplanselect = " <button class=\"layui-btn layui-btn-primary\" style='margi
     "            <ul class=\"content clearfix\">\n" +
     "                <li class=\"dropdown\">\n" +
     "                    <a href=\"#\" style=\" text-decoration:none\">方案控制</a>\n" +
-    "                    <ul id=\"select_sub\" class=\"sub-menu\" style='margin-left:-20px'>\n" +
+    "                    <ul id=\"select_sub\" class=\"sub-menu\" style='margin-left:-20px;z-index:20'>\n" +
     "                        <li class=\"dropdown\"><a href=\"#\" >选择</a> <ul id=\"del_sub\" class=\"sub-menu\"><li><a href=\"#\" onclick=\"alert(123)\">方案3</a></li><li><a href=\"#\">方案1</a></li><li><a href=\"#\">方案2</a></li></ul></li>\n" +
     "                        <li class=\"dropdown\">\n" +
     "                            <a href=\"#\">删除</a>\n" +
@@ -33,6 +35,22 @@ $("#cmsshowlist").text("播放列表");
 function cms_downs() {
     
 }
+
+//上传情报板
+$("#cms_upload").click(function(){
+    $.ajax({
+        type: "GET",
+        url: "bcd/php/setcms.php?itype=5&id="+id+"",
+        dataType: "json",
+        success:function (res) {
+            if(res.iresult == 1){
+                layer.msg(res.sinfo);
+            }else{
+                layer.msg(res.sinfo);
+            }
+        }
+    })
+})
 
 
 //获取cms亮度
@@ -174,11 +192,12 @@ function gettcmsshow(id,type=0,cid) {
         async: false,
         success:function (res) {
            window.rescount = res.count;
-            // cmssetdota(id,res,res.count,type,cid);
             tcmsdota(id,res,res.count,type,cid)
         }
     })
 }
+
+interval = new Array();
 
 //门架播放版
 function cmssetdota(id,resdata,playnum,type,cid=null) {
@@ -188,23 +207,25 @@ function cmssetdota(id,resdata,playnum,type,cid=null) {
     var content = new Array();
     var font_style = new Array();
     var font_color = new Array();
+    var back_color = new Array();
     var font_size = new Array();
     var speed = new Array();
     var idping = new Array();
     var classping = new Array();
     var pontx = new Array();
+    var ponty = new Array();
     var img = new Array();
     var picx = new Array();
+    var picy = new Array();
     var stoptime = new Array();
     var showcontent = new Array();
     var showimg = new Array();
     var uppicpath = new Array();
     var uppicx = new Array();
-    var  picxlabel = new Array();
+    var uppicy = new Array();
+    var picxlabel = new Array();
     var selectstr = new Array();
     var selectsize = new Array();
-    var selectcolor = new Array();
-    var fontsize = new Array("15","25","30");
 
     var fontstyle = new Array();
         fontstyle[0] = "SimHei";                 //黑体
@@ -220,31 +241,35 @@ function cmssetdota(id,resdata,playnum,type,cid=null) {
         content[i] =  resdata.data[i].content ;
         font_style[i] =  resdata.data[i].font_style ;
         font_color[i] =  resdata.data[i].font_color ;
+        back_color[i] =  resdata.data[i].back_color ;
         font_size[i] =  resdata.data[i].size ;
         speed[i] = resdata.data[i].speed*1;
         img[i] = "";
         pontx[i] = resdata.data[i].fontx*1;
+        ponty[i] = resdata.data[i].fonty*1;
         stoptime[i] = resdata.data[i].stoptime;
 
         //多张图片循环
         for(var z = 0;z<resdata.data[i].picpath.length; z++){
 
             //播放动画的图片
-            img[i] += "<img src=\""+resdata.data[i].picpath[z]+"\";    style=\"margin-left:"+resdata.data[i].picx[z]+"px;position:absolute;\">"
+            img[i] += "<img src=\""+resdata.data[i].picpath[z]+"\";    style=\"z-index:5;margin-left:"+resdata.data[i].picx[z]+"px;margin-top:"+resdata.data[i].picy[z]+"px;position:absolute;\">"
             //静止可选择的图片
             uppicpath[z] = resdata.data[i].uppicpath[z];
             uppicx[z] =  resdata.data[i].picx[z];
-            showimg[z] = "<img src=\""+resdata.data[i].picpath[z]+"\";    style=\"margin-left:"+resdata.data[i].picx[z]+"px;position:absolute;\">"
+            uppicy[z] =  resdata.data[i].picy[z];
+            showimg[z] = "<img src=\""+resdata.data[i].picpath[z]+"\";    style=\"z-index:5;margin-left:"+resdata.data[i].picx[z]+"px;margin-top:"+resdata.data[i].picy[z]+"px;position:absolute;\">"
             //图片位置
             picx[i] = resdata.data[i].picx[0];
+            picy[i] = resdata.data[i].picy[0];
         }
 
-        idping[i] = "<div id=\""+id+"affiche_text"+i+"\"  ;  style='position: absolute;display:none; height:32;width:320px' >"+img[i]+"<span  id=\""+id+"test_content"+i+"\"  style=\" position:absolute ;margin-left:"+resdata.data[i].fontx+"px;font-size:" + font_size[i] + "px;color:"+font_color[i]+";margin-top:2px;width:280px;font-family:"+font_style[i]+";line-height:" + font_size[i] + "px;\">"+content[i]+"</span></div>"
+        idping[i] = "<div id=\""+id+"affiche_text"+i+"\"  ;  style='position: absolute;display:none; height:32;width:320px' >"+img[i]+"<span  id=\""+id+"test_content"+i+"\"  style=\"background-color:"+back_color[i]+"; position:absolute ;margin-left:"+resdata.data[i].fontx+"px; margin-top:"+resdata.data[i].fonty+"px;font-size:" + font_size[i] + "px;color:"+font_color[i]+";font-family:"+font_style[i]+";line-height:" + font_size[i] + "px;\">"+content[i]+"</span></div>"
         
         
        
         //判断是否是图片还是文字还是 父节点
-        showcontent = "<span  class=\""+id+"test_content"+i+"\"  style=\"position:absolute ;margin-left:"+resdata.data[i].fontx+"px;font-size:" + font_size[i] + "px;color:"+font_color[i]+";margin-top:2px;width:280px;font-family:"+font_style[i]+";line-height:" + font_size[i] + "px;\">"+content[i]+"</span>";
+        showcontent = "<span  class=\""+id+"test_content"+i+"\"  style=\"background-color:"+back_color[i]+";position:absolute ;margin-left:"+resdata.data[i].fontx+"px;margin-top:"+resdata.data[i].fonty+"px;font-size:" + font_size[i] + "px;color:"+font_color[i]+";font-family:"+font_style[i]+";line-height:" + font_size[i] + "px;\">"+content[i]+"</span>";
        
         if(cid != null &&  cid.indexOf("图片") != -1){
             //去除文字
@@ -253,7 +278,7 @@ function cmssetdota(id,resdata,playnum,type,cid=null) {
             var reg=/[\u4E00-\u9FA5]/g;
             var cidnum=cid.replace(reg,'');
             if(!isNaN(cidnum * 1)){
-                 picxlabel[i] = "<tr><th>名称</th><th>信息</th></tr><tr><td>X坐标</td><td><input type='text' value=\""+uppicx[cidnum-1]+"\"  maxlength=\"3\" class=\"picx"+i+"\"></td></tr><tr><td>当前图片</td><td>"+ uppicpath[cidnum-1] +"<button id=\"selectpic"+i+"\"  style='margin-left: 35px' class=\"layui-btn layui-btn-xs\">更改图片</button></td></tr><tr><td>上传并且更改图片</td><td><button type=\"button\"class=\"layui-btn-sm layui-btn-primary\" id=\"filepic"+i+"\">上传图片</button></td></tr>"
+                 picxlabel[i] = "<tr><th>名称</th><th>信息</th></tr><tr><td>X坐标</td><td><input type='text' value=\""+uppicx[cidnum-1]+"\"  maxlength=\"3\" class=\"picx"+i+"\"></td></tr><tr><td>Y坐标</td><td><input type='text' value=\""+uppicy[cidnum-1]+"\"  maxlength=\"3\" class=\"picy"+i+"\"></td></tr><tr><td>当前图片</td><td>"+ uppicpath[cidnum-1] +"<button id=\"selectpic"+i+"\"  style='margin-left: 35px' class=\"layui-btn layui-btn-xs\">更改图片</button></td></tr><tr><td>上传并且更改图片</td><td><button type=\"button\"class=\"layui-btn-sm layui-btn-primary\" id=\"filepic"+i+"\">上传图片</button></td></tr>"
                 img[i] = showimg[cidnum-1];
             }
         }else if(cid != null && cid == "文字"){
@@ -266,30 +291,12 @@ function cmssetdota(id,resdata,playnum,type,cid=null) {
                 }else{
                     selectstr[i] += "<option value=\""+element+"\" >"+chinse[index]+"</option>";
                  }
-            })
+            });
             selectstr[i] += "</select>";
-            //字体大小
-            selectsize[i] = '<select class=\"fontsize'+i+'\" >';
-            fontsize.forEach(function(element,index,arr){
-                if(font_size[i] == element ){
-                    selectsize[i] += "<option value=\""+element+"\"  selected >"+element+"</option>";
-                }else{
-                    selectsize[i] += "<option value=\""+element+"\" >"+element+"</option>";
-                  }
-            })
             selectsize[i] += "</select>";
-            //字体颜色
-            selectcolor[i] = '<select class=\"fontcolor'+i+'\" >';
-            fontcolor.forEach(function(element,index,arr){
-                if(font_color[i] == element ){
-                    selectcolor[i] += "<option value=\""+element+"\"  selected >"+element+"</option>";
-                }else{
-                   selectcolor[i] += "<option value=\""+element+"\" >"+element+"</option>";
-                }
-            })
-            selectcolor[i] += "</select>";
-
-            picxlabel[i] = "<tr><th>名称</th><th>信息</th></tr><tr><td>X坐标</td><td><input type='text' value=\""+pontx[i]+"\"  maxlength=\"3\" class=\"fontx"+i+"\"></td></tr><tr><td>字体颜色</td><td>"+  selectcolor[i] +"</td></tr><tr><td>字体</td><td>"+  selectstr[i] +"</td></tr><tr><td>字体大小</td><td>"+ selectsize[i] +"</td></tr><tr><td>字符</td><td><textarea style='width:250px;height:60px'   class=\"content"+i+"\";>"+content[i]+"</textarea></td></tr>"
+            //g,表示全部替换。
+            var brreg = new RegExp("<br>","g");
+            picxlabel[i] = "<tr><th>名称</th><th>信息</th></tr><tr><td>X坐标</td><td><input type='text' value=\""+pontx[i]+"\"  maxlength=\"3\" class=\"fontx"+i+"\"></td></tr><tr><td>Y坐标</td><td><input type='text' value=\""+ponty[i]+"\"  maxlength=\"3\" class=\"fonty"+i+"\"></td></tr><tr><td>字体颜色</td><td><div   class=\"fontcolor"+i+"\"></div></td></tr><tr><td>背景颜色</td><td><div   class=\"backcolor"+i+"\"></div></td></tr><tr><td>字体</td><td>"+  selectstr[i] +"</td></tr><tr><td>字体大小</td><td><input type='text' value=\""+font_size[i]+"\"  maxlength=\"2\" class=\"fontsize"+i+"\"></td></tr><tr><td>文字</td><td><textarea style='width:250px;height:60px'   class=\"content"+i+"\";>"+content[i].replace(brreg,"\r")+"</textarea></td></tr>"
         }else if(cid == null ){
             //出场顺序
             selectstr[i] = '<select class=\"check'+i+'\" >';
@@ -321,7 +328,7 @@ function cmssetdota(id,resdata,playnum,type,cid=null) {
         $("#updatecms").children().remove();
         $("#updatecms").append(picxlabel[type-1]);
         //type-1   为动作  ，cidnum 为图片 1或者2   
-        updatecmsini(type-1,cidnum);
+        updatecmsini(type-1,cidnum,font_color[type-1], back_color[type-1]);
         return false;
     }
     $("."+id+"affiche").append(classping[0]);
@@ -363,13 +370,13 @@ function cmssetdota(id,resdata,playnum,type,cid=null) {
                 $("#" + id + "affiche_text" + playes + "").hide();
                 $("#" + id + "affiche_text" + x + "").show();
                 if (arr_check[x] == 5 && iwidth[x] == 0) {
-                    clearInterval(interval);
+                    clearInterval(interval[id]);
                     setTimeout(statecms, stoptime[x]);
                 }
                 iwidth[x] -= speed[x];
                 if (iwidth[x] <= 0 && iwidth[x] > 0 - speed[x] && stoptime[x] != 0 && arr_check[x] != 5) {
                     //清除
-                    clearInterval(interval);
+                    clearInterval(interval[id]);
                     //延迟执行
                     setTimeout(statecms, stoptime[x]);
                 }
@@ -399,10 +406,10 @@ function cmssetdota(id,resdata,playnum,type,cid=null) {
             $("#"+id+"affiche_text"+x+"").css(''+placese[x]+'',''+left[x] + 'px');
         }
      }
-    var interval = window.setInterval (cmsstate,50);
+     interval[id] = window.setInterval (cmsstate,50);
     
     function statecms(){
-         interval = window.setInterval (cmsstate,50);
+         interval[id] = window.setInterval (cmsstate,50);
     }
      
 }
@@ -422,11 +429,13 @@ function tcmsdota(id,resdata,playnum,type,cid=null){
     var pontx = new Array();
     var img = new Array();
     var picx = new Array();
+    var picy = new Array();
     var stoptime = new Array();
     var showcontent = new Array();
     var showimg = new Array();
     var uppicpath = new Array();
     var uppicx = new Array();
+    var uppicy = new Array();
     var  picxlabel = new Array();
     var selectstr = new Array();
     var selectsize = new Array();
@@ -457,13 +466,15 @@ function tcmsdota(id,resdata,playnum,type,cid=null){
         for(var z = 0;z<resdata.data[i].picpath.length; z++){
 
             //播放动画的图片
-            img[i] += "<img src=\""+resdata.data[i].picpath[z]+"\";    style=\"margin-left:"+resdata.data[i].picx[z]+"px;position:absolute;height:48;width:48px;\">"
+            img[i] += "<img src=\""+resdata.data[i].picpath[z]+"\";    style=\"margin-left:"+resdata.data[i].picx[z]+"px;margin-top:"+resdata.data[i].picy[z]+"px;position:absolute;height:48;width:48px;\">"
             //静止可选择的图片
             uppicpath[z] = resdata.data[i].uppicpath[z];
             uppicx[z] =  resdata.data[i].picx[z];
-            showimg[z] = "<img src=\""+resdata.data[i].picpath[z]+"\";    style=\"margin-left:"+resdata.data[i].picx[z]+"px;position:absolute;height:48;width:48px;\">"
+            uppicy[z] =  resdata.data[i].picy[z];
+            showimg[z] = "<img src=\""+resdata.data[i].picpath[z]+"\";    style=\"margin-left:"+resdata.data[i].picx[z]+"px;margin-top:"+resdata.data[i].picy[z]+"px;position:absolute;height:48;width:48px;\">"
             //图片位置
             picx[i] = resdata.data[i].picx[0];
+            picy[i] = resdata.data[i].picy[0];
         }
 
         idping[i] = "<div id=\""+id+"affiche_text"+i+"\"  ;  style='position: absolute;display:none; height:48;width:48px' >"+img[i]+"</div>"
@@ -480,7 +491,7 @@ function tcmsdota(id,resdata,playnum,type,cid=null){
             var reg=/[\u4E00-\u9FA5]/g;
             var cidnum=cid.replace(reg,'');
             if(!isNaN(cidnum * 1)){
-                 picxlabel[i] = "<tr><th>名称</th><th>信息</th></tr><tr><td>X坐标</td><td><input type='text' value=\""+uppicx[cidnum-1]+"\"  maxlength=\"3\" class=\"picx"+i+"\"></td></tr><tr><td>当前图片</td><td>"+ uppicpath[cidnum-1] +"<button id=\"selectpic"+i+"\"  style='margin-left: 35px' class=\"layui-btn layui-btn-xs\">更改图片</button></td></tr><tr><td>上传并且更改图片</td><td><button type=\"button\"class=\"layui-btn-sm layui-btn-primary\" id=\"filepic"+i+"\">上传图片</button></td></tr>"
+                 picxlabel[i] = "<tr><th>名称</th><th>信息</th></tr><tr><td>X坐标</td><td><input type='text' value=\""+uppicx[cidnum-1]+"\"  maxlength=\"3\" class=\"picx"+i+"\"></td></tr><tr><td>Y坐标</td><td><input type='text' value=\""+uppicy[cidnum-1]+"\"  maxlength=\"3\" class=\"picy"+i+"\"></td></tr><tr><td>当前图片</td><td>"+ uppicpath[cidnum-1] +"<button id=\"selectpic"+i+"\"  style='margin-left: 35px' class=\"layui-btn layui-btn-xs\">更改图片</button></td></tr><tr><td>上传并且更改图片</td><td><button type=\"button\"class=\"layui-btn-sm layui-btn-primary\" id=\"filepic"+i+"\">上传图片</button></td></tr>"
                 img[i] = showimg[cidnum-1];
             }
         }else if(cid != null && cid == "文字"){
@@ -588,13 +599,13 @@ function tcmsdota(id,resdata,playnum,type,cid=null){
                 $("#" + id + "affiche_text" + playes + "").hide();
                 $("#" + id + "affiche_text" + x + "").show();
                 if (arr_check[x] == 5 && iwidth[x] == 0) {
-                    clearInterval(interval);
+                    clearInterval(interval[id]);
                     setTimeout(statecms, stoptime[x]);
                 }
                 iwidth[x] -= speed[x];
                 if (iwidth[x] <= 0 && iwidth[x] > 0 - speed[x] && stoptime[x] != 0 && arr_check[x] != 5) {
                     //清除
-                    clearInterval(interval);
+                    clearInterval(interval[id]);
                     //延迟执行
                     setTimeout(statecms, stoptime[x]);
                 }
@@ -625,10 +636,10 @@ function tcmsdota(id,resdata,playnum,type,cid=null){
         }
     }
    
-    var interval = window.setInterval (tcmsstate,50);
+     interval[id] = window.setInterval (tcmsstate,50);
     
     function statecms(){
-         interval = window.setInterval (tcmsstate,50);
+         interval[id] = window.setInterval (tcmsstate,50);
     }
 }
 

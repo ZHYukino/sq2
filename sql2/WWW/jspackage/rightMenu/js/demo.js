@@ -47,41 +47,30 @@ var countryTree = (function(countryTree) {
             }
         },
         loadTree: function() { //加载树
-            var nodes;
-            $.ajax({
-                url:"../../bcd/php/setcms.php?itype=2&id=100002",
-                type:"get",
-                dataType:"json",
-                async:false,
-                data:"" ,
-                success:function (res) {
-                    nodes=res;
-                }
-            });
-            // var nodes = [{
-            //     id: 1,
-            //     pid: 0,
-            //     name: "中国",
-            //     open: true
-            // }, {
-            //     id: 11,
-            //     pid: 1,
-            //     name: "北京",
-            //     isParent: true
-            // }, {
-            //     id: 111,
-            //     pid: 11,
-            //     name: "海淀"
-            // }, {
-            //     id: 12,
-            //     pid: 1,
-            //     name: "河南"
-            // }, {
-            //     id: 121,
-            //     pid: 12,
-            //     name: "郑州",
-            //     isParent: true
-            // }];
+            var nodes = [{
+                id: 1,
+                pid: 0,
+                name: "中国",
+                open: true
+            }, {
+                id: 11,
+                pid: 1,
+                name: "北京",
+                isParent: true
+            }, {
+                id: 111,
+                pid: 11,
+                name: "海淀"
+            }, {
+                id: 12,
+                pid: 1,
+                name: "河南"
+            }, {
+                id: 121,
+                pid: 12,
+                name: "郑州",
+                isParent: true
+            }];
             tree.zTree = $("#tree").zTree(tree.setting, nodes);
         },
         showRightMenu: function(postionJson) {

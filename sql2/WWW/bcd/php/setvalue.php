@@ -3,33 +3,39 @@
     session_start();
     $result = array("result" => 0,"msg"=>"");
     if(isset($_SESSION["uid"])){
-       $itype = $_GET["itype"];
-       $state = $_GET["state"];
+       $value = $_GET["fvalue"];
+       $devtype = $_GET["devtype"];
        $id = $_GET["id"];
-        $id = str_replace("10000","",$id);
-       $tip = $_GET["tip"];
+       $id = str_replace("10000","",$id);
+       $tunnel = $_GET["tunnel"] - 1;
        $changetype = $_GET["changetype"];
        $cname = $_GET["cname"];
-       if($itype == 1 && !empty($state) && !empty($id) ){
-
-           $query3 = "select FTypeID from PLCDevInfo where FID = '".$id."'";
-           $sqldata = sqlsrv_query($conn,$query3,array(),array("Scrollable"=>"static"));
-           if($sqldata) {
-               while ($row = sqlsrv_fetch_array($sqldata)) {
-                   $typeid = $row["FTypeID"];
-               }
+       if($itype == 1 && !empty($value) && !empty($id) ){
+           $userid = $_SESSION["uid"];
+           $marknum = time().round(0,9);
+           $path = "PLCDevControl";
+           $sign = "FID=".$id."&FUserID=".$userid."&FMark=".$marknum ."&FIndex=".$tunnel."&FValue=".$value."&FTypeID=".$devtype."";
+           $light = CurlCalss::curl(6,$sign,$path);
+           $newdata =  json_decode($light,true);
+           if($newdata["iresult"] === 1){
+                $data = array(
+                    "msg"=>"发送成功",
+                    "data"=>$marknum,
+                    "code"=>"",
+                    "time"=>""
+                );
+           }else{
+               $data = array(
+                   "msg"=>"发送失败",
+                   "data"=>$marknum,
+                   "code"=>-1,
+               );
            }
-           $query  = "update PLCDevState set FState='".$state."',FDT=GETDATE() where FPLCDevID='".$id."' ";
-           $sql = sqlsrv_query($conn2,$query,array(),array("Scrollable"=>"static"));
-           $query2 = "insert into SysLog(FUserID,FDT,FInfo,FType,FMemo) values ('" .$_SESSION["uid"]. "',GETDATE(),'" .$changetype.$cname.$tip."','". $typeid."','')" ;
-           $sql2 = sqlsrv_query($conn2,$query2,array(),array("Scrollable"=>"static"));
-           if($sql ){
-               $result["msg"] = "发送成功";
-               $result["result"] =1;
-           }
+           echo json_encode($data);
+           die();
        }
     }else{
         $result["msg"] = "未登录不可操作";
     }
-    echo json_encode($result);
+  echo json_encode($result);
 
