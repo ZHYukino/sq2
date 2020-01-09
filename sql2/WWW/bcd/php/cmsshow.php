@@ -7,7 +7,7 @@
     $picname     = isset($_GET["picname"]) ? str_replace("图片", "", $_GET["picname"]) : "";
     $font_styles = array(
         "h" => "SimHei",                  //黑体
-        "k" => "KaiTi",                  //楷体
+        "k" => "KaiTi",                   //楷体
         "s" => "SimSun",                  //宋体
         "f" => "FangSong",                //仿宋
     );
@@ -254,7 +254,7 @@
                 "size"       => isset($font_style[1]) ? substr($font_style[1], 0, 2) : "",                         //字体大小
                 "fontx"      => isset($font_style[1]) ? substr($font_style[1], 2, 3) : "",                         //字体x
                 "fonty"      => isset($font_style[1]) ? substr($font_style[1], 5, 3) : "",                         //字体y
-                "speed"      => $base[2] / 100,                        //字体速度
+                "speed"      => $base[2] / 100,                         //字体速度
                 "stoptime"   => $base[0] * 10,                          //停止时间
                 "stopplace"  => 1,                                       //左右的停止位置    1 居中
                 "picpath"    => $picname,                                //图片地址
@@ -303,11 +303,9 @@
         } //删除图片
         else if ($act == "delpic") {
             $picname = isset($_GET["picname"]) ? str_replace("图片", "", $_GET["picname"]) : "";
-
             $item_no = explode(",", $play["playlist"][$item]);
-
-            $str    = explode("\\", $item_no[3]);
-            $picnum = 1;
+            $str     = explode("\\", $item_no[3]);
+            $picnum  = 1;
 
             foreach ($str as $key => $value) {
                 if (strpos($str[$key], 'C') !== false && strlen($value) === 7) {

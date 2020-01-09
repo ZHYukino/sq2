@@ -39,15 +39,6 @@ if(!isset($_SESSION['uid'])){
                     <dd><a href="">角色管理</a></dd>
                 </dl>
             </li>
-
-<!--            <li class="layui-nav-item"   id="dev-nav-1"></li>-->
-<!--            <li class="layui-nav-item"   id="dev-nav-2"></li>-->
-<!--            <li class="layui-nav-item"   id="dev-nav-3"></li>-->
-<!--            <li class="layui-nav-item"   id="dev-nav-4"></li>-->
-<!--            <li class="layui-nav-item"   id="dev-nav-5"></li>-->
-<!--            <li class="layui-nav-item"   id="dev-nav-6"></li>-->
-<!--            <li class="layui-nav-item"   id="dev-nav-0"></li>-->
-
         </ul>
         <ul class="layui-nav layui-layout-right" id="usehead_nav" style="display: none">
             <li class="layui-nav-item">

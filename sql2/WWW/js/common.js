@@ -441,11 +441,9 @@ function bindLeftKey(picclass,id,pointX,pointY) {
                ,title: '限速标志'+id.replace("10000",'')
                ,area: ['1300px', '670px']
                ,shade: 0
-               ,maxmin: true
                ,offset: [Ht+10]
                ,id: 'LAY_LSTSdbclick_tcms' //防止重复弹出
                ,content: 'tcms.php?tcms='+id+''
-               ,btn: ['关闭'] //只是为了演示
                ,yes: function(index, layero){
                    layer.close(index);
                }
@@ -476,11 +474,9 @@ function bindLeftKey(picclass,id,pointX,pointY) {
                     ,title: '门架势情报版'+id.replace("10000",'')
                     ,area: ['1300px', '670px']
                     ,shade: 0
-                    ,maxmin: true
                     ,offset: [Ht+10]
                     , id: 'LAY_LSTSdbclick_cms' //防止重复弹出
                     ,content: 'cms.php?cms='+id+''
-                    ,btn: ['关闭'] //只是为了演示
                     ,yes: function(index, layero){
                         layer.close(index);
                     }

@@ -141,12 +141,14 @@ function roadpara2(){
             if(res.code==1) {
                 roaddev = res.data;
                 var vdstatesplay = new Array();
+                var wdstatesplay = new Array();
                 var bodydev = "";
                 var cmsnum = 0;
                 var cmsid = new Array();
                 var tcmsnum = 0;
                 var tcmsid = new Array();
                 var plug = "";
+                var wdplug = "";
                 var num = 10;
                 for (var j = 0 ;j<res.count;j++){
                     var x = (res.data[j].ipointx==0) ? 0 :res.data[j].ipointx;
@@ -155,11 +157,18 @@ function roadpara2(){
                     var playy = (res.data[j].ipointy== 0) ? 20 :res.data[j].playy;
                     var updown = (res.data[j].iupdown == 1) ?"上行":(res.data[j].iupdown == 2 ? "下行" :"变电所") ;
                     plug = "";
+                    wdplug = "";
                     bodydev = "<div id=\""+res.data[j].iid+"\"  title=\""+res.data[j].scode+"\r"+res.data[j].scname+"\r"+updown+"\"  class=\""+res.data[j].itypeid+"\"  style=\"cursor:pointer;position:absolute;left: "+x+"%;top:"+y+"%  \">";
                     bodydev += "<img src=\"pic2/"+res.data[j].picpath+"\"  class=\""+res.data[j].itypeid+"\"  style='width: 32px;height: 32px;'>" ;
-
+                    //气象
                     if(res.data[j].itypeid == 22){
                         bodydev += "<div id=\"wdvalue"+res.data[j].iid+"\" style='font-size: 15px;font-weight: bold;'>风速："+res.data[j].fengsu+ " <br>能见度："+res.data[j].nengjiandu+ "</div>";
+                        wdstatesplay[res.data[j].iid] = "<div id=\"play"+res.data[j].iid+"\"  title=\""+res.data[j].scode+"\r"+res.data[j].scname+"\r"+updown+"\"   class=\""+res.data[j].itypeid+"\"  style=\"cursor:pointer;overflow: hidden;background-color: #ff5722;width: 100px;height: 18px;display: block;position:absolute;left: 50%;top:50%\">"
+                        wdstatesplay[res.data[j].iid] += "<div id=\"wdvalue"+res.data[j].iid+"\" style='font-size: 13px;font-weight: bold;color:white;position: absolute;'><ul style=\"list-style: none;\"><li id=\"vdcontent1"+res.data[j].iid+"\" style=\"list-style: none;cursor:pointer;margin: 0 10px\"> 流量："+res.data[j].icount1  + "</li>";
+                        wdstatesplay[res.data[j].iid] += "<li id=\"wdcontent3"+res.data[j].iid+"\" style=\"list-style: none;margin:0 10px\">平均速："+res.data[j].fspeed1 + " </li></ul></div>";
+                        wdstatesplay[res.data[j].iid] += "</div>";
+                        wdplug += wdstatesplay[res.data[j].iid];
+                        $("#dev_div_body").append(wdplug);
                     }else if(res.data[j].itypeid == 23 ){
                          plug +="<div id=\"10000"+res.data[j].iid+"affiche\"  ;  class=\""+res.data[j].itypeid+"\"    title=\""+res.data[j].scode+"\r"+res.data[j].scname+"\r"+updown+"\"  style=\"cursor:pointer;display: block; width: 96%; height: 30px;top:"+playy+"%;left:"+playx+"%;margin: 0 auto;position: absolute;  overflow: hidden;background: #000000;   width: 320px;   height: 32px; position: absolute; border-top-left-radius: 2px;border-top-right-radius: 2px;border-bottom-left-radius: 2px;border-bottom-right-radius: 2px;\"></div>";
                          cmsid[cmsnum]  = "10000"+res.data[j].iid+"";
@@ -172,7 +181,9 @@ function roadpara2(){
                          tcmsnum += 1;
                         $("#dev_div_body").append(plug);
                         devmove("10000"+res.data[j].iid+"affichetcms");
-                    }else if(res.data[j].itypeid == 20){
+                    }
+                    //车检
+                    else if(res.data[j].itypeid == 20){
                         vdstatesplay[res.data[j].iid] = "<div id=\"play"+res.data[j].iid+"\"  title=\""+res.data[j].scode+"\r"+res.data[j].scname+"\r"+updown+"\"   class=\""+res.data[j].itypeid+"\"  style=\"cursor:pointer;overflow: hidden;background-color: #ff5722;width: 270px;height: 18px;display: block;position:absolute;left: "+playx+"%;top:"+playy+"%\">"
                         vdstatesplay[res.data[j].iid] += "<div id=\"vdvalue"+res.data[j].iid+"\" style='font-size: 13px;font-weight: bold;color:white;position: absolute;'><ul style=\"list-style: none;\"><li id=\"vdcontent1"+res.data[j].iid+"\" style=\"list-style: none;cursor:pointer;margin: 0 30px\"> 流量："+res.data[j].icount1  + " &nbsp流量："+res.data[j].icount2  + " &nbsp流量："+res.data[j].icount3+ " &nbsp流量："+res.data[j].icount4+ "</li><li id=\"vdcontent2"+res.data[j].iid+"\" style=\"list-style: none;margin: 0 10px\">占有率："+res.data[j].focc1+ " 占有率："+res.data[j].focc2+" 占有率："+res.data[j].focc3+ " 占有率："+res.data[j].focc4+ "</li>";
                         vdstatesplay[res.data[j].iid] += "<li id=\"vdcontent3"+res.data[j].iid+"\" style=\"list-style: none;margin:0 10px\">平均速："+res.data[j].fspeed1 + " 平均速："+res.data[j].fspeed2+" 平均速：" +res.data[j].fspeed3 + " 平均速："+res.data[j].fspeed4+ "</li></ul></div>";
@@ -207,6 +218,10 @@ function roadpara2(){
 
                 //加载vdstate
                 for (var key in vdstatesplay ) {
+                    vdstateplay(key);
+                    devmove("play"+key+"");
+                }
+                for (var key in wdstatesplay ) {
                     vdstateplay(key);
                     devmove("play"+key+"");
                 }
