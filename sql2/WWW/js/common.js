@@ -305,19 +305,23 @@ function defaultAddImg(typevalue,selectvalue,picclass,arr_info,snum) {
 						break;
 					case "VD":
 						var plug = "";
-						// if( window["var"+ id +""] !== false ) {
                         plug +="<div class= \""+ picclass + " picselectclass\">"
                         plug += "<div id=\"play" + id + "\"      title=\"" + title + "\" style=\"cursor:pointer;overflow: hidden;background-color: #ff5722;width:140px;height: 18px;display: block;position:absolute;left:" + playx + "px;top:" + playy + "px\">";
-                        plug += "<div id=\"vdvalue" + id + "\" style='font-size: 13px;font-weight: bold;color:white;position: absolute;'><ul style=\"list-style: none;\"><li id=\"vdcontent" + id + "\" style=\"list-style: none;margin: 2px 10px\"> 流量：" + arr_info[snum][32] + " &nbsp&nbsp&nbsp流量：" + arr_info[snum][33] + " </li><li id=\"vdcontent2" + id + "\" style=\"list-style: none;margin: 2px 5px\">占有率：" + arr_info[snum][34] + " 占有率：" + arr_info[snum][35] + " </li>";
+                        plug += "<div id=\"wvdvalue" + id + "\" style='font-size: 13px;font-weight: bold;color:white;position: absolute;'><ul style=\"list-style: none;\"><li id=\"vdcontent" + id + "\" style=\"list-style: none;margin: 2px 10px\"> 流量：" + arr_info[snum][32] + " &nbsp&nbsp&nbsp流量：" + arr_info[snum][33] + " </li><li id=\"vdcontent2" + id + "\" style=\"list-style: none;margin: 2px 5px\">占有率：" + arr_info[snum][34] + " 占有率：" + arr_info[snum][35] + " </li>";
                         plug += "<li id=\"vdcontent3" + id + "\" style=\"list-style: none;margin:2px 5px\">平均速：" + arr_info[snum][36] + " 平均速：" + arr_info[snum][37] + "</li></ul></div>";
                         plug += "</div></div>"
-                        // }
                         $("#default_cover").append(plug);
                         devmove("play"+id+"",1);
-                        // window["var"+ id +""] = false;
 						break;
 					case "WD":
-                        picmodule +="<div id=\"wdvalue"+id+"\" style='font-size: 14px;font-weight: bold;'>风速："+arr_info[snum][38]+ " <br>能见度："+arr_info[snum][39]+ "</div>";
+					    var plug = "";
+                        plug +="<div class= \""+ picclass + " picselectclass\">"
+                        plug += "<div id=\"play" + id + "\"      title=\"" + title + "\" style=\"cursor:pointer;overflow: hidden;background-color: #0689eb;width:80px;height: 18px;display: block;position:absolute;left:" + playx + "px;top:" + playy + "px\">";
+                        plug += "<div id=\"wvdvalue" + id + "\" style='font-size: 13px;font-weight: bold;color:white;position: absolute;'><ul style=\"list-style: none;\"><li id=\"wdcontent1" + id + "\" style=\"list-style: none;margin: 2px 10px\"> 风速：" + arr_info[snum][38] + "  </li><li id=\"wdcontent2" + id + "\" style=\"list-style: none;margin: 2px 5px\">风向：" + arr_info[snum][44] + " </li>";
+                        plug += "<li id=\"wdcontent3" + id + "\" style=\"list-style: none;margin:2px 5px\">能见度：" + arr_info[snum][39] + " </li><li id=\"wdcontent4" + id + "\" style=\"list-style: none;margin:2px 5px\">空气温度：" + arr_info[snum][45] + " </li></ul></div>";
+                        plug += "</div></div>"
+                        $("#default_cover").append(plug);
+                        devmove("play"+id+"",1);
                         break;
 					case "TCMS":
                         $("#" + id + "affichetcms").attr("title",titleplay);
@@ -410,7 +414,10 @@ function defaultUpdateImg(typevalue,selectvalue,picclass,arr_info,snum){
                             $("#vdcontent3"+id+"").html("平均速："+arr_info[snum][36] + " 平均速："+arr_info[snum][37]+"");
 							break;
                         case "WD":
-                            $("#wdvalue"+id+"").html("风速："+arr_info[snum][38]+ " <br>能见度："+arr_info[snum][39]+ "");
+                            $("#wdcontent1"+id+"").html("风向："+arr_info[snum][38] + "");
+                            $("#wdcontent2"+id+"").html("风速："+arr_info[snum][44] + "");
+                            $("#wdcontent3"+id+"").html("能见度："+arr_info[snum][39] + "");
+                            $("#wdcontent4"+id+"").html("空气温度："+arr_info[snum][45] + "");
                         	break;
 					}
 				}
@@ -424,9 +431,13 @@ function defaultUpdateImg(typevalue,selectvalue,picclass,arr_info,snum){
 
 //点击事件
 function bindLeftKey(picclass,id,pointX,pointY) {
+    //气象
+    if(picclass == "default-pic-WD"){
+        wvdstateplay(id);
+    }
 	//车横
 	if(picclass == "default-pic-VD"){
-        vdstateplay(id);
+        wvdstateplay(id);
 	}
     //可限速标志
     if (picclass == "default-pic-TCMS") {

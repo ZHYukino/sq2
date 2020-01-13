@@ -207,6 +207,11 @@ function devgetpara2(arr_,b,t,u){
                     arr_[i].push(jsonObject.rows[i].nengjiandu); //39
                     arr_[i].push(jsonObject.rows[i].playx); //40
                     arr_[i].push(jsonObject.rows[i].playy); //41
+                    arr_[i].push(jsonObject.rows[i].playx); //42
+                    arr_[i].push(jsonObject.rows[i].playy); //43
+                    arr_[i].push(jsonObject.rows[i].fengxiang); //44
+                    arr_[i].push(jsonObject.rows[i].KQwendu); //45
+
 				}
 			}
 			b[0]=true;
@@ -814,7 +819,8 @@ function devchangvalue(i,arr_,jsonObject){
 				jsonObject.rows[i].fnvalue1 !=arr_[j][30] || jsonObject.rows[i]. value1!=arr_[j][31]  || jsonObject.rows[i].shape!=arr_[j][9] ||
                 jsonObject.rows[i].icount1 !=arr_[j][32] || jsonObject.rows[i]. icount2!=arr_[j][33]  || jsonObject.rows[i].focc1!=arr_[j][34] ||
                 jsonObject.rows[i].focc2 !=arr_[j][35] || jsonObject.rows[i]. fspeed1!=arr_[j][36]  || jsonObject.rows[i].fspeed2!=arr_[j][37] ||
-                jsonObject.rows[i].fengsu !=arr_[j][38] || jsonObject.rows[i]. nengjiandu!=arr_[j][39]
+                jsonObject.rows[i].fengsu !=arr_[j][38] || jsonObject.rows[i]. nengjiandu!=arr_[j][39] ||jsonObject.rows[i].fengxiang !=arr_[j][44] ||
+				jsonObject.rows[i].KQwendu!=arr_[j][45]
 			)
 			{
 				arr_[j][16]=true;
@@ -835,6 +841,8 @@ function devchangvalue(i,arr_,jsonObject){
                 arr_[j][37]=jsonObject.rows[i].fspeed2;    // 37
                 arr_[j][38]=jsonObject.rows[i].fengsu;    // 38
                 arr_[j][39]=jsonObject.rows[i].nengjiandu;    // 39
+                arr_[j][42]=jsonObject.rows[i].fengxiang;    // 42
+                arr_[j][43]=jsonObject.rows[i].KQwendu;    // 43
 				// arr_[j][23]=jsonObject.rows[i].v1;
 				// arr_[j][24]=jsonObject.rows[i].v2;
 			}

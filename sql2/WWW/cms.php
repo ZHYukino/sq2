@@ -72,7 +72,7 @@ require ('./bcd/php/config.php');
     <div style="width: 300px;height: 400px;position: absolute;top: 65px;background-color: ">
         <div id="seedcmsplay"></div>
     </div>
-    <div class="cms_three" style="margin-left: 300px;overflow:scroll;height: 1000px">
+    <div class="cms_three" style="overflow:scroll;height: 1000px">
         <div id="cmsshowlist"  ></div>
         <div  style="position:absolute; ">
             <div style="overflow:scroll;height:200px;width: 350px">
@@ -137,15 +137,6 @@ require ('./bcd/php/config.php');
             }
             ?>
         </div>
-<!--        <button onclick="checkcmsplay(100003)">-->
-<!--            aniu-->
-<!--        </button>-->
-<!--        <button onclick="checkcmsplay(100004)">-->
-<!--            aniu2-->
-<!--        </button>-->
-<!--        <button onclick="checkcmsplay(100006)">-->
-<!--            aniu2-->
-<!--        </button>-->
     </div>
 
 </div>
@@ -154,37 +145,9 @@ require ('./bcd/php/config.php');
 </html>
 
 <script src="js/opencms.js"></script>
-<script>
-    console.log([{title: '江西',children: [{title: '南昌' }]},{title: '陕西',children: [{title: '西安' }]}]);
-
-    tunnelinfo = "";
-    $.ajax({
-        type:"get",
-        url:"bcd/php/seedcms.php?itype=1",
-        dataType:"json",
-        success:function (res) {
-            tunnelinfo = res;
-            console.log(tunnelinfo);
-            layui.use('tree', function(){
-                var tree = layui.tree;
-                //渲染
-                var inst1 = tree.render({
-                    elem: '#seedcmsplay'  //绑定元素
-                    ,showCheckbox:true
-                    ,id: 'seedcheck' //定义索引
-                    ,data: tunnelinfo
-                });
-                tree.setChecked('seedcheck', [2, 3]); //单个勾选 id 为 1 的节点
-                // tree.setChecked('demoId', [2, 3]); //批量勾选 id 为 2、3 的节点
-            });
-
-        }
-    });
-
-</script>
 
 <script>
-    id =<?php  echo $_GET["cms"]; ?>;
+    id = <?php  echo $_GET["cms"]; ?>;
     trees(id,"cms");
     firstdevstars = new Array();
     starsplaycms(id);
@@ -197,9 +160,6 @@ require ('./bcd/php/config.php');
         firstdevstars[id] = false;
     }
     function checkcmsplay(playcmsdevid){
-        // clearInterval(interval[id]);
-        // clearInterval(interval[playcmsdevid]);
-        console.log(firstdevstars[id]);
         $("#" + id + "affiche").hide();
         $("." + id + "affiche").hide();
         id = playcmsdevid;

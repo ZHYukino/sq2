@@ -7,7 +7,7 @@ var cmsbtn = "\n" +
     " <input type=\"number\" name=\"phone\"  id=\"cmslight\" value=\"0\"   lay-verify=\"required|phone\" autocomplete=\"off\" class=\"layui-input\" style=\"width: 80px; height: 26px;background: #d0c0cf\">\n" +
     " <input type=\"radio\" name=\"cmsauto\" value=\"0\" title=\"自动\" checked>自动\n" +
     " <input type=\"radio\" name=\"cmsauto\" value=\"1\" title=\"手动\">手动\n" +
-    " <button id=\"cms_setlight\" type=\"button\" style='position:absolute ;top:3px;margin-left:95px'   class=\"layui-btn layui-btn-primary\">全选中</button>\n" +
+    " <button id=\"allsetplayseed\" type=\"button\" style='position:absolute ;top:3px;margin-left:95px'   class=\"layui-btn layui-btn-primary\">全选中</button>\n" +
     " <button id=\"cms_setlight\" type=\"button\" style='position:absolute ;top:3px;margin-left:185px'   class=\"layui-btn layui-btn-primary\">保存</button>\n" +
     "</div>";
 $(".layui-upload").append(cmsbtn);
@@ -32,6 +32,55 @@ $("#cmsshowlist").text("播放列表");
 function cms_downs() {
 
 }
+
+
+
+//全选中
+var chcikseed  = true ;
+$("#allsetplayseed").click(function () {
+    if(chcikseed === false){
+        return false;
+    }
+    var url = window.location.pathname; /* 获取文件路径（文件地址） */
+    if( url == "/cms.php"){
+        allselectplay(1);
+    }else{
+        allselectplay(2);
+    }
+})
+
+function allselectplay(type) {
+    $(".cms_three").css("margin-Left","300px");
+    tunnelinfo = "";
+    $.ajax({
+        type:"get",
+        url:"bcd/php/seedcms.php?itype="+type+"",
+        dataType:"json",
+        success:function (res) {
+            tunnelinfo = res;
+            layui.use('tree', function(){
+                var tree = layui.tree;
+                //渲染
+                var inst1 = tree.render({
+                    elem: '#seedcmsplay'  //绑定元素
+                    ,showCheckbox:true
+                    ,id: 'seedcheck' //定义索引
+                    ,data: tunnelinfo
+                    ,click:function (obj) {
+                        if(obj.data.id>10000){
+                            checkcmsplay(obj.data.id);
+                        }
+                    }
+                });
+                tree.setChecked('seedcheck', [0, 12]); //单个勾选 id 为 1 的节点
+                tree.setChecked('seedcheck', [1, 12]); //单个勾选 id 为 1 的节点
+                tree.setChecked('seedcheck', [2, 12]); //单个勾选 id 为 1 的节点
+                tree.setChecked('seedcheck', [3, 12]); //单个勾选 id 为 1 的节点
+            });
+        }
+    });
+}
+
 
 //上传情报板
 $("#cms_upload").click(function () {
@@ -145,11 +194,9 @@ function devmove(id, tunnel = 0) {
 }
 
 intervalvdplay = new Array();
-
-//车检的状态字体滚动
-function vdstateplay(idvalue) {
+//车检和气象的状态字体滚动
+function wvdstateplay(idvalue) {
     clearInterval(intervalvdplay[idvalue]);
-
     function vdcmsstate(obj) {
         var $self = obj.find("ul");
         var lineHeight = $self.find("li:first").height();
@@ -163,7 +210,7 @@ function vdstateplay(idvalue) {
     }
 
     intervalvdplay[idvalue] = setInterval(function () {
-        vdcmsstate($("#vdvalue" + idvalue + ""));
+        vdcmsstate($("#wvdvalue" + idvalue + ""));
     }, 4000);
 }
 

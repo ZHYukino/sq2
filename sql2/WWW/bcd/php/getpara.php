@@ -98,6 +98,7 @@
                     $vd[$v["iid"]]["fspeed".$i]  = $v["fspeed".$i] ;
                 }
             }
+
             foreach ($result["rows"] as $k=>$v){
                 foreach ($vd as $key => $value) {
                     if ($v["id"] == "10000".$key) {
@@ -115,12 +116,16 @@
             $wdpara = json_decode($wdstate,true)["data"];
             foreach ($wdpara as $k=>$v){
                 $wd[$v["iid"]]["fengsu"] = $v["fengsu"];
+                $wd[$v["iid"]]["fengxiang"] = $v["fengxiang"];
+                $wd[$v["iid"]]["KQwendu"] = $v["KQwendu"];
                 $wd[$v["iid"]]["nengjiandu"] = $v["nengjiandu"];
             }
             foreach ($result["rows"] as $k=>$v){
                 foreach ($wd as $key => $value) {
                     if ($v["id"] == "10000".$key) {
                         $result["rows"][$k]["fengsu"] = $value["fengsu"];
+                        $result["rows"][$k]["fengxiang"] = $value["fengxiang"];
+                        $result["rows"][$k]["KQwendu"] = $value["KQwendu"];
                         $result["rows"][$k]["nengjiandu"] = $value["nengjiandu"];
                     }
                 }
