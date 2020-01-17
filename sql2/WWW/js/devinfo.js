@@ -229,7 +229,7 @@ devgetpara2(arr_LED,LEDinit,6,1);
 devgetpara2(arr_FAN,FANinit,8,1);
 devgetpara2(arr_COVI,COVIinit,7,1);
 devgetpara2(arr_FSFX,FSFXinit,5,1);
-devgetpara2(arr_FB,FBinit,11,1);          //收报
+devgetpara2(arr_FB,FBinit,11,1);          //手报
 devgetpara2(arr_FGS,FGSinit,12,3);   //wu
 devgetpara2(arr_FGW,FGWinit,13,3);   //wu
 devgetpara2(arr_FGR,FGRinit,14,3);   //wu
@@ -1351,11 +1351,11 @@ function ZMAutoMode2Do(planid){
 }
 var changeflag = 1;//有未登录情况时置为0，即后续操作跳过不提交，无需重置为1，重新登录完加载即为1
 //修改设备状态
-function changestate(devid,state){
+function changestate(devid,state,devtype=null){
 	if(changeflag){
 		$.ajax({
 			type: "GET",
-			url : "bcd/php/setvalue2.php?id="+ devid +"&state="+ state +"&dc=" + new Date().getTime() + "",
+			url : "bcd/php/setvalue.php?itype=1&tunnel="+tunnelnum+"&devtype="+devtype+"&id="+ devid +"&fvalue="+ state +"&dc=" + new Date().getTime() + "",
 			//data:{},
 			dataType: "json",
 			success: function(data){

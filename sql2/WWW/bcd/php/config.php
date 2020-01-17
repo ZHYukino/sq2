@@ -2,40 +2,6 @@
     header("Content-Type: text/html; charset=utf-8");
     $opt_ini=parse_ini_file("opt.ini",true);
 
-    function get_ini_file($file_name = "bcd/db.ini"){
-        $str=file_get_contents($file_name);
-        $ini_list = explode("\r\n",$str);
-        $ini_items = array();
-        foreach($ini_list as $item){
-            $one_item = explode("=",$item);
-            if(isset($one_item[0])&&isset($one_item[1]))
-                $ini_items[trim($one_item[0])] = trim($one_item[1]);
-        }
-        return $ini_items;
-    }
-    $ini = get_ini_file();//取出ini中的配置信息
-
-    $server = $ini['servername']; //服务器名称，在 sql server management studio 的登录界面查看
-    $uid = $ini['username']; //数据库用户名
-    $pwd = $ini['password']; //数据库密码
-    $db  = $ini['dbname']; // 数据库名 GS
-    $db2 = $ini['dbname2'];//第二个数据库 SD
-    $connectionInfo = array("UID"=>$uid, "PWD"=>$pwd, "Database"=>$db,"CharacterSet"=>"utf-8");
-    $conn = sqlsrv_connect( $server, $connectionInfo);
-    if( $conn == false) {
-        echo "连接失败！";
-        die( var_dump( sqlsrv_errors(), true));
-    };
-
-
-    //第二个数据库
-    $connectionInfo2 = array("UID"=>$uid, "PWD"=>$pwd, "Database"=>$db2,"CharacterSet"=>"utf-8");
-    $conn2 = sqlsrv_connect( $server, $connectionInfo2);
-    if( $conn2 == false) {
-        echo "连接失败！";
-        die( var_dump( sqlsrv_errors(), true));
-    };
-
 
     //普通查询
     function get_sql($query,$params,$conn)     //$conn2 或者 $conn  直接调用
@@ -71,13 +37,9 @@
     $paras = json_decode($paras, true);
     $num = 0;
     foreach ($paras["data"] as $k => $v) {           //消除ienable 不为 1的数组
-        // if ($v["ienable"] != 1) {
-        //     unset($paras["data"][$k]);
-        // }else{
-            $cms[$num]["id"] = "10000" . $v["iid"];
-            $cms[$num]["name"] =  $v["scname"];
-            $num +=1;
-        // }
+        $cms[$num]["id"] = "10000" . $v["iid"];
+        $cms[$num]["name"] =  $v["scname"];
+        $num +=1;
     }
     unset($paras);
 
@@ -88,16 +50,9 @@
     $paras = json_decode($paras, true);
     $num = 0;
     foreach ($paras["data"] as $k => $v) {           //消除ienable 不为 1的数组
-        // if ($v["ienable"] != 1) {
-        //     unset($paras["data"][$k]);
-        // }
-        // elseif($v["itunnelid"] <1 || $v["itunnelid"] >3 ){
-        //     unset($paras["data"][$k]);
-        // }else{
-            $tcms[$num]["id"] = "10000" . $v["iid"];
-            $tcms[$num]["name"] =  $v["scname"];
-            $num += 1;
-        // }
+        $tcms[$num]["id"] = "10000" . $v["iid"];
+        $tcms[$num]["name"] =  $v["scname"];
+        $num += 1;
     }
     unset($paras);
 ?>

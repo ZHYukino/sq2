@@ -1,7 +1,7 @@
 <?php 
     header('Content-Type: text/html; charset=utf-8');
 
-    function get_ini_file($file_name = "../NDB.ini"){
+    function get_ini_file($file_name = "../db.ini"){
             $str=file_get_contents($file_name);
             $ini_list = explode("\r\n",$str);
             $ini_items = array();
@@ -14,7 +14,7 @@
         }
 
     // $ini = get_ini_file();//取出ini中的配置信息
-    $ini = parse_ini_file("../NDB.ini");
+    $ini = parse_ini_file("../db.ini");
     
     $server = $ini['servername']; //服务器名称，在 sql server management studio 的登录界面查看
     $uid = $ini['username']; //数据库用户名

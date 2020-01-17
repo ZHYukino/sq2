@@ -1,12 +1,12 @@
 var cmsbtn = "\n" +
-    " <button id=\"cms_upload\" type=\"button\" class=\"layui-btn layui-btn-normal\">播放发送</button>\n" +
+    " <button id=\"cms_upload\" type=\"button\" class=\"layui-btn layui-btn-normal\"  lay-demo=\"getChecked\">播放发送</button>\n" +
     " <button id=\"cms_down\" type=\"button\" class=\"layui-btn layui-btn-normal\">播放获取</button>\n" +
-    " <button id=\"cms_getlight\" type=\"button\"  onclick=\"cms_getligth()\" class=\"layui-btn layui-btn-primary\">获取亮度</button>\n" +
-    " <button id=\"cms_setlight\" type=\"button\"  onclick=\"cms_setligth()\" class=\"layui-btn layui-btn-primary\" style='margin-right: 10px'>设置亮度</button>\n" +
+    " <button id=\"cms_getlight\" type=\"button\"   class=\"layui-btn layui-btn-primary\">获取亮度</button>\n" +
+    " <button id=\"cms_setlight\" type=\"button\"   class=\"layui-btn layui-btn-primary\" style='margin-right: 10px'>设置亮度</button>\n" +
     " <div class=\"layui-input-inline\">\n" +
     " <input type=\"number\" name=\"phone\"  id=\"cmslight\" value=\"0\"   lay-verify=\"required|phone\" autocomplete=\"off\" class=\"layui-input\" style=\"width: 80px; height: 26px;background: #d0c0cf\">\n" +
-    " <input type=\"radio\" name=\"cmsauto\" value=\"0\" title=\"自动\" checked>自动\n" +
-    " <input type=\"radio\" name=\"cmsauto\" value=\"1\" title=\"手动\">手动\n" +
+    " <input type=\"radio\" name=\"cmsauto\" value=\"0\" title=\"自动\"  id=\"tradeType0\"  checked>自动\n" +
+    " <input type=\"radio\" name=\"cmsauto\" value=\"1\" title=\"手动\"  id=\"tradeType1\" >手动\n" +
     " <button id=\"allsetplayseed\" type=\"button\" style='position:absolute ;top:3px;margin-left:95px'   class=\"layui-btn layui-btn-primary\">全选中</button>\n" +
     " <button id=\"cms_setlight\" type=\"button\" style='position:absolute ;top:3px;margin-left:185px'   class=\"layui-btn layui-btn-primary\">保存</button>\n" +
     "</div>";
@@ -28,29 +28,30 @@ var allplanselect = " <button class=\"layui-btn layui-btn-primary\" style='margi
 $(".layui-upload").append(allplanselect);
 $("#cmsshowlist").text("播放列表");
 
-//播放获取
-function cms_downs() {
-
-}
-
 
 
 //全选中
 var chcikseed  = true ;
+updatecmsres = new Array();
 $("#allsetplayseed").click(function () {
-    if(chcikseed === false){
-        return false;
-    }
+    // if(chcikseed === false){
+    //     settreecheck()
+    //     return false;
+    // }
     var url = window.location.pathname; /* 获取文件路径（文件地址） */
     if( url == "/cms.php"){
-        allselectplay(1);
+        allselectplay(1,"",6);
     }else{
-        allselectplay(2);
+        allselectplay(2,"",6);
     }
+    chcikseed  = false ;
 })
 
-function allselectplay(type) {
-    $(".cms_three").css("margin-Left","300px");
+window.getlight = true;
+function allselectplay(type,checkid,itype) {
+    //type为1是cms
+    //type为2是tcms
+    $(".cms_three").css("margin-Left","380px");
     tunnelinfo = "";
     $.ajax({
         type:"get",
@@ -59,7 +60,7 @@ function allselectplay(type) {
         success:function (res) {
             tunnelinfo = res;
             layui.use('tree', function(){
-                var tree = layui.tree;
+                var tree = layui.tree
                 //渲染
                 var inst1 = tree.render({
                     elem: '#seedcmsplay'  //绑定元素
@@ -67,73 +68,247 @@ function allselectplay(type) {
                     ,id: 'seedcheck' //定义索引
                     ,data: tunnelinfo
                     ,click:function (obj) {
-                        if(obj.data.id>10000){
-                            checkcmsplay(obj.data.id);
+                        if(window.getlight !== false) {
+                            if (obj.data.id > 10000) {
+                                checkcmsplay(obj.data.id);
+                            }
+                        }else {
+                            if (obj.data.id > 10000) {
+                                checkcmsplayes(obj.data.id);
+                            }
                         }
                     }
                 });
-                tree.setChecked('seedcheck', [0, 12]); //单个勾选 id 为 1 的节点
-                tree.setChecked('seedcheck', [1, 12]); //单个勾选 id 为 1 的节点
-                tree.setChecked('seedcheck', [2, 12]); //单个勾选 id 为 1 的节点
-                tree.setChecked('seedcheck', [3, 12]); //单个勾选 id 为 1 的节点
+                //全选
+                function settreecheck() {
+                    tree.setChecked('seedcheck', [0, 20]); //单个勾选 id 为 0 的节点
+                    tree.setChecked('seedcheck', [1, 20]); //单个勾选 id 为 1 的节点
+                    tree.setChecked('seedcheck', [2, 20]); //单个勾选 id 为 2 的节点
+                    tree.setChecked('seedcheck', [3, 20]); //单个勾选 id 为 3 的节点
+                }
+                //删除播放发送按钮
+                $("#cms_upload").unbind("click");
+                $("#cms_getlight").unbind("click");
+                $("#cms_setlight").unbind("click");
+                $("#cms_down").unbind("click");
+                //重新定义发送按钮
+                $("#cms_getlight").click(function () {
+                    seedallprocess(3)
+                });
+                $("#cms_setlight").click(function () {
+                    seedallprocess(4)
+                });
+                $("#cms_down").click(function () {
+                    seedallprocess(5)
+                });
+                $("#cms_upload").click(function () {
+                    seedallprocess(6)
+                });
+                //发送全过程
+                function seedallprocess(itypes) {
+                    var checkData = tree.getChecked('seedcheck');
+                    //遍历出选中的cmsid
+                    var seedcmsid = "";
+                    seedhtml  = new Array();
+                    var seedid  = new Array();
+                    var numes = 1;
+                    var nbsps = "&nbsp&nbsp&nbsp&nbsp";
+                    for(var  key = 0;key< checkData.length;key++){
+                        for (var k in checkData[key].children) {
+                            //发送id 的数值
+                            seedcmsid += checkData[key].children[k].id+",";
+                            //树名
+                            seedhtml[numes] = checkData[key].children[k].title;
+                            //树id
+                            seedid[numes] = checkData[key].children[k].id;
+                            $("div[data-id='"+seedid[numes]+"'] .layui-tree-txt").html(""+seedhtml[numes]+nbsps+"准备操作("+new Date().toLocaleTimeString('chinese',{hour12:false})+")");
+                            numes += 1;
+                        }
+                    }
+                    //发送情报板
+                    var cmsauto = $("input[name='cmsauto']:checked").val();
+                    var lightvalue = $("#cmslight").val();
+                    var url ="";
+                    if(itypes==4) {
+                         url = "&auto=" + cmsauto + "&value=" + lightvalue + "";
+                    }
+                    $.ajax({
+                        type: "GET",
+                        url: "bcd/php/setcms.php?itype="+itypes+"&id=" + seedcmsid + "&nowid="+id+url+"",
+                        dataType: "json",
+                        success: function (res) {
+                            //发送成功后
+                            saveseedtime = res.seedtime;
+                            var updatetime = 20000;
+                            var seedcmid = "";
+                            for (var z=0;z<res.num;z++){
+                                seedcmid += (z==(res.num-1)) ? res.data[z].iid : res.data[z].iid+"|" ;
+                                var returnmsg = res.data[z].sinfo;
+                                $("div[data-id='10000"+res.data[z].iid+"'] .layui-tree-txt").html(""+seedhtml[z+1]+nbsps+"操作中("+new Date().toLocaleTimeString('chinese',{hour12:false})+")");
+                            }
+
+                            //定时获取上传的cms结果方法
+                            var checktrue = false;
+                            var checkrefre = false;
+                            function updateseedres(time,fid,seedhtml,resultes){
+                                //resultes->6   播发发送的结果
+                                //resultes->5   播发获取的结果
+                                //resultes->3   获取亮度的结果
+                                //resultes->4   设置亮度的结果
+                                $.ajax({
+                                    type: "GET",
+                                    url: "bcd/php/setcms.php?itype=7&time=" + time + "&fid="+seedcmid+"&res="+resultes+"",
+                                    dataType: "json",
+                                    success: function (res) {
+                                        getlightauto = new Array();
+                                        getlightvalue = new Array();
+                                        for (var key in res.data){
+                                            //操作成功
+                                            if(res.data[key].iinfo === 0){
+                                                $("div[data-id='10000"+res.data[key].iid+"'] .layui-tree-txt").html(""+seedhtml[(parseInt(key)+1)]+nbsps+"操作成功("+new Date().toLocaleTimeString('chinese',{hour12:false})+")");
+                                                checktrue = true;
+                                                //获取亮度并且赋值
+                                                if(resultes === 3){
+                                                    window.getlight = false;
+                                                    getlightauto[res.data[key].iid] = res.data[key].ivalueauto;
+                                                    getlightvalue[res.data[key].iid] = res.data[key].ivalue;
+                                                    if("10000"+res.data[key].iid == id){
+                                                        $("input[name='cmsauto']:eq("+res.data[key].ivalueauto+")").prop("checked","checked");
+                                                        $("#cmslight").val(res.data[key].ivalue);
+                                                    }
+                                                }
+                                            }
+                                            //操作失败
+                                            if( checktrue !== false && res.data[key].iinfo!==0){
+                                                $("div[data-id='10000"+res.data[key].iid+"'] .layui-tree-txt").html(""+seedhtml[(parseInt(key)+1)]+nbsps+"操作失败("+new Date().toLocaleTimeString('chinese',{hour12:false})+")");
+                                            }
+                                        }
+                                        if(checkrefre !==false){
+                                            clearInterval(updatecmsres[saveseedtime]);
+                                            //播放发送成功，更改网站内容
+                                            else if(resultes === 6){
+
+                                            }
+                                        }
+                                        if(checktrue !== false){
+                                            checkrefre = true;
+                                        }
+                                    }
+                                })
+                            }
+                            updatecmsres[saveseedtime] = setInterval(function(){
+                                updateseedres(saveseedtime,seedcmid,seedhtml,itypes);//30秒更新设备状态
+                            },updatetime);
+                        }
+                    });
+                }
+                //等于1为全选中
+                if(checkid === ""){
+                    settreecheck()
+                }
+                //发送情报板
+                else if(itype === 6){
+                    //选中点击的节点
+                    tree.setChecked('seedcheck', checkid);
+                    var checkData = tree.getChecked('seedcheck');
+                    seedallprocess(itype);
+                }
+                //获取亮度
+                else if(itype === 3){
+                    tree.setChecked('seedcheck', checkid);
+                    var checkData = tree.getChecked('seedcheck');
+                    seedallprocess(itype);
+                }
+                //设置亮度
+                else if(itype === 4){
+                    tree.setChecked('seedcheck', checkid);
+                    var checkData = tree.getChecked('seedcheck');
+                    seedallprocess(itype);
+                }
+                else if(itype === 5){
+                    tree.setChecked('seedcheck', checkid);
+                    var checkData = tree.getChecked('seedcheck');
+                    seedallprocess(itype);
+                }
             });
         }
     });
 }
+//选择更改情报板
+function checkcmsplayes(playcmsdevid){
+    console.log(getlightauto)
+    console.log(getlightvalue)
+    $("#" + id + "affiche").hide();
+    $("." + id + "affiche").hide();
+    id = playcmsdevid;
+    trees(id,"cms");
+    starsplaycms(id);
+    var strid = id.replace("10000",'');
+    $("input[name='cmsauto']:eq("+getlightauto[strid]+")").prop("checked","checked");
+    $("#cmslight").val(getlightvalue[id.replace("10000",'')]);
+}
 
+
+//播放获取
+$("#cms_down").click(function () {
+    if(chcikseed === false){
+        return false;
+    }
+    var url = window.location.pathname; /* 获取文件路径（文件地址） */
+    if( url == "/cms.php"){
+        allselectplay(1,id,6);
+    }else{
+        allselectplay(2,id,6);
+    }
+    chcikseed  = false ;
+})
 
 //上传情报板
 $("#cms_upload").click(function () {
-    $.ajax({
-        type: "GET",
-        url: "bcd/php/setcms.php?itype=5&id=" + id + "",
-        dataType: "json",
-        success: function (res) {
-            if (res.iresult == 1) {
-                layer.msg(res.sinfo);
-            } else {
-                layer.msg(res.sinfo);
-            }
-        }
-    })
+    if(chcikseed === false){
+        return false;
+    }
+    var url = window.location.pathname; /* 获取文件路径（文件地址） */
+    if( url == "/cms.php"){
+        allselectplay(1,id,5);
+    }else{
+        allselectplay(2,id,5);
+    }
+    chcikseed  = false ;
 })
 
 
 //获取cms亮度
-function cms_getligth() {
-    $.ajax({
-        url: "bcd/php/setcms.php?itype=3&id=" + id + ""
-        , type: "get"
-        , dataType: "json"
-        , success: function (res) {
-            if (res.iresult === 0) {
-                layer.msg(res.sinfo, {icon: 2, time: 1000});
-            } else {
-                layer.msg(res.sinfo, {icon: 1, time: 1000});
-                $("#cmslight").val(res.ivalue);
-                $("input[name='cmsauto'][value=" + res.ivalueauto + "]").attr("check", true);
-            }
-        }
-    })
-}
+$("#cms_getlight").click(function () {
+    if(chcikseed === false){
+        return false;
+    }
+    var url = window.location.pathname; /* 获取文件路径（文件地址） */
+    if( url == "/cms.php"){
+        allselectplay(1,id,3);
+    }else{
+        allselectplay(2,id,3);
+    }
+    chcikseed  = false ;
+})
+
 
 //设置cms亮度
-function cms_setligth() {
-    var cmsauto = $("input[name='cmsauto']:checked").val();
-    var lightvalue = $("#cmslight").val();
-    $.ajax({
-        url: "bcd/php/setcms.php?itype=4&id=" + id + "&auto=" + cmsauto + "&value=" + lightvalue + ""
-        , type: "get"
-        , dataType: "json"
-        , success: function (res) {
-            if (res.iresult === 0) {
-                layer.msg(res.sinfo, {icon: 2, time: 1000});
-            } else {
-                layer.msg(res.sinfo, {icon: 1, time: 1000});
-            }
-        }
-    })
-}
+$("#cms_setlight").click(function () {
+    if(chcikseed === false){
+        return false;
+    }
+    var url = window.location.pathname; /* 获取文件路径（文件地址） */
+    if( url == "/cms.php"){
+        console.log(id);
+        allselectplay(1,id,4);
+    }else{
+        allselectplay(2,id,4);
+    }
+    chcikseed  = false ;
+})
+
+
 
 
 //托动
@@ -280,7 +455,6 @@ function cmssetdota(id, resdata, playnum, type, cid = null) {
     fontstyle[3] = "FangSong";                //仿宋
 
     var chinse = new Array("黑体", "楷体", "宋体", "仿宋");
-    var fontcolor = new Array("red", "yellow", "green", "black", "pink", "blue");
 
     for (var i = 0; i < resdata.data.length; i++) {
         arr_check[i] = resdata.data[i].check;

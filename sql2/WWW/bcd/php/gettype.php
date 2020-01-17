@@ -3,16 +3,7 @@
     //在配置文件 opt.ini 中获取隧道的信息
     require_once ("./common.php");
 
-    //设置缓存
-    $cache = new CacheClass ;
-    $filename = "../cache/typecache.php";
-    $cache_result = $cache-> usecache($filename,1);
-    //存在缓存
-    if($cache_result){
-        echo $cache_result;
-    }
-    else
-    {
+
         $path = "DevType";
         $result = CurlCalss::curl(6,'',$path);
         $arr = json_decode($result,true);
@@ -44,9 +35,9 @@
             "5"=>"tw.PNG",
             "6"=>"led.png",
             "7"=>"covi.png",
-            "8"=>"fancm.png",
+            "8"=>"fan.png",
             "11"=>"fb.PNG",
-            "15"=>"gt_0.PNG",
+            "15"=>"gt.png",
             "23"=>"cms.PNG",
             "25"=>"tcms.PNG",
             "17"=>"cam.png",
@@ -70,8 +61,7 @@
         }
         $finish["results"] = count($arr["data"]);
 
-        $cache->create_made($filename,json_encode($finish));
         echo json_encode($finish);
-    }
+
 
 ?>

@@ -965,7 +965,7 @@ function controlGroupGo(index){
 			var nowstate=$(".table_select_group_led").eq(i).attr("thisstate");
 			//不是当前状态才执行
 			if(parseInt(ledstate)!=parseInt(nowstate)){
-				changestate(ledid,ledstate);
+				changestate(ledid,ledstate,6);
 			}
 		}
 		
@@ -989,14 +989,14 @@ function controlGroupGo(index){
 		if(parseInt(fanstate)!=parseInt(nowstate)){
 			switch(parseInt(fanstate)){
 				case 0:
-					changestate(fanid,0);
+					changestate(fanid,0,8);
 				case 1:
-					changestate(fanid,1);
+					changestate(fanid,1,8);
 					//不操作
 					break;
 				case 2:
 					//停止风机
-					changestate(fanid,2);
+					changestate(fanid,2,8);
 					
 					break;
 				case 3:
@@ -1039,7 +1039,7 @@ function controlGroupGo(index){
 					
 					//大于0时有方向，等于0时为停止
 					if(parseInt(stateflag)>0){
-						setTimeout("changestate("+fanid+","+stateflag+")",fantimenum*1000+3000);					
+						setTimeout("changestate("+fanid+","+stateflag+",8)",fantimenum*1000+3000);
 					}else{
 						var fsfxnum=-1;
 						
@@ -1086,7 +1086,7 @@ function controlGroupGo(index){
 			var nowstate=$(".table_select_group_door").eq(i).attr("thisstate");
 			//不是当前状态才执行
 			if(parseInt(doorstate)!=parseInt(nowstate)){
-				changestate(doorid,doorstate);		
+				changestate(doorid,doorstate,16);
 			}
 		}
 		
@@ -1123,7 +1123,7 @@ function controlGroupGo(index){
 			var nowstate=$(".table_select_group_ts").eq(i).attr("thisstate");
 			//不是当前状态才执行
 			if(parseInt(tsstate)!=parseInt(nowstate)){
-				changestate(tsid,tsstate);
+				changestate(tsid,tsstate,1);
 			}
 		}
 		
@@ -1141,7 +1141,7 @@ function controlGroupGo(index){
 			var nowstate=$(".table_select_group_ls").eq(i).attr("thisstate");
 			//不是当前状态才执行
 			if(parseInt(lsstate)!=parseInt(nowstate)){
-				changestate(lsid,lsstate);			
+				changestate(lsid,lsstate,2);
 			}
 		}
 		
@@ -1582,7 +1582,7 @@ function showPlc(){
 		//判断有无PLC
 		if(plctunnel == tunnelnum) {
 		    plcmodule = " <li   class=\"dev-nav-plc\" >";
-            plcmodule = plcmodule + "<a  title=\""+name+"\"  style=\"cursor:pointer;padding: 0px;width: 80px;height: 60px;\" ><img src=\"" + plcpicurl + "\" style='margin:0px 10px;width:60px;height:40px ' /></a>";
+            plcmodule = plcmodule + "<a  title=\""+name+"\"  style=\"cursor:pointer;padding: 0px;width: 80px;height: 60px;\" ><img src=\"" + plcpicurl + "\" style='margin:0px 20px;width:40px;height:40px ' /></a>";
             plcmodule = plcmodule + "</li>";
             $("#usedaotasdesd").append(plcmodule);
         }

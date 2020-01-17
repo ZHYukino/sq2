@@ -68,18 +68,18 @@ if(!isset($_SESSION['uid'])){
         </div>
     </div>
     <div class="dn">
-        <input id="config_language" type="text" class="dn" value="<?php echo $opt_ini["config"]['SoftLanguage']; ?>">
-        <input id="config_city_left" type="text" class="dn" value="<?php echo $opt_ini["config"]['RoadName1']; ?>">
-        <input id="config_city_right" type="text" class="dn" value="<?php echo $opt_ini["config"]['RoadName2']; ?>">
-        <input id="config_pingjie_ip" type="text" class="dn" value="<?php echo $opt_ini["ScreenConfig"]['ScreenIP']; ?> ">
-        <input id="config_pingjie_acount" type="text" class="dn" value="<?php echo $opt_ini["ScreenConfig"]['ScreenAcount'];?> ">
-        <input id="config_pingjie_password" type="text" class="dn" value="<?php echo $opt_ini["ScreenConfig"]['ScreenPassword']; ?> ">
+        <input id="config_language" type="text" class="dn" value="<? echo $opt_ini["config"]['SoftLanguage']; ?>">
+        <input id="config_city_left" type="text" class="dn" value="<? echo $opt_ini["config"]['RoadName1']; ?>">
+        <input id="config_city_right" type="text" class="dn" value="<? echo $opt_ini["config"]['RoadName2']; ?>">
+        <input id="config_pingjie_ip" type="text" class="dn" value="<? echo $opt_ini["ScreenConfig"]['ScreenIP']; ?> ">
+        <input id="config_pingjie_acount" type="text" class="dn" value="<? echo $opt_ini["ScreenConfig"]['ScreenAcount'];?> ">
+        <input id="config_pingjie_password" type="text" class="dn" value="<? echo $opt_ini["ScreenConfig"]['ScreenPassword']; ?> ">
         <input id="config_pingjie_md5" type="text" class="dn" value="">
         <input id="config_pingjie_session" type="text" class="dn" value="">
-        <input id="config_pingjie_planname" type="text" class="dn" value="<?php echo $opt_ini["ScreenConfig"]['ScreenPlanName'] ; ?> ">
-        <input id="config_pingjie_svalue" type="text" class="dn" value="<?php echo $opt_ini["ScreenValue"]['svalueArray']; ?> " >
-        <input id="config_pingjie_screenselect" type="text" class="dn" value="<?php echo $opt_ini["ScreenConfig"]['ScreenSelect']; ?> ">
-        <input id="config_pingjie_screencount" type="text" class="dn" value="<?php echo $opt_ini["ScreenConfig"]['ScreenCount'] ; ?> ">
+        <input id="config_pingjie_planname" type="text" class="dn" value="<? echo $opt_ini["ScreenConfig"]['ScreenPlanName'] ; ?> ">
+        <input id="config_pingjie_svalue" type="text" class="dn" value="<? echo $opt_ini["ScreenValue"]['svalueArray']; ?> " >
+        <input id="config_pingjie_screenselect" type="text" class="dn" value="<? echo $opt_ini["ScreenConfig"]['ScreenSelect']; ?> ">
+        <input id="config_pingjie_screencount" type="text" class="dn" value="<? echo $opt_ini["ScreenConfig"]['ScreenCount'] ; ?> ">
     </div>
 </div>
 

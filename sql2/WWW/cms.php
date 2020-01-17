@@ -116,7 +116,7 @@ require ('./bcd/php/config.php');
         </div>
         <div id="dev_cms_run" >
             <div style="margin-top: 50px">
-                <?php
+                <?
                 for($i=0;$i<count($cms);$i++) {
                     echo "<div class=" . $cms[$i]["id"] . "affiche   ;  style='display:none; width: 96%; height: 30px;margin: 0 auto;position: relative;  overflow: hidden;background: #000000;   width: 320px;   height: 32px; position: absolute; border-top-left-radius: 2px;border-top-right-radius: 2px;border-bottom-left-radius: 2px;border-bottom-right-radius: 2px;'>";
                     echo "<div class=" . $cms[$i]["id"] . "affiche_text0  ;  style='position: absolute; height:32px;width:320px;' >";
@@ -127,13 +127,13 @@ require ('./bcd/php/config.php');
                 ?>
             </div>
             <div id="cms_bigdiv" >
-            <?php
+            <?
             for($i=0;$i<count($cms);$i++) {
                 if(isset($cms[$i])) {
                     echo "<div id=" . $cms[$i]["id"] . "affiche   ;  style='display: block; width: 96%; height: 30px;margin: 0 auto;position: absolute;  overflow: hidden;background: #000000;   width: 320px;   height: 32px; position: absolute; display: none;border-top-left-radius: 2px;border-top-right-radius: 2px;border-bottom-left-radius: 2px;border-bottom-right-radius: 2px;'>";
                     ?>
                   </div>
-             <?php  }
+             <?  }
             }
             ?>
         </div>
@@ -147,7 +147,7 @@ require ('./bcd/php/config.php');
 <script src="js/opencms.js"></script>
 
 <script>
-    id = <?php  echo $_GET["cms"]; ?>;
+    id = <?  echo $_GET["cms"]; ?>;
     trees(id,"cms");
     firstdevstars = new Array();
     starsplaycms(id);

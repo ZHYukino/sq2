@@ -1,7 +1,7 @@
 <?php 
 header('Content-Type: text/html; charset=utf-8');
 
-function get_ini_file($file_name = "../db.ini"){
+function get_ini_file($file_name = "db.ini"){
 		$str=file_get_contents($file_name);
 		$ini_list = explode("\r\n",$str);
 		$ini_items = array();

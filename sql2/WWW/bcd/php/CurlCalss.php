@@ -88,12 +88,12 @@
             curl_close($ch);
             return $output;
         }
-        public static function usecmsupload($furl,$url){
+       public static function usecmsupload($furl,$url){
             $arr_header[] = "Content-Type:application/json";
             $arr_header[] = "Authorization: Basic ".base64_encode("root:web12345"); //添加头，在data处填写对应账号密码
             $res = self::cmsupload($furl, $url,$arr_header);
             return $res;
-        }
+       }
 
     }
 

@@ -1,9 +1,9 @@
     <?php
     include_once('conn.php');//数据库
-    // 制定允许其他域名访问
     header("Access-Control-Allow-Origin:*");
-    // 响应类型
-    header('Access-Control-Allow-Methods:POST');
+//    header("Access-Control-Allow-Origin:http://192.168.8.121:1234");
+    // header('Access-Control-Allow-Methods:POST');
+    header("Access-Control-Allow-Methods: GET,POST");
     // 响应头设置
     header('Access-Control-Allow-Headers:x-requested-with, content-type');
 

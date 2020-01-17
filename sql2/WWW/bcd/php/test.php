@@ -1,10 +1,6 @@
 <?php
 
-
-
-    define("DIR", "/");
-    function __autoload($classname) {
-        require DIR.$classname.'.php';
-    }
-
-   $p2 = new CurlCalss();
+$resseedtime = time();
+$res["seedtime"] = date("H:i:s",  $resseedtime);
+$res = strtotime($res["seedtime"]);
+print_r( $res);

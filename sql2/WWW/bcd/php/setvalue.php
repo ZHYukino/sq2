@@ -8,8 +8,8 @@
        $id = $_GET["id"];
        $id = str_replace("10000","",$id);
        $tunnel = $_GET["tunnel"] - 1;
-       $changetype = $_GET["changetype"];
-       $cname = $_GET["cname"];
+//       $changetype = $_GET["changetype"];
+//       $cname = $_GET["cname"];
        if($itype == 1 && !empty($value) && !empty($id) ){
            $userid = $_SESSION["uid"];
            $marknum = time().round(0,9);

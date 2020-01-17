@@ -86,7 +86,7 @@
                     $para["data"][$k]["picpath"] = "cam_0_" . $v["ishape"] . "_" . $v["iupdown"] . "_" . $ivalue . ".png";
                 }
             } elseif ($v["itypeid"] == 18) {
-                $para["data"][$k]["picpath"] = "ETHOST.png";
+                $para["data"][$k]["picpath"] = "ETHOST2.png";
             } //ET
             elseif ($v["itypeid"] == 19) {
                 if ($para["data"][$k]["state"] == 0) $para["data"][$k]["picpath"] = "ET_" . $v["iupdown"] . " _-1.png";

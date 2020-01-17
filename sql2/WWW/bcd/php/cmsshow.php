@@ -205,7 +205,9 @@
         if ($wres) {
             echo $success5;
         }
-    } //读取
+    }
+
+    //读取
     elseif ($type == 2) {
         $path = "../localcms/" . $id . "/play.lst";
         $play = parse_ini_file($path, true);
@@ -277,7 +279,9 @@
 
         $arr = array('count' => $play["playlist"]["item_no"], "data" => $result);
         echo json_encode($arr);
-    } //增加
+    }
+
+    //增加
     else if ($type == 3) {
         //图片内容
         $item = $_GET["item"];
@@ -300,7 +304,10 @@
             $upfiles                           = implode($item_no, ",");
             $play ["playlist"]["item" . $item] = $upfiles;
             $wres                              = write_ini_file($play, $path, $has_sections = true);
-        } //删除图片
+        }
+
+
+        //删除图片
         else if ($act == "delpic") {
             $picname = isset($_GET["picname"]) ? str_replace("图片", "", $_GET["picname"]) : "";
             $item_no = explode(",", $play["playlist"][$item]);
@@ -326,7 +333,10 @@
         if ($wres) {
             echo $success5;
         }
-    } //整个动作的删除或添加
+    }
+
+
+    //整个动作的删除或添加
     else if ($type == 4) {
 
         $item = $_GET["item"];
@@ -341,7 +351,9 @@
         if ($wres) {
             echo $success5;
         }
-    } else if ($type == 5) {
+    }
+    // cms的添加动作
+    else if ($type == 5) {
         $item = $_GET["item"];
 
         $path = "../localcms/" . $id . "/play.lst";
@@ -354,7 +366,9 @@
         if ($wres) {
             echo $success5;
         }
-    } else if ($type == 6) {
+    }
+    //tcm 的添加动作
+    else if ($type == 6) {
         $item = $_GET["item"];
 
         $path = "../localcms/" . $id . "/play.lst";
@@ -367,13 +381,15 @@
         if ($wres) {
             echo $success5;
         }
-    } //取出所有图片
+    }
+
+    //取出所有图片
     else if ($type == 7) {
         $item = $_GET["item"];
         $cid  = $_GET["cid"];
         $path = "../localcms/" . $id . "/";
         $num  = 0;
-        for ($i = 0; $i < 30; $i++) {
+        for ($i = 0; $i < 50; $i++) {
             $numbi   = substr("00" . $i, (strlen("00" . $i) - 3));
             $picname = $numbi . ".bmp";
             if (file_exists($path . $picname)) {

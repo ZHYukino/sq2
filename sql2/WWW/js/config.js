@@ -972,7 +972,7 @@ function returnPicurl(typevalue,state,shape,updown,i1,i2,tunnelnum,n3,n1){
 				}	
 				break;
 			case "ETHOST":
-				picurl="../pic2/ETHOST.png";
+				picurl="../pic2/ETHOST2.png";
 				break;
 
 		}
